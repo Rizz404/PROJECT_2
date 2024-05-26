@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SIPKK.DataAccess.Data;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
+using SIPKK.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,7 +17,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SIPKK.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area(nameof(Admin))]
     public class BiayaOperasionalController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -26,114 +27,151 @@ namespace SIPKK.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        // GET: Dosens
-        public IActionResult Index()
+        // GET: BiayaOperasional
+        public async Task<IActionResult> Index()
         {
-            List<Dosen> dosenList = _unitOfWork.Dosen.GetAll().ToList();
-            return View(dosenList);
+            List<BiayaOperasional> biayaOperasionalList = (await _unitOfWork.BiayaOperasional.GetAllAsync()).ToList();
+            return View(biayaOperasionalList);
         }
 
-        // GET: Dosens/Details/5
-        public IActionResult Details(string id)
+        // GET: BiayaOperasional/Details/5
+        public async Task<IActionResult> Details(string id)
         {
             if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
-            Dosen dosen = _unitOfWork.Dosen.Get(d => d.Id == id);
+            BiayaOperasional biayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(d => d.Id == id);
 
-            if(dosen == null)
+            if(biayaOperasional == null)
             {
                 return NotFound();
             }
 
-            return View(dosen);
+            return View(biayaOperasional);
         }
 
-        // GET: Dosens/Create
-        public IActionResult Create()
+        // GET: BiayaOperasional/Create
+        public async Task<IActionResult> Create()
         {
-            return View();
+            BiayaOperasionalVM biayaOperasionalVM = new()
+            {
+                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                }),
+            };
+
+            return View(biayaOperasionalVM);
         }
 
-        // POST: Dosens/Create
+        // POST: BiayaOperasional/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Dosen obj)
+        public async Task<IActionResult> Create(BiayaOperasionalVM biayaOperasionalVM)
         {
             if(ModelState.IsValid)
             {
-                _unitOfWork.Dosen.Create(obj);
-                _unitOfWork.Save();
-                TempData["Success"] = "Dosen created successfully";
+                await _unitOfWork.BiayaOperasional.CreateAsync(biayaOperasionalVM.BiayaOperasional);
+                await _unitOfWork.SaveAsync();
+                TempData["Success"] = "BiayaOperasional created successfully";
                 return RedirectToAction(nameof(Index));
             }
-            return View(obj);
+            else
+            {
+                biayaOperasionalVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                });
+                return View(biayaOperasionalVM);
+            }
         }
 
-        // GET: Dosens/Edit/5
-        public IActionResult Edit(string id)
+        // GET: BiayaOperasional/Edit/5
+        public async Task<IActionResult> Edit(string id)
         {
             if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
-            Dosen? dosenFromDb = _unitOfWork.Dosen.Get(d => d.Id == id);
+            BiayaOperasional? biayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(d => d.Id == id);
 
-            if(dosenFromDb == null)
+            if(biayaOperasional == null)
             {
                 return NotFound();
             }
-            return View(dosenFromDb);
+
+            BiayaOperasionalVM biayaOperasionalVM = new()
+            {
+                BiayaOperasional = biayaOperasional,
+                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                }),
+            };
+
+            return View(biayaOperasionalVM);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Dosen obj)
+        public async Task<IActionResult> Edit(BiayaOperasionalVM biayaOperasionalVM)
         {
             if(ModelState.IsValid)
             {
-                _unitOfWork.Dosen.Update(obj);
-                _unitOfWork.Save();
-                TempData["Success"] = "Dosen updated successfully";
+                await _unitOfWork.BiayaOperasional.UpdateAsync(biayaOperasionalVM.BiayaOperasional);
+                await _unitOfWork.SaveAsync();
+                TempData["Success"] = "BiayaOperasional updated successfully";
                 return RedirectToAction(nameof(Index));
             }
-            return View();
+            else
+            {
+                biayaOperasionalVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                });
+                return View(biayaOperasionalVM);
+            }
         }
 
-        // GET: Dosens/Delete/5
-        public IActionResult Delete(string id)
+        // GET: BiayaOperasional/Delete/5
+        public async Task<IActionResult> Delete(string id)
         {
             if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
-            Dosen? dosenFromDb = _unitOfWork.Dosen.Get(d => d.Id == id);
+            BiayaOperasional biayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(d => d.Id == id);
 
-            if(dosenFromDb == null)
+            if(biayaOperasional == null)
             {
                 return NotFound();
             }
-            return View(dosenFromDb);
+
+            return View(biayaOperasional);
         }
 
-        // POST: Dosens/Delete/5
+        // POST: BiayaOperasional/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Dosen? dosen = _unitOfWork.Dosen.Get(d => d.Id == id);
+            BiayaOperasional? biayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(d => d.Id == id);
 
-            if(dosen == null)
+            if(biayaOperasional == null)
             {
                 return NotFound();
             }
-            _unitOfWork.Dosen.Delete(dosen);
-            _unitOfWork.Save();
-            TempData["Success"] = "Dosen deleted successfully";
+            await _unitOfWork.BiayaOperasional.DeleteAsync(biayaOperasional);
+            await _unitOfWork.SaveAsync();
+            TempData["Success"] = "BiayaOperasional deleted successfully";
             return RedirectToAction(nameof(Index));
         }
     }

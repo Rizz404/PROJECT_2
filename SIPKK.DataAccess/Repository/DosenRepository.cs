@@ -21,9 +21,14 @@ namespace SIPKK.DataAccess.Repository
         }
 
         // update type modelnya
-        public void Update(Dosen obj)
+        public async Task UpdateAsync(Dosen obj)
         {
-            _db.Dosen.Update(obj);   // update modelnya
+            var existingEntity = await _db.Dosen.FindAsync(obj.Id);
+            if(existingEntity != null)
+            {
+                _db.Entry(existingEntity).CurrentValues.SetValues(obj);
+                await _db.SaveChangesAsync();
+            }
         }
     }
 }

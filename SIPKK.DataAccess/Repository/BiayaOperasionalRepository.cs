@@ -21,9 +21,14 @@ namespace SIPKK.DataAccess.Repository
         }
 
         // update type modelnya
-        public void Update(BiayaOperasional obj)
+        public async Task UpdateAsync(BiayaOperasional obj)
         {
-            _db.BiayaOperasional.Update(obj); // update modelnya
+            var existingEntity = await _db.BiayaOperasional.FindAsync(obj.Id);
+            if(existingEntity != null)
+            {
+                _db.Entry(existingEntity).CurrentValues.SetValues(obj);
+                await _db.SaveChangesAsync();
+            }
         }
     }
 }

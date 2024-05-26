@@ -9,8 +9,18 @@ namespace SIPKK.DataAccess.Repository.IRepository
     public interface IUnitOfWork
     {
         // tambahin interface repo lagi kalo buat lagi
+        IAdminRepository Admin { get; }
         IDosenRepository Dosen { get; }
         IBiayaOperasionalRepository BiayaOperasional { get; }
-        void Save();
+        IKonsentrasiRepository Konsentrasi { get; }
+        ILaporanRepository Laporan { get; }
+        IMahasiswaRepository Mahasiswa { get; }
+        IPendaftaranRepository Pendaftaran { get; }
+        IPersyaratanRepository Persyaratan { get; }
+        IProgramStudiRepository ProgramStudi { get; }
+        IProyekRepository Proyek { get; }
+        ITestRepository Test { get; }
+        // ya intinya buat async pakai task
+        Task SaveAsync();
     }
 }

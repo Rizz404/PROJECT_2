@@ -27,21 +27,21 @@ namespace SIPKK.Areas.Admin.Controllers
         }
 
         // GET: Dosens
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            List<Dosen> dosenList = _unitOfWork.Dosen.GetAll().ToList();
+            List<Dosen> dosenList = (await _unitOfWork.Dosen.GetAllAsync()).ToList();
             return View(dosenList);
         }
 
         // GET: Dosens/Details/5
-        public IActionResult Details(string id)
+        public async Task<IActionResult> Details(string id)
         {
             if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
-            Dosen dosen = _unitOfWork.Dosen.Get(d => d.Id == id);
+            Dosen dosen = await _unitOfWork.Dosen.GetAsync(d => d.Id == id);
 
             if(dosen == null)
             {
@@ -52,7 +52,7 @@ namespace SIPKK.Areas.Admin.Controllers
         }
 
         // GET: Dosens/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             return View();
         }
@@ -60,12 +60,12 @@ namespace SIPKK.Areas.Admin.Controllers
         // POST: Dosens/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Dosen obj)
+        public async Task<IActionResult> Create(Dosen obj)
         {
             if(ModelState.IsValid)
             {
-                _unitOfWork.Dosen.Create(obj);
-                _unitOfWork.Save();
+                await _unitOfWork.Dosen.CreateAsync(obj);
+                await _unitOfWork.SaveAsync();
                 TempData["Success"] = "Dosen created successfully";
                 return RedirectToAction(nameof(Index));
             }
@@ -73,14 +73,14 @@ namespace SIPKK.Areas.Admin.Controllers
         }
 
         // GET: Dosens/Edit/5
-        public IActionResult Edit(string id)
+        public async Task<IActionResult> Edit(string id)
         {
             if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
-            Dosen? dosenFromDb = _unitOfWork.Dosen.Get(d => d.Id == id);
+            Dosen? dosenFromDb = await _unitOfWork.Dosen.GetAsync(d => d.Id == id);
 
             if(dosenFromDb == null)
             {
@@ -91,12 +91,12 @@ namespace SIPKK.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Dosen obj)
+        public async Task<IActionResult> Edit(Dosen obj)
         {
             if(ModelState.IsValid)
             {
-                _unitOfWork.Dosen.Update(obj);
-                _unitOfWork.Save();
+                await _unitOfWork.Dosen.UpdateAsync(obj);
+                await _unitOfWork.SaveAsync();
                 TempData["Success"] = "Dosen updated successfully";
                 return RedirectToAction(nameof(Index));
             }
@@ -104,14 +104,14 @@ namespace SIPKK.Areas.Admin.Controllers
         }
 
         // GET: Dosens/Delete/5
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
-            Dosen? dosenFromDb = _unitOfWork.Dosen.Get(d => d.Id == id);
+            Dosen? dosenFromDb = await _unitOfWork.Dosen.GetAsync(d => d.Id == id);
 
             if(dosenFromDb == null)
             {
@@ -123,16 +123,16 @@ namespace SIPKK.Areas.Admin.Controllers
         // POST: Dosens/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Dosen? dosen = _unitOfWork.Dosen.Get(d => d.Id == id);
+            Dosen? dosen = await _unitOfWork.Dosen.GetAsync(d => d.Id == id);
 
             if(dosen == null)
             {
                 return NotFound();
             }
-            _unitOfWork.Dosen.Delete(dosen);
-            _unitOfWork.Save();
+            await _unitOfWork.Dosen.DeleteAsync(dosen);
+            await _unitOfWork.SaveAsync();
             TempData["Success"] = "Dosen deleted successfully";
             return RedirectToAction(nameof(Index));
         }

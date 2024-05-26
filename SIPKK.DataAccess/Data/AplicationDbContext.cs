@@ -74,6 +74,26 @@ namespace SIPKK.DataAccess.Data
             );
         }
 
+        public override int SaveChanges()
+        {
+            foreach(var entry in ChangeTracker.Entries<ICuidEntity>())
+            {
+                if(entry.State == EntityState.Added)
+                {
+                    if(entry.Entity is ITimestampedEntity timestampedEntity)
+                    {
+                        timestampedEntity.CreatedAt = DateTime.UtcNow;
+                        timestampedEntity.UpdatedAt = DateTime.UtcNow;
+                    }
+                }
+                else if(entry.State == EntityState.Modified && entry.Entity is ITimestampedEntity modifiedEntity)
+                {
+                    modifiedEntity.UpdatedAt = DateTime.UtcNow;
+                }
+            }
+            return base.SaveChanges();
+        }
+
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             foreach(var entry in ChangeTracker.Entries<ICuidEntity>())

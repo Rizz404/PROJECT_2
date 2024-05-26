@@ -21,32 +21,31 @@ namespace SIPKK.DataAccess.Repository
             this.dbSet = _db.Set<T>();
         }
 
-        public void Create(T entity)
+        public async Task CreateAsync(T entity)
         {
-            dbSet.Add(entity);
+            await dbSet.AddAsync(entity);
         }
 
-        public T Get(System.Linq.Expressions.Expression<Func<T, bool>> filter)
+        public async Task<T> GetAsync(System.Linq.Expressions.Expression<Func<T, bool>> filter)
         {
             IQueryable<T> query = dbSet;
-            query.Where(filter);
-            return query.FirstOrDefault();
+            return await query.Where(filter).FirstOrDefaultAsync();
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             IQueryable<T> query = dbSet;
-            return query.ToList();
+            return await query.ToListAsync();
         }
 
-        public void Delete(T entity)
+        public async Task DeleteAsync(T entity)
         {
-            dbSet.Remove(entity);
+            await Task.Run(() => dbSet.Remove(entity));
         }
 
-        public void DeleteRange(IEnumerable<T> entities)
+        public async Task DeleteRangeAsync(IEnumerable<T> entities)
         {
-            dbSet.RemoveRange(entities);
+            await Task.Run(() => dbSet.RemoveRange(entities));
         }
     }
 }

@@ -10,6 +10,6 @@ namespace SIPKK.DataAccess.Repository.IRepository
     // update genericnya kalo di copy
     public interface IBiayaOperasionalRepository : IRepository<BiayaOperasional>
     {
-        void Update(BiayaOperasional obj);   // update type modelnya
+        Task UpdateAsync(BiayaOperasional obj);   // update type modelnya
     }
 }
