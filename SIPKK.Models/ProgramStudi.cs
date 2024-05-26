@@ -7,7 +7,7 @@ namespace SIPKK.Models
 {
     public class ProgramStudi : CuidTimestampedEntity
     {
-       // public string Id { get; set; }
+        // public string Id { get; set; }
 
         [MaxLength(50)]
         [Required(ErrorMessage = "{0} harus diisi")]
@@ -17,10 +17,7 @@ namespace SIPKK.Models
         [RegularExpression(@"^(?!.{5}$).*", ErrorMessage = "Deskripsi tidak boleh hanya berisi 5 karakter.")]
         public string? Deskripsi { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdateAt { get;  set; }
-
-        //public ICollection<Konsentrasi>? Konsentrasi { get; set; }
-        //public ICollection<Mahasiswa>? Mahasiswa { get; set; }
+        public ICollection<Konsentrasi>? Konsentrasi { get; set; }
+        public ICollection<Mahasiswa>? Mahasiswa { get; set; }
     }
 }

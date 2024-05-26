@@ -10,6 +10,5 @@ namespace SIPKK.DataAccess.Repository.IRepository
     public interface IDosenRepository : IRepository<Dosen>
     {
         void Update(Dosen obj);
-        void Save();
     }
 }
