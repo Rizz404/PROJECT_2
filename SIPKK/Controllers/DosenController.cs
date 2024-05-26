@@ -18,17 +18,17 @@ namespace SIPKK.Controllers
 {
     public class DosenController : Controller
     {
-        private readonly IDosenRepository _dosenRepo;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DosenController(IDosenRepository dosenRepo)
+        public DosenController(IUnitOfWork unitOfWork)
         {
-            _dosenRepo = dosenRepo;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: Dosens
         public IActionResult Index()
         {
-            List<Dosen> dosenList = _dosenRepo.GetAll().ToList();
+            List<Dosen> dosenList = _unitOfWork.Dosen.GetAll().ToList();
             return View(dosenList);
         }
 
@@ -40,7 +40,7 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            Dosen dosen = _dosenRepo.Get(d => d.Id == id);
+            Dosen dosen = _unitOfWork.Dosen.Get(d => d.Id == id);
 
             if(dosen == null)
             {
@@ -63,8 +63,8 @@ namespace SIPKK.Controllers
         {
             if(ModelState.IsValid)
             {
-                _dosenRepo.Create(obj);
-                _dosenRepo.Save();
+                _unitOfWork.Dosen.Create(obj);
+                _unitOfWork.Save();
                 TempData["Success"] = "Dosen created successfully";
                 return RedirectToAction(nameof(Index));
             }
@@ -79,7 +79,7 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            Dosen? dosenFromDb = _dosenRepo.Get(d => d.Id == id);
+            Dosen? dosenFromDb = _unitOfWork.Dosen.Get(d => d.Id == id);
 
             if(dosenFromDb == null)
             {
@@ -94,8 +94,8 @@ namespace SIPKK.Controllers
         {
             if(ModelState.IsValid)
             {
-                _dosenRepo.Update(obj);
-                _dosenRepo.Save();
+                _unitOfWork.Dosen.Update(obj);
+                _unitOfWork.Save();
                 TempData["Success"] = "Dosen updated successfully";
                 return RedirectToAction(nameof(Index));
             }
@@ -110,7 +110,7 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            Dosen? dosenFromDb = _dosenRepo.Get(d => d.Id == id);
+            Dosen? dosenFromDb = _unitOfWork.Dosen.Get(d => d.Id == id);
 
             if(dosenFromDb == null)
             {
@@ -124,14 +124,14 @@ namespace SIPKK.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(string id)
         {
-            Dosen? dosen = _dosenRepo.Get(d => d.Id == id);
+            Dosen? dosen = _unitOfWork.Dosen.Get(d => d.Id == id);
 
             if(dosen == null)
             {
                 return NotFound();
             }
-            _dosenRepo.Delete(dosen);
-            _dosenRepo.Save();
+            _unitOfWork.Dosen.Delete(dosen);
+            _unitOfWork.Save();
             TempData["Success"] = "Dosen deleted successfully";
             return RedirectToAction(nameof(Index));
         }

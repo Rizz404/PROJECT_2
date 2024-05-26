@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SIPKK.DataAccess;
 using SIPKK.DataAccess.Data;
+using SIPKK.DataAccess.Repository;
+using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using System;
 
@@ -15,6 +17,8 @@ builder.Services.AddDbContext<AplicationDbContext>(options =>
 {
     options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
 });
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
@@ -35,6 +39,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
