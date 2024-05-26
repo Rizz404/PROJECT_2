@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SIPKK.Models
 {
-    public class BiayaOperational : CuidTimestampedEntity
+    public class BiayaOperasional : CuidTimestampedEntity
     {
         [MaxLength(36)]
         [Required(ErrorMessage = "{0} harus diisi")]

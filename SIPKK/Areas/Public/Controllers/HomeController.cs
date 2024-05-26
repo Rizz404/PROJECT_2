@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using SIPKK.Models;
 using System.Diagnostics;
 
-namespace SIPKK.Controllers
+namespace SIPKK.Areas.Public.Controllers
 {
+    [Area(nameof(Public))]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

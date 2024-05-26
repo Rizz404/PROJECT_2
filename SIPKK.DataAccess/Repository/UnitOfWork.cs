@@ -13,10 +13,13 @@ namespace SIPKK.DataAccess.Repository
     {
         private AplicationDbContext _db;
         public IDosenRepository Dosen { get; private set; }
+        public IBiayaOperasionalRepository BiayaOperasional { get; private set; }
+
         public UnitOfWork(AplicationDbContext db)
         {
             _db = db;
             Dosen = new DosenRepository(_db);
+            BiayaOperasional = new BiayaOperasionalRepository(_db);
         }
 
         public void Save()

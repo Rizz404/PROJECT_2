@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace SIPKK.DataAccess.Repository
 {
+    // update generic dan typenya kalo di copy
     public class DosenRepository : Repository<Dosen>, IDosenRepository
     {
         //strukturnya begini jangan macem-macem
@@ -19,9 +20,10 @@ namespace SIPKK.DataAccess.Repository
             _db = db;
         }
 
+        // update type modelnya
         public void Update(Dosen obj)
         {
-            _db.Dosen.Update(obj);
+            _db.Dosen.Update(obj);   // update modelnya
         }
     }
 }

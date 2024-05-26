@@ -30,7 +30,7 @@ namespace SIPKK.DataAccess.Data
         public DbSet<ProgramStudi> ProgramStudi { get; set; }
         public DbSet<Konsentrasi> Konsentrasi { get; set; }
         public DbSet<Pendaftaran> Pendaftaran { get; set; }
-        public DbSet<BiayaOperational> BiayaOperational { get; set; }
+        public DbSet<BiayaOperasional> BiayaOperasional { get; set; }
         public DbSet<Laporan> Laporan { get; set; }
         public DbSet<Test> Test { get; set; }
 

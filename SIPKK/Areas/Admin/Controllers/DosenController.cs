@@ -14,13 +14,14 @@ using System.Threading.Tasks;
 using Visus.Cuid;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace SIPKK.Controllers
+namespace SIPKK.Areas.Admin.Controllers
 {
-    public class BiayaOperasionalController : Controller
+    [Area("Admin")]
+    public class DosenController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public BiayaOperasionalController(IUnitOfWork unitOfWork)
+        public DosenController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }

@@ -48,7 +48,7 @@ namespace SIPKK.Models
 
         public ICollection<Mahasiswa>? Mahasiswa { get; set; }
         public ICollection<Dosen>? Dosen { get; set; }
-        public BiayaOperational? BiayaOperational { get; set; }
+        public BiayaOperasional? BiayaOperasional { get; set; }
         public Laporan? Laporan { get; set; }
     }
 }

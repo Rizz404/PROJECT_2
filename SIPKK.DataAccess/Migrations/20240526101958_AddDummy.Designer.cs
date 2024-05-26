@@ -69,7 +69,7 @@ namespace SIPKK.DataAccess.Migrations
                     b.ToTable("admin", (string)null);
                 });
 
-            modelBuilder.Entity("SIPKK.Models.BiayaOperational", b =>
+            modelBuilder.Entity("SIPKK.Models.BiayaOperasional", b =>
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(50)
@@ -683,11 +683,11 @@ namespace SIPKK.DataAccess.Migrations
                     b.ToTable("test", (string)null);
                 });
 
-            modelBuilder.Entity("SIPKK.Models.BiayaOperational", b =>
+            modelBuilder.Entity("SIPKK.Models.BiayaOperasional", b =>
                 {
                     b.HasOne("SIPKK.Models.Proyek", "Proyek")
-                        .WithOne("BiayaOperational")
-                        .HasForeignKey("SIPKK.Models.BiayaOperational", "IdProyek")
+                        .WithOne("BiayaOperasional")
+                        .HasForeignKey("SIPKK.Models.BiayaOperasional", "IdProyek")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_biaya_operational_proyek_id_proyek");
@@ -806,7 +806,7 @@ namespace SIPKK.DataAccess.Migrations
 
             modelBuilder.Entity("SIPKK.Models.Proyek", b =>
                 {
-                    b.Navigation("BiayaOperational");
+                    b.Navigation("BiayaOperasional");
 
                     b.Navigation("Dosen");
 
