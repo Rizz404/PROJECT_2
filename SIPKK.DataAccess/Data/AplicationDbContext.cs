@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SIPKK.Models;
 using SIPKK.Ultilities.Abstractions;
@@ -13,7 +15,7 @@ using Visus.Cuid;
 
 namespace SIPKK.DataAccess.Data
 {
-    public class AplicationDbContext : DbContext
+    public class AplicationDbContext : IdentityDbContext<IdentityUser>
     {
         //harus add reference ke masing masing class library yang berhubungan intinya
         public AplicationDbContext(DbContextOptions<AplicationDbContext> options) : base(options)
@@ -22,7 +24,8 @@ namespace SIPKK.DataAccess.Data
         }
 
         //! Defaultnya bakal plural hati-hati penamaannya
-        //jangan lupa nambahin kalo ada db baru kontol
+        //jangan lupa nambahin kalo ada db baru
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Admin> Admin { get; set; }
         public DbSet<Persyaratan> Persyaratan { get; set; }
         public DbSet<Proyek> Proyek { get; set; }

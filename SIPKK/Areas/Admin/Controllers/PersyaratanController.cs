@@ -60,7 +60,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 MahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.FirstName,
-                    Value = p.Id
+                    Value = p.Id.ToString(),
                 }),
             };
 
