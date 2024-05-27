@@ -1,4 +1,5 @@
-﻿using SIPKK.Ultilities.Abstractions;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using SIPKK.Ultilities.Abstractions;
 using SIPKK.Ultilities.Interface;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -49,7 +50,7 @@ namespace SIPKK.Models
         [MaxLength(36)]
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Proyek")]
-        public string IdProyek { get; set; }
+        public string? IdProyek { get; set; }
 
         [Range(1, 12, ErrorMessage = "Semester harus di antara 1 sampai 12")]
         [Required(ErrorMessage = "Semester harus diisi")]
@@ -57,12 +58,15 @@ namespace SIPKK.Models
 
 
         [ForeignKey(nameof(IdProgramStudi))]
+        [ValidateNever]
         public ProgramStudi ProgramStudi { get; set; }
 
         [ForeignKey(nameof(IdKonsentrasi))]
+        [ValidateNever]
         public Konsentrasi Konsentrasi { get; set; }
 
         [ForeignKey(nameof(IdProyek))]
+        [ValidateNever]
         public Proyek? Proyek { get; set; }
 
         public Pendaftaran? Pendaftaran { get; set; }

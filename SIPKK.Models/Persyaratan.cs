@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SIPKK.Ultilities.Abstractions;
 using SIPKK.Ultilities.Interface;
 using System.ComponentModel;
@@ -35,6 +36,7 @@ namespace SIPKK.Models
         public bool KetKelakuanBaik { get; set; }
 
         [ForeignKey(nameof(IdMahasiswa))]
-        public Mahasiswa? Mahasiswa { get; set; }
+        [ValidateNever]
+        public Mahasiswa Mahasiswa { get; set; }
     }
 }

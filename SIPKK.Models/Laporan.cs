@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SIPKK.Ultilities.Abstractions;
 using SIPKK.Ultilities.Interface;
 using System.ComponentModel.DataAnnotations;
@@ -18,6 +19,7 @@ namespace SIPKK.Models
         public string Keterangan { get; set; }
 
         [ForeignKey(nameof(IdProyek))]
-        public Proyek? Proyek { get; set; }
+        [ValidateNever]
+        public Proyek Proyek { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SIPKK.Ultilities.Abstractions;
 using SIPKK.Ultilities.Interface;
 using System.ComponentModel.DataAnnotations;
@@ -6,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SIPKK.Models
 {
-    public class Konsentrasi :  CuidTimestampedEntity
+    public class Konsentrasi : CuidTimestampedEntity
     {
         //public string Id { get; set; }
 
@@ -25,7 +26,8 @@ namespace SIPKK.Models
         public string? Deskripsi { get; set; }
 
         [ForeignKey(nameof(IdProgramStudi))]
-        public  ProgramStudi? ProgramStudi { get; set; }
+        [ValidateNever]
+        public ProgramStudi ProgramStudi { get; set; }
 
         public ICollection<Mahasiswa>? Mahasiswa { get; set; }
     }

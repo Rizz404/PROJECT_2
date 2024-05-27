@@ -1,0 +1,31 @@
+﻿@model Konsentrasi
+
+@{
+    ViewData["Title"] = "Details";
+    var keyMappings = new Dictionary<string, object>
+    {
+        { "BiayaTransportasi", Model.Nama },
+        { "BiayaProyek", Model.IdProgramStudi },
+        { "BiayaDll", Model.Deskripsi },
+        { "CreatedAt", Model.CreatedAt },
+        { "UpdatedAt", Model.UpdatedAt },
+    };
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>BiayaOperational</h4>
+    <hr />
+    <dl class="row">
+        @foreach(var map in keyMappings)
+        {
+            <dt class="col-sm-2">@map.Key</dt>
+            <dd class="col-sm-10">@map.Value</dd>
+        }
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
