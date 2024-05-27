@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="cuid.net" Version="5.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
   </ItemGroup>
 
 </Project>

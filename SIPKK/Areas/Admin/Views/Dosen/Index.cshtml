@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Dosen>
+
+@{
+    ViewData["Title"] = "Index";
+    var excludedProps = new List<string> { "Id", "Password", "ProyekOptions" };
+    var properties = typeof(Dosen).GetProperties()
+    .Where(prop => !excludedProps.Contains(prop.Name)).ToList();
+    var headers = properties.Select(prop => prop.Name).ToList();
+    int counter = 1;
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>No</th>
+            @foreach(var header in headers)
+            {
+                <th>@header</th>
+            }
+            <th>Options</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>@counter</td>
+                @foreach(var prop in properties)
+                {
+                    <td>@prop.GetValue(item)</td>
+                }
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+            counter++;
+        }
+    </tbody>
+</table>

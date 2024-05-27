@@ -1,0 +1,26 @@
+﻿@model Mahasiswa
+
+@{
+    ViewData["Title"] = "Details";
+    var excludedProps = new List<string> { "Id", "Password", "ProyekOptions", "StudyOptions", "KonsentrasiOptions", "KonsentrasiId" };
+    var properties = typeof(Mahasiswa).GetProperties()
+    .Where(prop => !excludedProps.Contains(prop.Name)).ToList();
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Mahasiswa</h4>
+    <hr />
+    <dl class="row gap-2">
+        @foreach(var prop in properties)
+        {
+            <dt class="col-sm-2">@prop.Name</dt>
+            <dd class="col-sm-10">@prop.GetValue(Model)</dd>
+        }
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

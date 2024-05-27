@@ -10,8 +10,9 @@ namespace SIPKK.DataAccess.Repository.IRepository
     // jangan lupa buat ini jadi public bukan internal
     public interface IRepository<T> where T : class
     {
-        Task<IEnumerable<T>> GetAllAsync();
-        Task<T> GetAsync(Expression<Func<T, bool>> filter);
+        // sebenernya kurang tau ini type apaan tapi berasa keren aja jadi dipake
+        Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includedProperties);
+        Task<T> GetAsync(Expression<Func<T, bool>> filter, params Expression<Func<T, object>>[] includedProperties);
         Task CreateAsync(T entity);
         Task DeleteAsync(T entity);
         Task DeleteRangeAsync(IEnumerable<T> entities);

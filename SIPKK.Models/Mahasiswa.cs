@@ -8,6 +8,7 @@ namespace SIPKK.Models
 {
     public class Mahasiswa : CuidTimestampedEntity
     {
+        [ValidateNever]
         public string IdUser { get; set; }
 
         [MaxLength(10)]
@@ -26,10 +27,16 @@ namespace SIPKK.Models
         [StringLength(50, ErrorMessage = "{0} harus diantara {2} sampai {1}.", MinimumLength = 3)]
         public string LastName { get; set; }
 
+        [NotMapped]
+        private DateTime _tanggalLahir;
         [DataType(DataType.Date, ErrorMessage = "Tanggal Lahir tidak valid.")]
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Tanggal Lahir")]
-        public DateTime TanggalLahir { get; set; }
+        public DateTime TanggalLahir
+        {
+            get => _tanggalLahir;
+            set => _tanggalLahir = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
 
         [MaxLength(255)]
         [Required(ErrorMessage = "{0} harus diisi")]

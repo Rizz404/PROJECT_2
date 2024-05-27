@@ -58,9 +58,9 @@ namespace SIPKK.Areas.Admin.Controllers
             // biar miftah
             KonsentrasiVM konsentrasiVM = new()
             {
-                ProgramStudiList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
                 {
-                    Text = p.NamaProyek,
+                    Text = p.Nama,
                     Value = p.Id
                 }),
             };
@@ -82,9 +82,9 @@ namespace SIPKK.Areas.Admin.Controllers
             }
             else
             {
-                konsentrasiVM.ProgramStudiList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                konsentrasiVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
                 {
-                    Text = p.NamaProyek,
+                    Text = p.Nama,
                     Value = p.Id
                 });
                 return View(konsentrasiVM);
@@ -109,9 +109,9 @@ namespace SIPKK.Areas.Admin.Controllers
             KonsentrasiVM konsentrasiVM = new()
             {
                 Konsentrasi = konsentrasi,
-                ProgramStudiList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
                 {
-                    Text = p.NamaProyek,
+                    Text = p.Nama,
                     Value = p.Id
                 }),
             };
@@ -132,9 +132,9 @@ namespace SIPKK.Areas.Admin.Controllers
             }
             else
             {
-                konsentrasiVM.ProgramStudiList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                konsentrasiVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
                 {
-                    Text = p.NamaProyek,
+                    Text = p.Nama,
                     Value = p.Id
                 });
                 return View(konsentrasiVM);

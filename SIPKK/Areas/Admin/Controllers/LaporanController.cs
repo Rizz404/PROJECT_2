@@ -30,8 +30,8 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Laporan
         public async Task<IActionResult> Index()
         {
-            List<Laporan> biayaOperasionalList = (await _unitOfWork.Laporan.GetAllAsync()).ToList();
-            return View(biayaOperasionalList);
+            List<Laporan> laporanList = (await _unitOfWork.Laporan.GetAllAsync()).ToList();
+            return View(laporanList);
         }
 
         // GET: Laporan/Details/5
@@ -42,101 +42,68 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Laporan biayaOperasional = await _unitOfWork.Laporan.GetAsync(d => d.Id == id);
+            Laporan laporan = await _unitOfWork.Laporan.GetAsync(d => d.Id == id);
 
-            if(biayaOperasional == null)
+            if(laporan == null)
             {
                 return NotFound();
             }
 
-            return View(biayaOperasional);
+            return View(laporan);
         }
 
-        // GET: Laporan/Create
-        public async Task<IActionResult> Create()
+        // GET: Laporan/Upsert
+        public async Task<IActionResult> Upsert(string? id)
         {
-            LaporanVM biayaOperasionalVM = new()
+            LaporanVM laporanVM = new()
             {
                 ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.NamaProyek,
                     Value = p.Id
                 }),
+                Laporan = new Laporan() // Initialize BiayaOperasional
             };
 
-            return View(biayaOperasionalVM);
+            if(id != null || !string.IsNullOrEmpty(id))
+            {
+                laporanVM.Laporan = await _unitOfWork.Laporan.GetAsync(b => b.Id == id);
+                if(laporanVM.Laporan == null)
+                {
+                    return NotFound();
+                }
+            }
+
+            return View(laporanVM);
         }
 
-        // POST: Laporan/Create
+        // POST: Laporan/Upsert
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(LaporanVM biayaOperasionalVM)
+        public async Task<IActionResult> Upsert(LaporanVM laporanVM)
         {
             if(ModelState.IsValid)
             {
-                await _unitOfWork.Laporan.CreateAsync(biayaOperasionalVM.Laporan);
+                if(laporanVM.Laporan.Id == null || string.IsNullOrEmpty(laporanVM.Laporan.Id))
+                {
+                    await _unitOfWork.Laporan.CreateAsync(laporanVM.Laporan);
+                }
+                else
+                {
+                    await _unitOfWork.Laporan.UpdateAsync(laporanVM.Laporan);
+                }
                 await _unitOfWork.SaveAsync();
                 TempData["Success"] = "Laporan created successfully";
                 return RedirectToAction(nameof(Index));
             }
             else
             {
-                biayaOperasionalVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                laporanVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.NamaProyek,
                     Value = p.Id
                 });
-                return View(biayaOperasionalVM);
-            }
-        }
-
-        // GET: Laporan/Edit/5
-        public async Task<IActionResult> Edit(string id)
-        {
-            if(id == null || id == string.Empty)
-            {
-                return NotFound();
-            }
-
-            Laporan? biayaOperasional = await _unitOfWork.Laporan.GetAsync(d => d.Id == id);
-
-            if(biayaOperasional == null)
-            {
-                return NotFound();
-            }
-
-            LaporanVM biayaOperasionalVM = new()
-            {
-                Laporan = biayaOperasional,
-                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.NamaProyek,
-                    Value = p.Id
-                }),
-            };
-
-            return View(biayaOperasionalVM);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(LaporanVM biayaOperasionalVM)
-        {
-            if(ModelState.IsValid)
-            {
-                await _unitOfWork.Laporan.UpdateAsync(biayaOperasionalVM.Laporan);
-                await _unitOfWork.SaveAsync();
-                TempData["Success"] = "Laporan updated successfully";
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                biayaOperasionalVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.NamaProyek,
-                    Value = p.Id
-                });
-                return View(biayaOperasionalVM);
+                return View(laporanVM);
             }
         }
 
@@ -148,14 +115,14 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Laporan biayaOperasional = await _unitOfWork.Laporan.GetAsync(d => d.Id == id);
+            Laporan laporan = await _unitOfWork.Laporan.GetAsync(d => d.Id == id);
 
-            if(biayaOperasional == null)
+            if(laporan == null)
             {
                 return NotFound();
             }
 
-            return View(biayaOperasional);
+            return View(laporan);
         }
 
         // POST: Laporan/Delete/5
@@ -163,13 +130,13 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Laporan? biayaOperasional = await _unitOfWork.Laporan.GetAsync(d => d.Id == id);
+            Laporan? laporan = await _unitOfWork.Laporan.GetAsync(d => d.Id == id);
 
-            if(biayaOperasional == null)
+            if(laporan == null)
             {
                 return NotFound();
             }
-            await _unitOfWork.Laporan.DeleteAsync(biayaOperasional);
+            await _unitOfWork.Laporan.DeleteAsync(laporan);
             await _unitOfWork.SaveAsync();
             TempData["Success"] = "Laporan deleted successfully";
             return RedirectToAction(nameof(Index));

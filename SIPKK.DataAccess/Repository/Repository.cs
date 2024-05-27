@@ -4,6 +4,7 @@ using SIPKK.DataAccess.Repository.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,15 +27,23 @@ namespace SIPKK.DataAccess.Repository
             await dbSet.AddAsync(entity);
         }
 
-        public async Task<T> GetAsync(System.Linq.Expressions.Expression<Func<T, bool>> filter)
+        public async Task<T> GetAsync(System.Linq.Expressions.Expression<Func<T, bool>> filter, params Expression<Func<T, object>>[] includedProperties)
         {
             IQueryable<T> query = dbSet;
+            if(includedProperties.Any())
+            {
+                query = includedProperties.Aggregate(query, (current, includedProp) => current.Include(includedProp));
+            }
             return await query.Where(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includedProperties)
         {
             IQueryable<T> query = dbSet;
+            if(includedProperties.Any())
+            {
+                query = includedProperties.Aggregate(query, (current, includedProp) => current.Include(includedProp));
+            }
             return await query.ToListAsync();
         }
 

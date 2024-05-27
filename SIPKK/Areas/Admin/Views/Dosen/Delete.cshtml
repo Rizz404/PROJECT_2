@@ -1,0 +1,39 @@
+﻿@model Dosen
+
+@{
+    ViewData["Title"] = "Hapus Dosen";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3>Anda yakin ingin menghapus data ini?</h3>
+<div>
+    <h4>Dosen</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.NamaDosen)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.NamaDosen)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.NIDN)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.NIDN)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IdProyek)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.IdProyek)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

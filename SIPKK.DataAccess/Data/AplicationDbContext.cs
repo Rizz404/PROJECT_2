@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SIPKK.Models;
+using SIPKK.Ultilities.Abstractions;
 using SIPKK.Ultilities.Interface;
 using System;
 using System.Collections.Generic;
@@ -80,6 +81,7 @@ namespace SIPKK.DataAccess.Data
             {
                 if(entry.State == EntityState.Added)
                 {
+                    GenerateIdsForNewEntities();
                     if(entry.Entity is ITimestampedEntity timestampedEntity)
                     {
                         timestampedEntity.CreatedAt = DateTime.UtcNow;
@@ -100,6 +102,7 @@ namespace SIPKK.DataAccess.Data
             {
                 if(entry.State == EntityState.Added)
                 {
+                    GenerateIdsForNewEntities();
                     if(entry.Entity is ITimestampedEntity timestampedEntity)
                     {
                         timestampedEntity.CreatedAt = DateTime.UtcNow;
@@ -114,19 +117,16 @@ namespace SIPKK.DataAccess.Data
             return await base.SaveChangesAsync(cancellationToken);
         }
 
-        //public async Task SeedDataAsync()
-        //{
-        //    if(!Proyek.Any())
-        //    {
-        //        await Proyek.AddRangeAsync(SeedData.GetProyekData());
-        //    }
+        private void GenerateIdsForNewEntities()
+        {
+            var newEntities = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added && e.Entity is CuidEntity)
+                .Select(e => e.Entity as CuidEntity);
 
-        //    if(!ProgramStudi.Any())
-        //    {
-        //        await ProgramStudi.AddRangeAsync(SeedData.GetProgramStudiData());
-        //    }
-
-        //    await SaveChangesAsync();
-        //}
+            foreach(var entity in newEntities)
+            {
+                entity?.GenerateId();
+            }
+        }
     }
 }
