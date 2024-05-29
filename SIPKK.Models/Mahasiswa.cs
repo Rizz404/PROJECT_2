@@ -38,10 +38,7 @@ namespace SIPKK.Models
             set => _tanggalLahir = DateTime.SpecifyKind(value, DateTimeKind.Utc);
         }
 
-        [MaxLength(255)]
-        [Required(ErrorMessage = "{0} harus diisi")]
-        [StringLength(255, ErrorMessage = "{0} harus diantara {2} sampai {1}.", MinimumLength = 7)]
-
+        [Display(Name = "Foto Profil")]
         public string? FotoProfil { get; set; }
 
         [MaxLength(36)]
@@ -55,7 +52,6 @@ namespace SIPKK.Models
         public string IdKonsentrasi { get; set; }
 
         [MaxLength(36)]
-        [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Proyek")]
         public string? IdProyek { get; set; }
 
@@ -63,6 +59,9 @@ namespace SIPKK.Models
         [Required(ErrorMessage = "Semester harus diisi")]
         public short Semester { get; set; }
 
+        [ForeignKey(nameof(IdUser))]
+        [ValidateNever]
+        public ApplicationUser User { get; set; }
 
         [ForeignKey(nameof(IdProgramStudi))]
         [ValidateNever]
@@ -77,6 +76,7 @@ namespace SIPKK.Models
         public Proyek? Proyek { get; set; }
 
         public Pendaftaran? Pendaftaran { get; set; }
+
         public Persyaratan? Persyaratan { get; set; }
 
         // Custom validation method for Tanggal Lahir

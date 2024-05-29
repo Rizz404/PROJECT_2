@@ -10,7 +10,7 @@ using SIPKK.DataAccess.Data;
 
 namespace SIPKK.DataAccess.Migrations
 {
-    [DbContext(typeof(AplicationDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     partial class AplicationDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -82,97 +82,6 @@ namespace SIPKK.DataAccess.Migrations
                         .HasDatabaseName("ix_asp_net_role_claims_role_id");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("id");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer")
-                        .HasColumnName("access_failed_count");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("character varying(21)")
-                        .HasColumnName("discriminator");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("email");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean")
-                        .HasColumnName("email_confirmed");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean")
-                        .HasColumnName("lockout_enabled");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("lockout_end");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_email");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_user_name");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text")
-                        .HasColumnName("password_hash");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text")
-                        .HasColumnName("phone_number");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean")
-                        .HasColumnName("phone_number_confirmed");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("text")
-                        .HasColumnName("security_stamp");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean")
-                        .HasColumnName("two_factor_enabled");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("user_name");
-
-                    b.HasKey("Id")
-                        .HasName("pk_asp_net_users");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
-
-                    b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -321,6 +230,95 @@ namespace SIPKK.DataAccess.Migrations
                     b.ToTable("admin", (string)null);
                 });
 
+            modelBuilder.Entity("SIPKK.Models.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("access_failed_count");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text")
+                        .HasColumnName("concurrency_stamp");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("email");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("email_confirmed");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("lockout_enabled");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lockout_end");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalized_email");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalized_user_name");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text")
+                        .HasColumnName("password_hash");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text")
+                        .HasColumnName("phone_number");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("phone_number_confirmed");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text")
+                        .HasColumnName("security_stamp");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("two_factor_enabled");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("user_name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_asp_net_users");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
             modelBuilder.Entity("SIPKK.Models.BiayaOperasional", b =>
                 {
                     b.Property<string>("Id")
@@ -383,24 +381,36 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("FotoProfil")
+                        .HasColumnType("text")
+                        .HasColumnName("foto_profil");
+
                     b.Property<string>("IdProyek")
-                        .HasColumnType("character varying(50)")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
                         .HasColumnName("id_proyek");
 
                     b.Property<string>("IdUser")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
                         .HasColumnName("id_user");
 
                     b.Property<string>("NIDN")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
                         .HasColumnName("nidn");
 
                     b.Property<string>("NamaDosen")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("nama_dosen");
+
+                    b.Property<DateTime>("TanggalLahir")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("tanggal_lahir");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -411,6 +421,9 @@ namespace SIPKK.DataAccess.Migrations
 
                     b.HasIndex("IdProyek")
                         .HasDatabaseName("ix_dosen_id_proyek");
+
+                    b.HasIndex("IdUser")
+                        .HasDatabaseName("ix_dosen_id_user");
 
                     b.ToTable("dosen", (string)null);
                 });
@@ -509,9 +522,7 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnName("first_name");
 
                     b.Property<string>("FotoProfil")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("text")
                         .HasColumnName("foto_profil");
 
                     b.Property<string>("IdKonsentrasi")
@@ -527,14 +538,14 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnName("id_program_studi");
 
                     b.Property<string>("IdProyek")
-                        .IsRequired()
                         .HasMaxLength(36)
                         .HasColumnType("character varying(36)")
                         .HasColumnName("id_proyek");
 
                     b.Property<string>("IdUser")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
                         .HasColumnName("id_user");
 
                     b.Property<string>("LastName")
@@ -572,6 +583,9 @@ namespace SIPKK.DataAccess.Migrations
 
                     b.HasIndex("IdProyek")
                         .HasDatabaseName("ix_mahasiswa_id_proyek");
+
+                    b.HasIndex("IdUser")
+                        .HasDatabaseName("ix_mahasiswa_id_user");
 
                     b.ToTable("mahasiswa", (string)null);
                 });
@@ -688,35 +702,35 @@ namespace SIPKK.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "z4ozsqd2efmve5mt2gqz5l3f",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 534, DateTimeKind.Utc).AddTicks(520),
+                            Id = "ygp1m0nsne0ku6zp4j8j6rd1",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 130, DateTimeKind.Utc).AddTicks(1576),
                             Deskripsi = "Program studi yang mempelajari ilmu komputer dan teknologi informasi",
                             Nama = "Teknik Informatika",
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 534, DateTimeKind.Utc).AddTicks(522)
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 130, DateTimeKind.Utc).AddTicks(1578)
                         },
                         new
                         {
-                            Id = "ax8awnnm508ln8g9bf6z3vsy",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 534, DateTimeKind.Utc).AddTicks(802),
+                            Id = "jrueckl8wbqajg47ylxadyxy",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 130, DateTimeKind.Utc).AddTicks(2577),
                             Deskripsi = "Program studi yang mempelajari pengembangan dan pengelolaan sistem informasi",
                             Nama = "Sistem Informasi",
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 534, DateTimeKind.Utc).AddTicks(802)
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 130, DateTimeKind.Utc).AddTicks(2578)
                         },
                         new
                         {
-                            Id = "xj2b1v5yld1wiqymu0uwor5o",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 534, DateTimeKind.Utc).AddTicks(1047),
+                            Id = "hlak0kc0eez50uz6huvlaikk",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 130, DateTimeKind.Utc).AddTicks(3206),
                             Deskripsi = "Program studi yang mempelajari manajemen dan administrasi bisnis",
                             Nama = "Manajemen Bisnis",
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 534, DateTimeKind.Utc).AddTicks(1047)
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 130, DateTimeKind.Utc).AddTicks(3206)
                         },
                         new
                         {
-                            Id = "kkzz5kjf3wiyi55ld2w92prb",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 534, DateTimeKind.Utc).AddTicks(1321),
+                            Id = "kamvxheundqo9dwcs5w4s28w",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 130, DateTimeKind.Utc).AddTicks(3929),
                             Deskripsi = "Program studi yang mempelajari prinsip dan praktik akuntansi",
                             Nama = "Akuntansi",
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 534, DateTimeKind.Utc).AddTicks(1322)
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 130, DateTimeKind.Utc).AddTicks(3930)
                         });
                 });
 
@@ -771,123 +785,123 @@ namespace SIPKK.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "j9dt84ujj4p1u2sjlk0kbwpv",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(7255),
+                            Id = "i6f267qo3anntgfb3dtdcbye",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(6424),
                             Deskripsi = "Proyek pengembangan aplikasi mobile untuk bisnis ritel",
                             Kuota = (short)10,
                             Lokasi = "Jakarta",
                             NamaProyek = "Pengembangan Aplikasi Mobile",
-                            TanggalMulai = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(7245),
-                            TanggalSelesai = new DateTime(2024, 11, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(7248),
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(7256)
+                            TanggalMulai = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(6409),
+                            TanggalSelesai = new DateTime(2024, 11, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(6413),
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(6424)
                         },
                         new
                         {
-                            Id = "l1h2113hm3o3zn86ws5vumdr",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(7578),
+                            Id = "j44n23ral0gs6bf1kzcotlm4",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(6961),
                             Deskripsi = "Proyek desain antarmuka dan pengalaman pengguna untuk website perusahaan",
                             Kuota = (short)8,
                             Lokasi = "Bandung",
                             NamaProyek = "Desain UI/UX Website",
-                            TanggalMulai = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(7574),
-                            TanggalSelesai = new DateTime(2024, 9, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(7575),
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(7578)
+                            TanggalMulai = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(6955),
+                            TanggalSelesai = new DateTime(2024, 9, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(6956),
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(6962)
                         },
                         new
                         {
-                            Id = "ijddf9sjxzb8udvekkz4v0t8",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(7829),
+                            Id = "xose2qf2p5d8uvpnqnma13y7",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(7422),
                             Deskripsi = "Proyek analisis data pemasaran untuk meningkatkan strategi penjualan",
                             Kuota = (short)6,
                             Lokasi = "Surabaya",
                             NamaProyek = "Analisis Data Pemasaran",
-                            TanggalMulai = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(7826),
-                            TanggalSelesai = new DateTime(2024, 8, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(7827),
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(7829)
+                            TanggalMulai = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(7418),
+                            TanggalSelesai = new DateTime(2024, 8, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(7419),
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(7422)
                         },
                         new
                         {
-                            Id = "rgrfyhakb40duxbd1mrmvvmj",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8120),
+                            Id = "n118jgrbx8qx4rq2zazf6323",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8006),
                             Deskripsi = "Proyek pengembangan game 3D untuk platform mobile",
                             Kuota = (short)12,
                             Lokasi = "Yogyakarta",
                             NamaProyek = "Pengembangan Game 3D",
-                            TanggalMulai = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8116),
-                            TanggalSelesai = new DateTime(2025, 1, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8117),
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8120)
+                            TanggalMulai = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(7995),
+                            TanggalSelesai = new DateTime(2025, 1, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(7998),
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8006)
                         },
                         new
                         {
-                            Id = "dvvmrzwh7aps03kxtnwidcos",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8405),
+                            Id = "y1o9lcf261s3reyl57bgsq08",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8391),
                             Deskripsi = "Proyek pengembangan sistem manajemen inventaris untuk perusahaan manufaktur",
                             Kuota = (short)8,
                             Lokasi = "Semarang",
                             NamaProyek = "Sistem Manajemen Inventaris",
-                            TanggalMulai = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8402),
-                            TanggalSelesai = new DateTime(2024, 10, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8404),
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8406)
+                            TanggalMulai = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8388),
+                            TanggalSelesai = new DateTime(2024, 10, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8388),
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8392)
                         },
                         new
                         {
-                            Id = "bnblthyoqvccycga2k5e96my",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8690),
+                            Id = "ltt8wspoycrv7b5orc8xeeib",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8649),
                             Deskripsi = "Proyek analisis keamanan siber untuk meningkatkan sistem keamanan perusahaan",
                             Kuota = (short)6,
                             Lokasi = "Medan",
                             NamaProyek = "Analisis Keamanan Siber",
-                            TanggalMulai = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8686),
-                            TanggalSelesai = new DateTime(2024, 9, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8688),
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8690)
+                            TanggalMulai = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8646),
+                            TanggalSelesai = new DateTime(2024, 9, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8647),
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8650)
                         },
                         new
                         {
-                            Id = "i12006s4d4foermixk5kentz",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8982),
+                            Id = "r1xvl4bcidm7nqwpp50hbdpd",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8938),
                             Deskripsi = "Proyek pengembangan aplikasi web e-commerce untuk toko online",
                             Kuota = (short)10,
                             Lokasi = "Makassar",
                             NamaProyek = "Pengembangan Aplikasi Web E-Commerce",
-                            TanggalMulai = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8980),
-                            TanggalSelesai = new DateTime(2024, 12, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8981),
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(8983)
+                            TanggalMulai = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8936),
+                            TanggalSelesai = new DateTime(2024, 12, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8936),
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(8939)
                         },
                         new
                         {
-                            Id = "dbrtvbll9zat2liiuqii5c1k",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(9220),
+                            Id = "w13qfdmrerbctm7tgfxxc551",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(9234),
                             Deskripsi = "Proyek otomatisasi proses bisnis untuk meningkatkan efisiensi operasional",
                             Kuota = (short)8,
                             Lokasi = "Palembang",
                             NamaProyek = "Otomatisasi Proses Bisnis",
-                            TanggalMulai = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(9218),
-                            TanggalSelesai = new DateTime(2024, 11, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(9219),
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(9221)
+                            TanggalMulai = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(9231),
+                            TanggalSelesai = new DateTime(2024, 11, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(9232),
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(9235)
                         },
                         new
                         {
-                            Id = "p14nzl7dplylgszusr9k2ntb",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(9500),
+                            Id = "daro5f2bbmx7h76bavm097t6",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(9707),
                             Deskripsi = "Proyek pengembangan sistem manajemen proyek untuk perusahaan konsultan",
                             Kuota = (short)7,
                             Lokasi = "Balikpapan",
                             NamaProyek = "Pengembangan Sistem Manajemen Proyek",
-                            TanggalMulai = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(9498),
-                            TanggalSelesai = new DateTime(2024, 10, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(9499),
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(9501)
+                            TanggalMulai = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(9701),
+                            TanggalSelesai = new DateTime(2024, 10, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(9703),
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 129, DateTimeKind.Utc).AddTicks(9708)
                         },
                         new
                         {
-                            Id = "jvxni2xas252qh55s3xfr5kk",
-                            CreatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(9809),
+                            Id = "qeeruzmwuu081l9ap2c9mtih",
+                            CreatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 130, DateTimeKind.Utc).AddTicks(198),
                             Deskripsi = "Proyek analisis data keuangan untuk membantu pengambilan keputusan investasi",
                             Kuota = (short)6,
                             Lokasi = "Denpasar",
                             NamaProyek = "Analisis Data Keuangan",
-                            TanggalMulai = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(9807),
-                            TanggalSelesai = new DateTime(2024, 9, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(9808),
-                            UpdatedAt = new DateTime(2024, 5, 27, 14, 50, 44, 533, DateTimeKind.Utc).AddTicks(9810)
+                            TanggalMulai = new DateTime(2024, 5, 28, 13, 17, 40, 130, DateTimeKind.Utc).AddTicks(193),
+                            TanggalSelesai = new DateTime(2024, 9, 28, 13, 17, 40, 130, DateTimeKind.Utc).AddTicks(195),
+                            UpdatedAt = new DateTime(2024, 5, 28, 13, 17, 40, 130, DateTimeKind.Utc).AddTicks(198)
                         });
                 });
 
@@ -934,21 +948,6 @@ namespace SIPKK.DataAccess.Migrations
                     b.ToTable("test", (string)null);
                 });
 
-            modelBuilder.Entity("SIPKK.Models.ApplicationUser", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasDiscriminator().HasValue("ApplicationUser");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -961,7 +960,7 @@ namespace SIPKK.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("SIPKK.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -971,7 +970,7 @@ namespace SIPKK.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("SIPKK.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -988,7 +987,7 @@ namespace SIPKK.DataAccess.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_roles_asp_net_roles_role_id");
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("SIPKK.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -998,7 +997,7 @@ namespace SIPKK.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("SIPKK.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1025,7 +1024,16 @@ namespace SIPKK.DataAccess.Migrations
                         .HasForeignKey("IdProyek")
                         .HasConstraintName("fk_dosen_proyek_id_proyek");
 
+                    b.HasOne("SIPKK.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("IdUser")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_dosen_application_user_id_user");
+
                     b.Navigation("Proyek");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SIPKK.Models.Konsentrasi", b =>
@@ -1071,15 +1079,22 @@ namespace SIPKK.DataAccess.Migrations
                     b.HasOne("SIPKK.Models.Proyek", "Proyek")
                         .WithMany("Mahasiswa")
                         .HasForeignKey("IdProyek")
+                        .HasConstraintName("fk_mahasiswa_proyek_id_proyek");
+
+                    b.HasOne("SIPKK.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("IdUser")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_mahasiswa_proyek_id_proyek");
+                        .HasConstraintName("fk_mahasiswa_application_user_id_user");
 
                     b.Navigation("Konsentrasi");
 
                     b.Navigation("ProgramStudi");
 
                     b.Navigation("Proyek");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SIPKK.Models.Pendaftaran", b =>

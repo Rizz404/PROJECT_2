@@ -14,8 +14,8 @@ namespace SIPKK.DataAccess.Repository
     public class ProgramStudiRepository : Repository<ProgramStudi>, IProgramStudiRepository
     {
         //strukturnya begini jangan macem-macem
-        private AplicationDbContext _db;
-        public ProgramStudiRepository(AplicationDbContext db) : base(db)
+        private ApplicationDbContext _db;
+        public ProgramStudiRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }

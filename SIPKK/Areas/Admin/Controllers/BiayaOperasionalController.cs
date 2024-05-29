@@ -19,6 +19,7 @@ namespace SIPKK.Areas.Admin.Controllers
 {
     [Area(nameof(Admin))]
     [Authorize(Roles = nameof(Admin))]
+    [Route("Admin/[controller]/[action]")]
     public class BiayaOperasionalController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -54,9 +55,9 @@ namespace SIPKK.Areas.Admin.Controllers
         }
 
         // GET: BiayaOperasional/Upsert
+        [HttpGet("{id?}")]
         public async Task<IActionResult> Upsert(string? id)
         {
-            Debug.WriteLine($"GET Upsert method called with id: {id}");
             BiayaOperasionalVM biayaOperasionalVM = new()
             {
                 ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
@@ -64,34 +65,31 @@ namespace SIPKK.Areas.Admin.Controllers
                     Text = p.NamaProyek,
                     Value = p.Id
                 }),
-                BiayaOperasional = new BiayaOperasional()
+                BiayaOperasional = new BiayaOperasional(),
+                IsUpdate = false,
             };
 
             if(!string.IsNullOrEmpty(id))
             {
                 // update
-                Debug.WriteLine("Performing update operation");
                 biayaOperasionalVM.BiayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(b => b.Id == id);
                 if(biayaOperasionalVM.BiayaOperasional == null)
                 {
                     return NotFound();
                 }
-            }
-            else
-            {
-                Debug.WriteLine("Performing create operation");
+                biayaOperasionalVM.IsUpdate = true;
             }
             return View(biayaOperasionalVM);
         }
 
         // POST: BiayaOperasional/Upsert
-        [HttpPost]
+        [HttpPost("{id?}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Upsert(BiayaOperasionalVM biayaOperasionalVM)
+        public async Task<IActionResult> Upsert(string? id, BiayaOperasionalVM biayaOperasionalVM)
         {
             if(ModelState.IsValid)
             {
-                if(string.IsNullOrEmpty(biayaOperasionalVM.BiayaOperasional.Id))
+                if(string.IsNullOrEmpty(id))
                 {
                     // Create
                     Debug.WriteLine("Performing create operation if is valid");

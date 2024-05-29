@@ -14,8 +14,8 @@ namespace SIPKK.DataAccess.Repository
     public class KonsentrasiRepository : Repository<Konsentrasi>, IKonsentrasiRepository
     {
         //strukturnya begini jangan macem-macem
-        private AplicationDbContext _db;
-        public KonsentrasiRepository(AplicationDbContext db) : base(db)
+        private ApplicationDbContext _db;
+        public KonsentrasiRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }

@@ -14,8 +14,8 @@ namespace SIPKK.DataAccess.Repository
     public class AdminRepository : Repository<Admin>, IAdminRepository
     {
         //strukturnya begini jangan macem-macem
-        private AplicationDbContext _db;
-        public AdminRepository(AplicationDbContext db) : base(db)
+        private ApplicationDbContext _db;
+        public AdminRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }

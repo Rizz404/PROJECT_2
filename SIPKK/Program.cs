@@ -16,21 +16,21 @@ builder.Services.AddControllersWithViews();
 
 var connectionString = builder.Configuration.GetConnectionString("LocalConnection");
 
-builder.Services.AddDbContext<AplicationDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
 });
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = true;
+    options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequiredUniqueChars = 0;
     options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 0;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireLowercase = false;
     options.User.RequireUniqueEmail = true;
-}).AddEntityFrameworkStores<AplicationDbContext>().AddDefaultTokenProviders();
+}).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = $"/Identity/Account/Login";
@@ -58,9 +58,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
+// Configure area routes
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{area=Public}/{controller=Home}/{action=Index}/{id?}");
+    pattern: "{area=Public}/{controller=Home}/{action=Index}/{id?}"
+ );
 
 //using(var scope = app.Services.CreateScope())
 //{
@@ -75,5 +78,6 @@ app.MapControllerRoute(
 //        logger.LogError(ex, "An error occurred while seeding the database.");
 //    }
 //}
+
 
 app.Run();

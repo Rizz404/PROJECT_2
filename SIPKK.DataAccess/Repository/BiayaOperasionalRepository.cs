@@ -14,8 +14,8 @@ namespace SIPKK.DataAccess.Repository
     public class BiayaOperasionalRepository : Repository<BiayaOperasional>, IBiayaOperasionalRepository
     {
         //strukturnya begini jangan macem-macem
-        private AplicationDbContext _db;
-        public BiayaOperasionalRepository(AplicationDbContext db) : base(db)
+        private ApplicationDbContext _db;
+        public BiayaOperasionalRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }

@@ -11,7 +11,7 @@ using SIPKK.DataAccess.Data;
 
 namespace SIPKK.DataAccess.Migrations
 {
-    [DbContext(typeof(AplicationDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240525175014_Init")]
     partial class Init
     {

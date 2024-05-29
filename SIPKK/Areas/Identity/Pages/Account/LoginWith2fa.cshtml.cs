@@ -2,27 +2,28 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using SIPKK.Models;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace SIPKK.Areas.Identity.Pages.Account
 {
     public class LoginWith2faModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<LoginWith2faModel> _logger;
 
         public LoginWith2faModel(
-            SignInManager<IdentityUser> signInManager,
-            UserManager<IdentityUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            UserManager<ApplicationUser> userManager,
             ILogger<LoginWith2faModel> logger)
         {
             _signInManager = signInManager;
@@ -78,7 +79,7 @@ namespace SIPKK.Areas.Identity.Pages.Account
             // Ensure the user has gone through the username & password screen first
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
 
-            if (user == null)
+            if(user == null)
             {
                 throw new InvalidOperationException($"Unable to load two-factor authentication user.");
             }
@@ -91,7 +92,7 @@ namespace SIPKK.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(bool rememberMe, string returnUrl = null)
         {
-            if (!ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
                 return Page();
             }
@@ -99,7 +100,7 @@ namespace SIPKK.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
 
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-            if (user == null)
+            if(user == null)
             {
                 throw new InvalidOperationException($"Unable to load two-factor authentication user.");
             }
@@ -110,12 +111,12 @@ namespace SIPKK.Areas.Identity.Pages.Account
 
             var userId = await _userManager.GetUserIdAsync(user);
 
-            if (result.Succeeded)
+            if(result.Succeeded)
             {
                 _logger.LogInformation("User with ID '{UserId}' logged in with 2fa.", user.Id);
                 return LocalRedirect(returnUrl);
             }
-            else if (result.IsLockedOut)
+            else if(result.IsLockedOut)
             {
                 _logger.LogWarning("User with ID '{UserId}' account locked out.", user.Id);
                 return RedirectToPage("./Lockout");

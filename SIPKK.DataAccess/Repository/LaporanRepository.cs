@@ -14,8 +14,8 @@ namespace SIPKK.DataAccess.Repository
     public class LaporanRepository : Repository<Laporan>, ILaporanRepository
     {
         //strukturnya begini jangan macem-macem
-        private AplicationDbContext _db;
-        public LaporanRepository(AplicationDbContext db) : base(db)
+        private ApplicationDbContext _db;
+        public LaporanRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }

@@ -14,8 +14,8 @@ namespace SIPKK.DataAccess.Repository
     public class TestRepository : Repository<Test>, ITestRepository
     {
         //strukturnya begini jangan macem-macem
-        private AplicationDbContext _db;
-        public TestRepository(AplicationDbContext db) : base(db)
+        private ApplicationDbContext _db;
+        public TestRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }

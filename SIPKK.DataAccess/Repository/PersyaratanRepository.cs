@@ -14,8 +14,8 @@ namespace SIPKK.DataAccess.Repository
     public class PersyaratanRepository : Repository<Persyaratan>, IPersyaratanRepository
     {
         //strukturnya begini jangan macem-macem
-        private AplicationDbContext _db;
-        public PersyaratanRepository(AplicationDbContext db) : base(db)
+        private ApplicationDbContext _db;
+        public PersyaratanRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }

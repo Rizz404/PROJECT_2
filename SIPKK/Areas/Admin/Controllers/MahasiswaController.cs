@@ -7,6 +7,7 @@ using SIPKK.DataAccess.Data;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
+using SIPKK.Ultilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,19 +19,24 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace SIPKK.Areas.Admin.Controllers
 {
     [Area(nameof(Admin))]
+    [Authorize(Roles = nameof(Admin))]
     public class MahasiswaController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public MahasiswaController(IUnitOfWork unitOfWork)
+        public MahasiswaController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         // GET: Mahasiswa
         public async Task<IActionResult> Index()
         {
-            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync()).ToList();
+            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(m => m.Proyek, m => m.ProgramStudi, m => m.Konsentrasi)).ToList();
             return View(mahasiswaList);
         }
 
@@ -82,9 +88,47 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MahasiswaVM mahasiswaVM)
         {
+            string[] namaMahasiswaArr = mahasiswaVM.Mahasiswa.FirstName.Split(" ");
+
+            // Buat username, email, dan password
+            string username = namaMahasiswaArr.Length > 1 ? namaMahasiswaArr[0] : mahasiswaVM.Mahasiswa.FirstName + new Cuid2().ToString();
+            string email = $"{mahasiswaVM.Mahasiswa.NIM}@global.ac.id";
+            string password = "123456789"; // nanti ganti ke tanggal lahir aja
+
             if(ModelState.IsValid)
             {
-                await _unitOfWork.Mahasiswa.CreateAsync(mahasiswaVM.Mahasiswa);
+                var user = new ApplicationUser { UserName = username, Email = email, EmailConfirmed = true };
+                var createNewUser = await _userManager.CreateAsync(user, password);
+
+                if(createNewUser.Succeeded)
+                {
+                    var addRoleToUser = await _userManager.AddToRoleAsync(user, SD.Role_Dosen);
+
+                    if(addRoleToUser.Succeeded)
+                    {
+                        Mahasiswa mahasiswa = new()
+                        {
+                            IdUser = user.Id,
+                            NIM = mahasiswaVM.Mahasiswa.NIM,
+                            FirstName = mahasiswaVM.Mahasiswa.FirstName,
+                            LastName = mahasiswaVM.Mahasiswa.LastName,
+                            IdProyek = mahasiswaVM.Mahasiswa.IdProyek,
+                            IdProgramStudi = mahasiswaVM.Mahasiswa.IdProgramStudi,
+                            IdKonsentrasi = mahasiswaVM.Mahasiswa.IdKonsentrasi,
+                            TanggalLahir = mahasiswaVM.Mahasiswa.TanggalLahir,
+                            FotoProfil = mahasiswaVM.Mahasiswa.FotoProfil,
+                        };
+                        await _unitOfWork.Mahasiswa.CreateAsync(mahasiswa);
+                    }
+                    foreach(var error in addRoleToUser.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+                foreach(var error in createNewUser.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
                 await _unitOfWork.SaveAsync();
                 TempData["Success"] = "Mahasiswa created successfully";
                 return RedirectToAction(nameof(Index));

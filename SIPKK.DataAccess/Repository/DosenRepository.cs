@@ -14,8 +14,8 @@ namespace SIPKK.DataAccess.Repository
     public class DosenRepository : Repository<Dosen>, IDosenRepository
     {
         //strukturnya begini jangan macem-macem
-        private AplicationDbContext _db;
-        public DosenRepository(AplicationDbContext db) : base(db)
+        private ApplicationDbContext _db;
+        public DosenRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }

@@ -14,8 +14,8 @@ namespace SIPKK.DataAccess.Repository
     public class MahasiswaRepository : Repository<Mahasiswa>, IMahasiswaRepository
     {
         //strukturnya begini jangan macem-macem
-        private AplicationDbContext _db;
-        public MahasiswaRepository(AplicationDbContext db) : base(db)
+        private ApplicationDbContext _db;
+        public MahasiswaRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }

@@ -14,8 +14,8 @@ namespace SIPKK.DataAccess.Repository
     public class PendaftaranRepository : Repository<Pendaftaran>, IPendaftaranRepository
     {
         //strukturnya begini jangan macem-macem
-        private AplicationDbContext _db;
-        public PendaftaranRepository(AplicationDbContext db) : base(db)
+        private ApplicationDbContext _db;
+        public PendaftaranRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }

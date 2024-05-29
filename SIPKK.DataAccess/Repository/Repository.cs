@@ -14,9 +14,9 @@ namespace SIPKK.DataAccess.Repository
     //classnya juga harus generic kalau reponya pakai generic
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly AplicationDbContext _db;
+        private readonly ApplicationDbContext _db;
         internal DbSet<T> dbSet;
-        public Repository(AplicationDbContext db)
+        public Repository(ApplicationDbContext db)
         {
             _db = db;
             this.dbSet = _db.Set<T>();

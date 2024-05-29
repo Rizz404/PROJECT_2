@@ -6,12 +6,9 @@ namespace SIPKK.Ultilities.Abstractions
 {
     public abstract class CuidEntity : ICuidEntity
     {
-        public void GenerateId()
+        protected CuidEntity()
         {
-            if(string.IsNullOrEmpty(Id))
-            {
-                Id = new Cuid2().ToString();
-            }
+            Id = new Cuid2().ToString();
         }
 
         [Key]

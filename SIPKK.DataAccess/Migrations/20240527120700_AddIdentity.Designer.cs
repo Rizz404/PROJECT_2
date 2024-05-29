@@ -11,7 +11,7 @@ using SIPKK.DataAccess.Data;
 
 namespace SIPKK.DataAccess.Migrations
 {
-    [DbContext(typeof(AplicationDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240527120700_AddIdentity")]
     partial class AddIdentity
     {

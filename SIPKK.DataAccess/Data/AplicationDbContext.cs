@@ -15,10 +15,10 @@ using Visus.Cuid;
 
 namespace SIPKK.DataAccess.Data
 {
-    public class AplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         //harus add reference ke masing masing class library yang berhubungan intinya
-        public AplicationDbContext(DbContextOptions<AplicationDbContext> options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
         }
@@ -84,7 +84,6 @@ namespace SIPKK.DataAccess.Data
             {
                 if(entry.State == EntityState.Added)
                 {
-                    GenerateIdsForNewEntities();
                     if(entry.Entity is ITimestampedEntity timestampedEntity)
                     {
                         timestampedEntity.CreatedAt = DateTime.UtcNow;
@@ -105,7 +104,6 @@ namespace SIPKK.DataAccess.Data
             {
                 if(entry.State == EntityState.Added)
                 {
-                    GenerateIdsForNewEntities();
                     if(entry.Entity is ITimestampedEntity timestampedEntity)
                     {
                         timestampedEntity.CreatedAt = DateTime.UtcNow;
@@ -118,18 +116,6 @@ namespace SIPKK.DataAccess.Data
                 }
             }
             return await base.SaveChangesAsync(cancellationToken);
-        }
-
-        private void GenerateIdsForNewEntities()
-        {
-            var newEntities = ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added && e.Entity is CuidEntity)
-                .Select(e => e.Entity as CuidEntity);
-
-            foreach(var entity in newEntities)
-            {
-                entity?.GenerateId();
-            }
         }
     }
 }

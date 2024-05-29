@@ -11,7 +11,7 @@ using SIPKK.DataAccess.Data;
 
 namespace SIPKK.DataAccess.Migrations
 {
-    [DbContext(typeof(AplicationDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240526091954_AddTest")]
     partial class AddTest
     {

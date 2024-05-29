@@ -18,6 +18,8 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace SIPKK.Areas.Admin.Controllers
 {
     [Area(nameof(Admin))]
+    [Authorize(Roles = nameof(Admin))]
+    [Route("Admin/[controller]/[action]")]
     public class LaporanController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -53,6 +55,7 @@ namespace SIPKK.Areas.Admin.Controllers
         }
 
         // GET: Laporan/Upsert
+        [HttpGet("{id?}")]
         public async Task<IActionResult> Upsert(string? id)
         {
             LaporanVM laporanVM = new()
@@ -62,29 +65,31 @@ namespace SIPKK.Areas.Admin.Controllers
                     Text = p.NamaProyek,
                     Value = p.Id
                 }),
-                Laporan = new Laporan() // Initialize BiayaOperasional
+                Laporan = new Laporan(), // Initialize BiayaOperasional
+                IsUpdate = false
             };
 
-            if(id != null || !string.IsNullOrEmpty(id))
+            if(string.IsNullOrEmpty(id))
             {
                 laporanVM.Laporan = await _unitOfWork.Laporan.GetAsync(b => b.Id == id);
                 if(laporanVM.Laporan == null)
                 {
                     return NotFound();
                 }
+                laporanVM.IsUpdate = true;
             }
 
             return View(laporanVM);
         }
 
         // POST: Laporan/Upsert
-        [HttpPost]
+        [HttpPost("{id?}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Upsert(LaporanVM laporanVM)
+        public async Task<IActionResult> Upsert(string? id, LaporanVM laporanVM)
         {
             if(ModelState.IsValid)
             {
-                if(laporanVM.Laporan.Id == null || string.IsNullOrEmpty(laporanVM.Laporan.Id))
+                if(string.IsNullOrEmpty(id))
                 {
                     await _unitOfWork.Laporan.CreateAsync(laporanVM.Laporan);
                 }

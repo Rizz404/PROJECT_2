@@ -4,7 +4,7 @@
     ViewData["Title"] = "Upsert";
 }
 
-<h1>@(Model.Laporan.Id != null ? "Update" : "Create")</h1>
+<h1>@(Model.IsUpdate == true ? "Update" : "Create")</h1>
 
 <h4>Laporan</h4>
 <hr />
@@ -26,7 +26,7 @@
                 <span asp-validation-for="Laporan.Keterangan" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Upsert" class="btn btn-primary" />
+                <button type="submit" class="btn btn-primary">@(Model.IsUpdate == true ? "Update" : "Create")</button>
             </div>
         </form>
     </div>

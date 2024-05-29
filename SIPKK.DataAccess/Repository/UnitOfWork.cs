@@ -11,7 +11,7 @@ namespace SIPKK.DataAccess.Repository
     //intinya unit of work adalah penghubung untuk bisa mengakses semua repo yang diinginkan
     public class UnitOfWork : IUnitOfWork
     {
-        private AplicationDbContext _db;
+        private ApplicationDbContext _db;
         public IAdminRepository Admin { get; private set; }
         public IDosenRepository Dosen { get; private set; }
         public IBiayaOperasionalRepository BiayaOperasional { get; private set; }
@@ -24,7 +24,7 @@ namespace SIPKK.DataAccess.Repository
         public IProyekRepository Proyek { get; private set; }
         public ITestRepository Test { get; private set; }
 
-        public UnitOfWork(AplicationDbContext db)
+        public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
             Admin = new AdminRepository(_db);

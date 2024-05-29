@@ -1,0 +1,58 @@
+﻿@model DosenVM
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+@if(Model != null)
+{
+    if(Model.Dosen.NIDN == null)
+    {
+        <h1>Create</h1>
+    }
+    else
+    {
+        <h1>Update</h1>
+    }
+}
+
+<h4>Dosen</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Dosen.NamaDosen" class="control-label"></label>
+                <input asp-for="Dosen.NamaDosen" class="form-control" />
+                <span asp-validation-for="Dosen.NamaDosen" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Dosen.NIDN" class="control-label"></label>
+                <input asp-for="Dosen.NIDN" class="form-control" />
+                <span asp-validation-for="Dosen.NIDN" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Dosen.IdProyek" class="control-label"></label>
+                <select asp-for="@Model.Dosen.IdProyek" asp-items="@Model.ProyekList" class="form-select">
+                    <option disabled selected>Pilih Proyek</option>
+                </select>
+                <span asp-validation-for="Dosen.IdProyek" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @* <button type="submit" class="btn btn-primary">@((!string.IsNullOrEmpty(Model.Dosen.Id) || !string.IsNullOrEmpty(Model.Dosen.NamaDosen)) ? "Update" : "Create")</button> *@
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

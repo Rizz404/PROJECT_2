@@ -14,8 +14,8 @@ namespace SIPKK.DataAccess.Repository
     public class ProyekRepository : Repository<Proyek>, IProyekRepository
     {
         //strukturnya begini jangan macem-macem
-        private AplicationDbContext _db;
-        public ProyekRepository(AplicationDbContext db) : base(db)
+        private ApplicationDbContext _db;
+        public ProyekRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }

@@ -18,6 +18,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace SIPKK.Areas.Admin.Controllers
 {
     [Area(nameof(Admin))]
+    [Authorize(Roles = nameof(Admin))]
     public class KonsentrasiController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
