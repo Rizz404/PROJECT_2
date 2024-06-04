@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Proyek>
+
+<div class="row">
+    @foreach(var proyek in Model)
+    {
+        <div class="col-md-3 mb-2">
+            <div class="card">
+                <img src="https://i.pinimg.com/236x/80/6e/af/806eaf47c5330d58a9af3d7db0a4a444.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">@proyek.NamaProyek</h5>
+                    <p class="card-text">@proyek.Deskripsi</p>
+                    <div class="my-2 d-flex gap-2 flex-wrap">
+                        <button class="btn btn-danger badge">@proyek.Kuota</button>
+                        <button class="btn btn-danger badge">@proyek.Lokasi</button>
+                    </div>
+                    <a asp-action="Details" asp-route-id="@proyek.Id" class="btn btn-primary">Detail</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@* <table class="table">
+    <thead>
+        <tr>
+            <th>Nama Proyek</th>
+            <th>Deskripsi</th>
+            <th>Tanggal Mulai</th>
+            <th>Tanggal Selesai</th>
+            <th>Lokasi</th>
+            <th>Kuota</th>
+            <th>Mahasiswa</th>
+            <th>Dosen</th>
+            <th>Biaya Operasional</th>
+            <th>Laporan</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var proyek in Model)
+        {
+            <tr>
+                <td>@proyek.NamaProyek</td>
+                <td>@proyek.Deskripsi</td>
+                <td>@proyek.TanggalMulai</td>
+                <td>@proyek.TanggalSelesai</td>
+                <td>@proyek.Lokasi</td>
+                <td>@proyek.Kuota</td>
+                <td>
+                    @foreach(var mahasiswa in proyek.Mahasiswa)
+                    {
+                        <p>@mahasiswa.FirstName</p>
+                    }
+                </td>
+                <td>
+                    @foreach(var dosen in proyek.Dosen)
+                    {
+                        <p>@dosen.NamaDosen</p>
+                    }
+                </td>
+                <td>@proyek.BiayaOperasional?.BiayaProyek</td>
+                <td>@proyek.Laporan?.Keterangan</td>
+            </tr>
+        }
+    </tbody>
+</table> *@

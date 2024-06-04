@@ -61,9 +61,12 @@ app.MapRazorPages();
 // Configure area routes
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{area=Public}/{controller=Home}/{action=Index}/{id?}"
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
  );
+app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
 
 //using(var scope = app.Services.CreateScope())
 //{

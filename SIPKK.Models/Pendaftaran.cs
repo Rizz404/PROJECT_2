@@ -13,6 +13,11 @@ namespace SIPKK.Models
         [Display(Name = "Mahasiswa")]
         public string IdMahasiswa { get; set; }
 
+        [MaxLength(36)]
+        [Required(ErrorMessage = "{0} harus diisi")]
+        [Display(Name = "Mahasiswa")]
+        public string IdProyek { get; set; }
+
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Tanggal Pendaftaran")]
         public DateTime TanggalPendaftaran { get; set; }
@@ -24,5 +29,9 @@ namespace SIPKK.Models
         [ForeignKey(nameof(IdMahasiswa))]
         [ValidateNever]
         public Mahasiswa Mahasiswa { get; set; }
+
+        [ForeignKey(nameof(IdMahasiswa))]
+        [ValidateNever]
+        public Proyek Proyek { get; set; }
     }
 }
