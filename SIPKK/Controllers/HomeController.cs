@@ -2,31 +2,29 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SIPKK.DataAccess.Repository.IRepository;
+using SIPKK.DataAccess.Services;
+using SIPKK.DataAccess.Services.IServices;
 using SIPKK.Models;
+using System.Diagnostics;
 
 namespace SIPKK.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IProyekService _proyekService;
+        private readonly IMahasiswaService _mahasiswaService;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public HomeController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public HomeController(UserManager<ApplicationUser> userManager, IProyekService proyekService, IMahasiswaService mahasiswaService)
         {
-            _unitOfWork = unitOfWork;
             _userManager = userManager;
-            _signInManager = signInManager;
+            _proyekService = proyekService;
+            _mahasiswaService = mahasiswaService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var proyekList = await _unitOfWork.Proyek.GetAllAsync(
-                p => p.Mahasiswa,
-                p => p.Dosen,
-                p => p.BiayaOperasional,
-                p => p.Laporan
-            );
+            var proyekList = await _proyekService.GetAllProyekAsync();
             return View(proyekList);
         }
 
@@ -37,11 +35,7 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            Proyek proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id, p => p.Mahasiswa,
-                p => p.Dosen,
-                p => p.BiayaOperasional,
-                p => p.Laporan
-            );
+            var proyek = await _proyekService.GetProyekByIdAsync(id);
 
             if(proyek == null)
             {
@@ -52,60 +46,28 @@ namespace SIPKK.Controllers
         }
 
         [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Daftar(string id)
         {
             if(string.IsNullOrEmpty(id))
+            {
                 return NotFound();
+            }
 
-            // Mengambil UserId dari pengguna yang saat ini login
             var userId = _userManager.GetUserId(User);
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
-            var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == id);
-            var persyaratan = await _unitOfWork.Persyaratan.GetAsync(p => p.IdMahasiswa == mahasiswa.Id);
+            var (success, message) = await _mahasiswaService.DaftarProyekAsync(id, userId);
 
-            if(persyaratan == null)
+            if(!success)
             {
-                var newPersyaratan = new Persyaratan()
-                {
-                    KetKelakuanBaik = false,
-                    KetOrangTua = false,
-                    KetSehat = false,
-                    KetPembayaran = false
-                };
-
-                await _unitOfWork.Persyaratan.CreateAsync(newPersyaratan);
+                TempData["ErrorMessage"] = message;
+                return RedirectToAction(nameof(Details), new { id = id });
             }
 
-            if(persyaratan.KetPembayaran == false || persyaratan.KetKelakuanBaik == false || persyaratan.KetOrangTua == false || persyaratan.KetSehat == false)
-            {
-
-            }
-
-
-            if(mahasiswa == null || proyek == null || proyek.Kuota <= 0)
-            {
-                return mahasiswa == null || proyek == null ? NotFound() : (IActionResult)BadRequest("Kuota proyek sudah penuh.");
-            }
-
-            // Menambahkan mahasiswa ke proyek
-            mahasiswa.IdProyek = proyek.Id;
-            proyek.Kuota -= 1;
-
-            try
-            {
-                await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
-                await _unitOfWork.Proyek.UpdateAsync(proyek);
-                await _unitOfWork.SaveAsync();
-            }
-            catch(Exception)
-            {
-                // Log error di sini dan kembalikan respon yang sesuai
-                // Contoh: logger.LogError(ex, "Terjadi kesalahan saat mendaftar mahasiswa ke proyek.");
-                return StatusCode(500, "Terjadi kesalahan internal saat mendaftar mahasiswa ke proyek.");
-            }
-
-            return RedirectToAction(nameof(Index));
+            TempData["SuccessMessage"] = message;
+            return RedirectToAction(nameof(Details), new { id = id });
         }
+
 
     }
 }
