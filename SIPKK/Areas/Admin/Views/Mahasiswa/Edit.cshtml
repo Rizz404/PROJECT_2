@@ -11,6 +11,7 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit" class="d-flex flex-column gap-2">
+                <input asp-for="Mahasiswa.Id" type="hidden" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Mahasiswa.NIM" class="control-label"></label>

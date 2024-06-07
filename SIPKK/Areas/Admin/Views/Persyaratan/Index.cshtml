@@ -2,11 +2,6 @@
 
 @{
     ViewData["Title"] = "Index";
-    var excludedProps = new List<string> { "Id", "Password", "ProyekOptions" };
-    var properties = typeof(Persyaratan).GetProperties()
-    .Where(prop => !excludedProps.Contains(prop.Name)).ToList();
-    var headers = properties.Select(prop => prop.Name).ToList();
-    int counter = 1;
 }
 
 <h1>Index</h1>
@@ -17,30 +12,42 @@
 <table class="table">
     <thead>
         <tr>
-            <td>No</td>
-            @foreach(var header in headers)
-            {
-                <th>@header</th>
-            }
+            <th>No</th>
+            <th>@Html.DisplayNameFor(model => model.IdMahasiswa)</th>
+            <th>@Html.DisplayNameFor(model => model.KetSehat)</th>
+            <th>@Html.DisplayNameFor(model => model.KetPembayaran)</th>
+            <th>@Html.DisplayNameFor(model => model.KetOrangTua)</th>
+            <th>@Html.DisplayNameFor(model => model.KetKelakuanBaik)</th>
             <th>Opsi</th>
         </tr>
     </thead>
     <tbody>
-        @foreach(var item in Model)
+        @if(Model != null && Model.Any())
+        {
+            int counter = 1;
+            foreach(var item in Model)
+            {
+                <tr>
+                    <td>@counter</td>
+                    <td>@item.Mahasiswa.FirstName</td>
+                    <td>@item.KetSehat</td>
+                    <td>@item.KetPembayaran</td>
+                    <td>@item.KetOrangTua</td>
+                    <td>@item.KetKelakuanBaik</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+                counter++;
+            }
+        }
+        else
         {
             <tr>
-                <td>@counter</td>
-                @foreach(var prop in properties)
-                {
-                    <td>@prop.GetValue(item)</td>
-                }
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
+                <td colspan="7">No records found.</td>
             </tr>
-            counter++;
         }
     </tbody>
 </table>

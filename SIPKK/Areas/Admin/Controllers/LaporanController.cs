@@ -54,6 +54,94 @@ namespace SIPKK.Areas.Admin.Controllers
             return View(laporan);
         }
 
+        // GET: Laporan/Create
+        public async Task<IActionResult> Create()
+        {
+            LaporanVM LaporanVM = new()
+            {
+                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                }),
+            };
+
+            return View(LaporanVM);
+        }
+
+        // POST: Laporan/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(LaporanVM LaporanVM)
+        {
+            if(ModelState.IsValid)
+            {
+                await _unitOfWork.Laporan.CreateAsync(LaporanVM.Laporan);
+                await _unitOfWork.SaveAsync();
+                TempData["Success"] = "Laporan created successfully";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                LaporanVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                });
+                return View(LaporanVM);
+            }
+        }
+
+        // GET: Laporan/Edit/5
+        public async Task<IActionResult> Edit(string id)
+        {
+            if(id == null || id == string.Empty)
+            {
+                return NotFound();
+            }
+
+            Laporan? Laporan = await _unitOfWork.Laporan.GetAsync(d => d.Id == id);
+
+            if(Laporan == null)
+            {
+                return NotFound();
+            }
+
+            LaporanVM LaporanVM = new()
+            {
+                Laporan = Laporan,
+                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                }),
+            };
+
+            return View(LaporanVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(LaporanVM LaporanVM)
+        {
+            if(ModelState.IsValid)
+            {
+                await _unitOfWork.Laporan.UpdateAsync(LaporanVM.Laporan);
+                await _unitOfWork.SaveAsync();
+                TempData["Success"] = "Laporan updated successfully";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                LaporanVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                });
+                return View(LaporanVM);
+            }
+        }
+
         // GET: Laporan/Upsert
         [HttpGet("{id?}")]
         public async Task<IActionResult> Upsert(string? id)

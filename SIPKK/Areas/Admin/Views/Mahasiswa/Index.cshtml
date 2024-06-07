@@ -2,10 +2,6 @@
 
 @{
     ViewData["Title"] = "Index";
-    var excludedProps = new List<string> { "Id", "Password", "ProyekList", "StudyList", "KonsentrasiList", "KonsentrasiId" };
-    var properties = typeof(Mahasiswa).GetProperties()
-    .Where(prop => !excludedProps.Contains(prop.Name)).ToList();
-    var headers = properties.Select(prop => prop.Name).ToList();
     int counter = 1;
 }
 
@@ -20,24 +16,57 @@
         <thead>
             <tr>
                 <th>No</th>
-                @foreach(var header in headers)
-                {
-                    <th>@header</th>
-                }
-                <th>
-                    Action
-                </th>
+                <th>@Html.DisplayNameFor(model => model.NIM)</th>
+                <th>@Html.DisplayNameFor(model => model.FirstName)</th>
+                <th>@Html.DisplayNameFor(model => model.LastName)</th>
+                <th>@Html.DisplayNameFor(model => model.TanggalLahir)</th>
+                <th>@Html.DisplayNameFor(model => model.FotoProfil)</th>
+                <th>@Html.DisplayNameFor(model => model.IdProgramStudi)</th>
+                <th>@Html.DisplayNameFor(model => model.IdKonsentrasi)</th>
+                <th>@Html.DisplayNameFor(model => model.Semester)</th>
+                <th>@Html.DisplayNameFor(model => model.Persyaratan)</th>
+                <th>@Html.DisplayNameFor(model => model.IdProyek)</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
             @foreach(var item in Model)
             {
+                var persyaratanTerpenuhi = item.Persyaratan != null &&
+                item.Persyaratan.KetSehat &&
+                item.Persyaratan.KetPembayaran &&
+                item.Persyaratan.KetOrangTua &&
+                item.Persyaratan.KetKelakuanBaik;
                 <tr>
                     <td>@counter</td>
-                    @foreach(var prop in properties)
-                    {
-                        <td>@prop.GetValue(item)</td>
-                    }
+                    <td>@item.NIM</td>
+                    <td>@item.FirstName</td>
+                    <td>@item.LastName</td>
+                    <td>@item.TanggalLahir</td>
+                    <td>@item.FotoProfil</td>
+                    <td>@item.ProgramStudi.Nama</td>
+                    <td>@item.Konsentrasi.Nama</td>
+                    <td>@item.Semester</td>
+                    <td>
+                        @if(persyaratanTerpenuhi)
+                        {
+                            <span>Terpenuhi</span>
+                        }
+                        else
+                        {
+                            <a asp-area="Admin" asp-controller="Persyaratan" asp-action="Edit" asp-route-id="@item.Persyaratan?.Id">Belum Terpenuhi</a>
+                        }
+                    </td>
+                    <td>
+                        @if(item.Proyek != null)
+                        {
+                            @item.Proyek.NamaProyek
+                        }
+                        else
+                        {
+                            <span>Belum Mendaftar</span>
+                        }
+                    </td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                         <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
