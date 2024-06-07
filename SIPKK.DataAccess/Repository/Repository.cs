@@ -47,6 +47,16 @@ namespace SIPKK.DataAccess.Repository
             return await query.ToListAsync();
         }
 
+        public async Task<IEnumerable<T>> GetAllWithIncludesAsync(params Expression<Func<T, object>>[] includedProperties)
+        {
+            IQueryable<T> query = dbSet;
+            if(includedProperties.Any())
+            {
+                query = includedProperties.Aggregate(query, (current, includedProp) => current.Include(includedProp));
+            }
+            return await query.ToListAsync();
+        }
+
         public async Task DeleteAsync(T entity)
         {
             await Task.Run(() => dbSet.Remove(entity));

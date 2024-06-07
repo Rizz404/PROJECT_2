@@ -97,7 +97,12 @@ namespace SIPKK.Areas.Admin.Controllers
 
             if(ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = username, Email = email, EmailConfirmed = true };
+                var user = new ApplicationUser
+                {
+                    UserName = username,
+                    Email = email,
+                    EmailConfirmed = true
+                };
                 var createNewUser = await _userManager.CreateAsync(user, password);
 
                 if(createNewUser.Succeeded)
@@ -117,6 +122,7 @@ namespace SIPKK.Areas.Admin.Controllers
                             IdKonsentrasi = mahasiswaVM.Mahasiswa.IdKonsentrasi,
                             TanggalLahir = mahasiswaVM.Mahasiswa.TanggalLahir,
                             FotoProfil = mahasiswaVM.Mahasiswa.FotoProfil,
+                            Semester = mahasiswaVM.Mahasiswa.Semester,
                         };
                         await _unitOfWork.Mahasiswa.CreateAsync(mahasiswa);
                     }
@@ -198,6 +204,7 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             if(ModelState.IsValid)
             {
+                Debug.WriteLine(mahasiswaVM.Mahasiswa);
                 await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswaVM.Mahasiswa);
                 await _unitOfWork.SaveAsync();
                 TempData["Success"] = "Mahasiswa updated successfully";
