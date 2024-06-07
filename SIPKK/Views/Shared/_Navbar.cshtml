@@ -1,0 +1,95 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+}
+
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <div class="container-fluid">
+        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">YOUREGAY</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+                @if(SignInManager.IsSignedIn(User) && user != null)
+                {
+                    var roles = await UserManager.GetRolesAsync(user);
+
+                    if(roles.Contains("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Mahasiswa" asp-action="Index">Mahasiswa</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="ProgramStudi" asp-action="Index">Program Studi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Konsentrasi" asp-action="Index">Konsentrasi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Dosen" asp-action="Index">Dosen</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Proyek" asp-action="Index">Proyek</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Laporan" asp-action="Index">Laporan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Persyaratan" asp-action="Index">Persyaratan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Pendaftaran" asp-action="Index">Pendaftaran</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="BiayaOperasional" asp-action="Index">Biaya Operasional</a>
+                        </li>
+                    }
+                    else if(roles.Contains("Dosen"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Dosen" asp-action="Index">Dosen</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Laporan" asp-action="Index">Laporan</a>
+                        </li>
+                    }
+                    else if(roles.Contains("Mahasiswa"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Proyek" asp-action="Index">Proyek</a>
+                        </li>      
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Index">Profile</a>
+                        </li>
+                    }
+                    <li class="nav-item">
+                        <a id="manage" class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)</a>
+                    </li>
+                    <li class="nav-item">
+                        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")">
+                            <button id="logout" type="submit" class="nav-link btn btn-link border-0">Logout</button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>

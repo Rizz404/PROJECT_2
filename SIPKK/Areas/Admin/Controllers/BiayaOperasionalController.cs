@@ -54,6 +54,94 @@ namespace SIPKK.Areas.Admin.Controllers
             return View(biayaOperasional);
         }
 
+        // GET: BiayaOperasional/Create
+        public async Task<IActionResult> Create()
+        {
+            BiayaOperasionalVM biayaOperasionalVM = new()
+            {
+                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                }),
+            };
+
+            return View(biayaOperasionalVM);
+        }
+
+        // POST: BiayaOperasional/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(BiayaOperasionalVM biayaOperasionalVM)
+        {
+            if(ModelState.IsValid)
+            {
+                await _unitOfWork.BiayaOperasional.CreateAsync(biayaOperasionalVM.BiayaOperasional);
+                await _unitOfWork.SaveAsync();
+                TempData["Success"] = "BiayaOperasional created successfully";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                biayaOperasionalVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                });
+                return View(biayaOperasionalVM);
+            }
+        }
+
+        // GET: BiayaOperasional/Edit/5
+        public async Task<IActionResult> Edit(string id)
+        {
+            if(id == null || id == string.Empty)
+            {
+                return NotFound();
+            }
+
+            BiayaOperasional? biayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(d => d.Id == id);
+
+            if(biayaOperasional == null)
+            {
+                return NotFound();
+            }
+
+            BiayaOperasionalVM biayaOperasionalVM = new()
+            {
+                BiayaOperasional = biayaOperasional,
+                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                }),
+            };
+
+            return View(biayaOperasionalVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(BiayaOperasionalVM biayaOperasionalVM)
+        {
+            if(ModelState.IsValid)
+            {
+                await _unitOfWork.BiayaOperasional.UpdateAsync(biayaOperasionalVM.BiayaOperasional);
+                await _unitOfWork.SaveAsync();
+                TempData["Success"] = "BiayaOperasional updated successfully";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                biayaOperasionalVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                });
+                return View(biayaOperasionalVM);
+            }
+        }
+
         // GET: BiayaOperasional/Upsert
         [HttpGet("{id?}")]
         public async Task<IActionResult> Upsert(string? id)

@@ -36,7 +36,7 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Mahasiswa
         public async Task<IActionResult> Index()
         {
-            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(m => m.Proyek, m => m.ProgramStudi, m => m.Konsentrasi)).ToList();
+            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(m => m.Proyek, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Persyaratan, m => m.Pendaftaran)).ToList();
             return View(mahasiswaList);
         }
 
@@ -91,7 +91,7 @@ namespace SIPKK.Areas.Admin.Controllers
             string[] namaMahasiswaArr = mahasiswaVM.Mahasiswa.FirstName.Split(" ");
 
             // Buat username, email, dan password
-            string username = namaMahasiswaArr.Length > 1 ? namaMahasiswaArr[0] : mahasiswaVM.Mahasiswa.FirstName + new Cuid2().ToString();
+            string username = namaMahasiswaArr.Length > 1 ? namaMahasiswaArr[0] + "_" + new Cuid2().ToString() : mahasiswaVM.Mahasiswa.FirstName + "_" + new Cuid2().ToString();
             string email = $"{mahasiswaVM.Mahasiswa.NIM}@global.ac.id";
             string password = "123456789"; // nanti ganti ke tanggal lahir aja
 
@@ -107,7 +107,7 @@ namespace SIPKK.Areas.Admin.Controllers
 
                 if(createNewUser.Succeeded)
                 {
-                    var addRoleToUser = await _userManager.AddToRoleAsync(user, SD.Role_Dosen);
+                    var addRoleToUser = await _userManager.AddToRoleAsync(user, SD.Role_Mahasiswa);
 
                     if(addRoleToUser.Succeeded)
                     {

@@ -30,7 +30,7 @@ namespace SIPKK.Models
         [ValidateNever]
         public Mahasiswa Mahasiswa { get; set; }
 
-        [ForeignKey(nameof(IdMahasiswa))]
+        [ForeignKey(nameof(IdProyek))]
         [ValidateNever]
         public Proyek Proyek { get; set; }
     }
