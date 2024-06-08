@@ -1,0 +1,25 @@
+﻿@model IEnumerable<ProyekVM>
+
+<div class="row">
+    @foreach(var proyek in Model)
+    {
+        <div class="col-md-3 mb-2">
+            <div class="card">
+                <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">@proyek.Proyek.NamaProyek</h5>
+                    <p class="card-text">@proyek.Proyek.Deskripsi</p>
+                    @if(proyek.IsMahasiswaTerdaftar)
+                    {
+                        <span class="btn btn-success badge">Terdaftar</span>
+                    }
+                    <div class="my-2 d-flex gap-2 flex-wrap">
+                        <button class="btn btn-danger badge">@proyek.Proyek.Kuota</button>
+                        <button class="btn btn-danger badge">@proyek.Proyek.Lokasi</button>
+                    </div>
+                    <a asp-action="Details" asp-route-id="@proyek.Proyek.Id" class="btn btn-primary">Detail</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using Visus.Cuid;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -38,7 +39,7 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Dosens
         public async Task<IActionResult> Index()
         {
-            List<Dosen> dosenList = (await _unitOfWork.Dosen.GetAllAsync()).ToList();
+            List<Dosen> dosenList = (await _unitOfWork.Dosen.GetAllAsync(d => d.Proyek)).ToList();
             return View(dosenList);
         }
 
@@ -50,7 +51,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Dosen dosen = await _unitOfWork.Dosen.GetAsync(d => d.Id == id);
+            Dosen dosen = await _unitOfWork.Dosen.GetAsync(d => d.Id == id, d => d.Proyek);
 
             if(dosen == null)
             {
@@ -141,7 +142,7 @@ namespace SIPKK.Areas.Admin.Controllers
 
             if(!string.IsNullOrEmpty(dosenVM.Dosen.NamaDosen))
             {
-                dosenVM.Dosen = await _unitOfWork.Dosen.GetAsync(d => d.Id == id);
+                dosenVM.Dosen = await _unitOfWork.Dosen.GetAsync(d => d.Id == id, d => d.Proyek);
                 if(dosenVM == null)
                 {
                     return NotFound();
@@ -217,7 +218,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Dosen dosenFromDb = await _unitOfWork.Dosen.GetAsync(d => d.Id == id);
+            Dosen dosenFromDb = await _unitOfWork.Dosen.GetAsync(d => d.Id == id, d => d.Proyek);
 
             if(dosenFromDb == null)
             {
@@ -265,7 +266,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Dosen? dosenFromDb = await _unitOfWork.Dosen.GetAsync(d => d.Id == id);
+            Dosen? dosenFromDb = await _unitOfWork.Dosen.GetAsync(d => d.Id == id, d => d.Proyek);
 
             if(dosenFromDb == null)
             {
@@ -279,16 +280,43 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Dosen? dosen = await _unitOfWork.Dosen.GetAsync(d => d.Id == id);
+            Dosen? dosen = await _unitOfWork.Dosen.GetAsync(d => d.Id == id, d => d.Proyek);
 
             if(dosen == null)
             {
                 return NotFound();
             }
-            await _unitOfWork.Dosen.DeleteAsync(dosen);
-            await _unitOfWork.SaveAsync();
-            TempData["Success"] = "Dosen deleted successfully";
-            return RedirectToAction(nameof(Index));
+
+            ApplicationUser? user = await _userManager.FindByIdAsync(dosen.IdUser);
+
+            using(var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    await _unitOfWork.Dosen.DeleteAsync(dosen);
+                    await _unitOfWork.SaveAsync();
+
+                    if(user != null)
+                    {
+                        var result = await _userManager.DeleteAsync(user);
+
+                        if(!result.Succeeded)
+                        {
+                            TempData["Error"] = "Error deleting user";
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+
+                    transaction.Complete();
+                    TempData["Success"] = "Dosen deleted successfully";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch(Exception)
+                {
+                    TempData["Error"] = "An error occurred while deleting Dosen";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
         }
     }
 }

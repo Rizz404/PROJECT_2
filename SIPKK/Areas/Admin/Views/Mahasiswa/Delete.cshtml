@@ -2,19 +2,17 @@
 
 @{
     ViewData["Title"] = "Delete";
-    var keyMappings = new Dictionary<string, Func<Mahasiswa, object>>
-{
-    { "NIM", item => item.NIM },
-    { "FirstName", item => item.FirstName },
-    { "LastName", item => item.LastName },
-    { "Semester", item => item.Semester },
-    { "FotoProfil", item => item.FotoProfil },
-    { "NamaProgramStudi", item => item.IdProgramStudi },
-    { "IdKonsentrasi", item => item.IdKonsentrasi },
-    { "IdProyek", item => item.IdProyek },
-    { "CreatedAt", item => item.CreatedAt },
-    { "UpdatedAt", item => item.UpdatedAt },
-};
+    var details = new Dictionary<string, string>
+    {
+        { "NIM", Model.NIM },
+        { "First Name", Model.FirstName },
+        { "Last Name", Model.LastName },
+        { "Tanggal Lahir", Model.TanggalLahir.ToString("yyyy-MM-dd") },
+        { "Foto Profil", Model.FotoProfil },
+        { "Program Studi", Model.ProgramStudi?.Nama },
+        { "Konsentrasi", Model.Konsentrasi?.Nama },
+        { "Semester", Model.Semester.ToString() }
+    };
 }
 
 <h1>Delete</h1>
@@ -23,8 +21,8 @@
 <div>
     <h4>Admin</h4>
     <hr />
-    <dl class="row gap-2">
-        @foreach(var map in keyMappings)
+    <dl class="row">
+        @foreach(var map in details)
         {
             <dt class="col-sm-2">@map.Key</dt>
             <dd class="col-sm-10">@map.Value</dd>
