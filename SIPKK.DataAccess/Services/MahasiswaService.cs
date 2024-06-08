@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace SIPKK.DataAccess.Services
 {
@@ -83,61 +84,66 @@ namespace SIPKK.DataAccess.Services
 
         public async Task<(bool success, string message)> DaftarProyekAsync(string proyekId, string userId)
         {
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
-            if(mahasiswa == null)
-                return (false, "Mahasiswa tidak ditemukan");
-
-            var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == proyekId);
-            if(proyek == null)
-                return (false, "Proyek tidak ditemukan");
-            if(proyek.Kuota <= 0)
-                return (false, "Kuota proyek sudah penuh");
-
-            var persyaratan = await _unitOfWork.Persyaratan.GetAsync(p => p.IdMahasiswa == mahasiswa.Id);
-            if(persyaratan == null)
+            using(var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                persyaratan = new Persyaratan
+                var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
+                if(mahasiswa == null)
+                    return (false, "Mahasiswa tidak ditemukan");
+
+                var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == proyekId);
+                if(proyek == null)
+                    return (false, "Proyek tidak ditemukan");
+                if(proyek.Kuota <= 0)
+                    return (false, "Kuota proyek sudah penuh");
+
+                var persyaratan = await _unitOfWork.Persyaratan.GetAsync(p => p.IdMahasiswa == mahasiswa.Id);
+                if(persyaratan == null)
                 {
-                    IdMahasiswa = mahasiswa.Id,
-                    KetKelakuanBaik = false,
-                    KetOrangTua = false,
-                    KetSehat = false,
-                    KetPembayaran = false
-                };
-                await _unitOfWork.Persyaratan.CreateAsync(persyaratan);
-                await _unitOfWork.SaveAsync();
-            }
+                    persyaratan = new Persyaratan
+                    {
+                        IdMahasiswa = mahasiswa.Id,
+                        KetKelakuanBaik = false,
+                        KetOrangTua = false,
+                        KetSehat = false,
+                        KetPembayaran = false
+                    };
+                    await _unitOfWork.Persyaratan.CreateAsync(persyaratan);
+                    await _unitOfWork.SaveAsync();
+                }
 
-            if(!persyaratan.KetPembayaran || !persyaratan.KetKelakuanBaik || !persyaratan.KetOrangTua || !persyaratan.KetSehat)
-            {
-                return (false, "Syarat belum lengkap");
-            }
-
-            mahasiswa.IdProyek = proyek.Id;
-            proyek.Kuota -= 1;
-
-            try
-            {
-                await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
-                await _unitOfWork.Proyek.UpdateAsync(proyek);
-
-                var pendaftaran = new Pendaftaran
+                if(!persyaratan.KetPembayaran || !persyaratan.KetKelakuanBaik || !persyaratan.KetOrangTua || !persyaratan.KetSehat)
                 {
-                    IdMahasiswa = mahasiswa.Id,
-                    IdProyek = proyek.Id,
-                    TanggalPendaftaran = DateTime.UtcNow,
-                    Status = "PENDING",
-                };
+                    return (false, "Syarat belum lengkap");
+                }
 
-                Debug.WriteLine(pendaftaran);
-                await _unitOfWork.Pendaftaran.CreateAsync(pendaftaran);
-                await _unitOfWork.SaveAsync();
+                mahasiswa.IdProyek = proyek.Id;
+                proyek.Kuota -= 1;
 
-                return (true, "Pendaftaran berhasil");
-            }
-            catch(Exception ex)
-            {
-                return (false, "Terjadi kesalahan internal saat mendaftar mahasiswa ke proyek");
+                try
+                {
+                    await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
+                    await _unitOfWork.Proyek.UpdateAsync(proyek);
+
+                    var pendaftaran = new Pendaftaran
+                    {
+                        IdMahasiswa = mahasiswa.Id,
+                        IdProyek = proyek.Id,
+                        TanggalPendaftaran = DateTime.UtcNow,
+                        Status = "PENDING",
+                    };
+
+                    Debug.WriteLine(pendaftaran);
+                    await _unitOfWork.Pendaftaran.CreateAsync(pendaftaran);
+                    await _unitOfWork.SaveAsync();
+
+                    scope.Complete(); // Commit transaction
+
+                    return (true, "Pendaftaran berhasil");
+                }
+                catch(Exception ex)
+                {
+                    return (false, "Terjadi kesalahan internal saat mendaftar mahasiswa ke proyek");
+                }
             }
         }
     }

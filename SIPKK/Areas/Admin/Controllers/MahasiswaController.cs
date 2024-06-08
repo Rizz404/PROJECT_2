@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using Visus.Cuid;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -48,7 +49,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(d => d.Id == id);
+            Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(d => d.Id == id, m => m.Proyek, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Persyaratan, m => m.Pendaftaran);
 
             if(mahasiswa == null)
             {
@@ -95,68 +96,103 @@ namespace SIPKK.Areas.Admin.Controllers
             string email = $"{mahasiswaVM.Mahasiswa.NIM}@global.ac.id";
             string password = "123456789"; // nanti ganti ke tanggal lahir aja
 
-            if(ModelState.IsValid)
+            using(var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                var user = new ApplicationUser
+                try
                 {
-                    UserName = username,
-                    Email = email,
-                    EmailConfirmed = true
-                };
-                var createNewUser = await _userManager.CreateAsync(user, password);
-
-                if(createNewUser.Succeeded)
-                {
-                    var addRoleToUser = await _userManager.AddToRoleAsync(user, SD.Role_Mahasiswa);
-
-                    if(addRoleToUser.Succeeded)
+                    if(ModelState.IsValid)
                     {
-                        Mahasiswa mahasiswa = new()
+                        var user = new ApplicationUser
                         {
-                            IdUser = user.Id,
-                            NIM = mahasiswaVM.Mahasiswa.NIM,
-                            FirstName = mahasiswaVM.Mahasiswa.FirstName,
-                            LastName = mahasiswaVM.Mahasiswa.LastName,
-                            IdProyek = mahasiswaVM.Mahasiswa.IdProyek,
-                            IdProgramStudi = mahasiswaVM.Mahasiswa.IdProgramStudi,
-                            IdKonsentrasi = mahasiswaVM.Mahasiswa.IdKonsentrasi,
-                            TanggalLahir = mahasiswaVM.Mahasiswa.TanggalLahir,
-                            FotoProfil = mahasiswaVM.Mahasiswa.FotoProfil,
-                            Semester = mahasiswaVM.Mahasiswa.Semester,
+                            UserName = username,
+                            Email = email,
+                            EmailConfirmed = true
                         };
-                        await _unitOfWork.Mahasiswa.CreateAsync(mahasiswa);
+                        var createNewUser = await _userManager.CreateAsync(user, password);
+
+                        if(createNewUser.Succeeded)
+                        {
+                            var addRoleToUser = await _userManager.AddToRoleAsync(user, SD.Role_Mahasiswa);
+
+                            if(addRoleToUser.Succeeded)
+                            {
+                                Mahasiswa mahasiswa = new()
+                                {
+                                    IdUser = user.Id,
+                                    NIM = mahasiswaVM.Mahasiswa.NIM,
+                                    FirstName = mahasiswaVM.Mahasiswa.FirstName,
+                                    LastName = mahasiswaVM.Mahasiswa.LastName,
+                                    IdProyek = mahasiswaVM.Mahasiswa.IdProyek,
+                                    IdProgramStudi = mahasiswaVM.Mahasiswa.IdProgramStudi,
+                                    IdKonsentrasi = mahasiswaVM.Mahasiswa.IdKonsentrasi,
+                                    TanggalLahir = mahasiswaVM.Mahasiswa.TanggalLahir,
+                                    FotoProfil = mahasiswaVM.Mahasiswa.FotoProfil,
+                                    Semester = mahasiswaVM.Mahasiswa.Semester,
+                                };
+
+                                Persyaratan persyaratan = new()
+                                {
+                                    KetKelakuanBaik = false,
+                                    KetOrangTua = false,
+                                    KetPembayaran = false,
+                                    KetSehat = false,
+                                    IdMahasiswa = mahasiswa.Id
+                                };
+
+                                await _unitOfWork.Mahasiswa.CreateAsync(mahasiswa);
+                                await _unitOfWork.Persyaratan.CreateAsync(persyaratan);
+                            }
+                            foreach(var error in addRoleToUser.Errors)
+                            {
+                                ModelState.AddModelError(string.Empty, error.Description);
+                            }
+                        }
+                        foreach(var error in createNewUser.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        await _unitOfWork.SaveAsync();
+
+                        transaction.Complete();
+                        TempData["Success"] = "Mahasiswa created successfully";
+                        return RedirectToAction(nameof(Index));
                     }
-                    foreach(var error in addRoleToUser.Errors)
+                    mahasiswaVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
                     {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                        Text = p.Nama,
+                        Value = p.Id
+                    });
+                    mahasiswaVM.KonsentrasiList = (await _unitOfWork.Konsentrasi.GetAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.Nama,
+                        Value = p.Id
+                    });
+                    mahasiswaVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.NamaProyek,
+                        Value = p.Id
+                    });
+                    return View(mahasiswaVM);
                 }
-                foreach(var error in createNewUser.Errors)
+                catch(Exception)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    mahasiswaVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.Nama,
+                        Value = p.Id
+                    });
+                    mahasiswaVM.KonsentrasiList = (await _unitOfWork.Konsentrasi.GetAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.Nama,
+                        Value = p.Id
+                    });
+                    mahasiswaVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.NamaProyek,
+                        Value = p.Id
+                    });
+                    return View(mahasiswaVM);
                 }
-                await _unitOfWork.SaveAsync();
-                TempData["Success"] = "Mahasiswa created successfully";
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                mahasiswaVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.Nama,
-                    Value = p.Id
-                });
-                mahasiswaVM.KonsentrasiList = (await _unitOfWork.Konsentrasi.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.Nama,
-                    Value = p.Id
-                });
-                mahasiswaVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.NamaProyek,
-                    Value = p.Id
-                });
-                return View(mahasiswaVM);
             }
         }
 
@@ -239,7 +275,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(d => d.Id == id);
+            Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.Id == id, m => m.Proyek, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Persyaratan, m => m.Pendaftaran);
 
             if(mahasiswa == null)
             {
@@ -260,10 +296,41 @@ namespace SIPKK.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            await _unitOfWork.Mahasiswa.DeleteAsync(mahasiswa);
-            await _unitOfWork.SaveAsync();
-            TempData["Success"] = "Mahasiswa deleted successfully";
-            return RedirectToAction(nameof(Index));
+
+            string userId = mahasiswa.IdUser;
+
+            ApplicationUser? user = await _userManager.FindByIdAsync(userId);
+
+            using(var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    await _unitOfWork.Mahasiswa.DeleteAsync(mahasiswa);
+                    await _unitOfWork.SaveAsync();
+
+                    if(user != null)
+                    {
+                        var result = await _userManager.DeleteAsync(user);
+
+                        if(!result.Succeeded)
+                        {
+                            TempData["Error"] = "Error deleting user";
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+
+                    // Commit transaction
+                    transaction.Complete();
+
+                    TempData["Success"] = "Mahasiswa deleted successfully";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch(Exception)
+                {
+                    TempData["Error"] = "An error occurred while deleting Mahasiswa";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
         }
     }
 }
