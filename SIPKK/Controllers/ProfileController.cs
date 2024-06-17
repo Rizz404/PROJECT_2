@@ -11,11 +11,13 @@ public class ProfileController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
-    public ProfileController(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork)
+    public ProfileController(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
     {
         _unitOfWork = unitOfWork;
         _userManager = userManager;
+        _webHostEnvironment = webHostEnvironment;
     }
 
     [Authorize]
@@ -53,10 +55,36 @@ public class ProfileController : Controller
     [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Index(ProfileVM profileVM)
+    public async Task<IActionResult> Index(ProfileVM profileVM, IFormFile? file)
     {
+        // parameter file itu sesuaikan sama name file input ya
         if(ModelState.IsValid)
         {
+            string wwwRootPath = _webHostEnvironment.WebRootPath;
+
+            if(file != null)
+            {
+                string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                string mahasiswaPath = Path.Combine(wwwRootPath, @"images\mahasiswa");
+
+                //if(string.IsNullOrEmpty(profileVM.FotoProfil))
+                //{
+                //    // hapus image old
+                //    var oldImagePath = Path.Combine(wwwRootPath, profileVM.FotoProfil.TrimStart('\\'));
+
+                //    if(System.IO.File.Exists(oldImagePath))
+                //    {
+                //        System.IO.File.Delete(oldImagePath);
+                //    }
+                //}
+
+                using(var fileStream = new FileStream(Path.Combine(mahasiswaPath, filename), FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+
+                profileVM.FotoProfil = @"\images\mahasiswa\" + filename;
+            }
             var user = await _userManager.FindByIdAsync(profileVM.IdUser);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == profileVM.IdUser);
 

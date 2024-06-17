@@ -73,7 +73,7 @@ namespace SIPKK.Models.ViewModels
         [Required(ErrorMessage = "{0} harus diisi")]
         [Phone]
         [StringLength(100, ErrorMessage = "{0} harus diantara {2} sampai {1}.", MinimumLength = 3)]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         //[DataType(DataType.Password)]
         //public string Password { get; set; }

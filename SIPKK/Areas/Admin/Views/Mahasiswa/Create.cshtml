@@ -33,11 +33,11 @@
                 <input asp-for="Mahasiswa.TanggalLahir" class="form-control" />
                 <span asp-validation-for="Mahasiswa.TanggalLahir" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @* <div class="form-group">
                 <label asp-for="Mahasiswa.FotoProfil" class="control-label"></label>
                 <input asp-for="Mahasiswa.FotoProfil" class="form-control" />
                 <span asp-validation-for="Mahasiswa.FotoProfil" class="text-danger"></span>
-            </div>
+            </div> *@
             <div class="form-group">
                 <label asp-for="Mahasiswa.IdProgramStudi" class="control-label"></label>
                 <select asp-for="@Model.Mahasiswa.IdProgramStudi" class="form-control" asp-items="@Model.ProgramStudiList"></select>

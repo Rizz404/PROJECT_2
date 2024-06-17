@@ -18,6 +18,9 @@ namespace SIPKK.Models
         [RegularExpression(@"^(?!.{5}$).*", ErrorMessage = "Deskripsi tidak boleh hanya berisi 5 karakter.")]
         public string? Deskripsi { get; set; }
 
+        [Display(Name = "Foto Proyek")]
+        public string? FotoProyek { get; set; }
+
         private DateTime _tanggalMulai;
         public DateTime TanggalMulai
         {

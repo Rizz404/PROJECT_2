@@ -1,4 +1,5 @@
-﻿using SIPKK.DataAccess.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using SIPKK.DataAccess.Data;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using System;
@@ -23,11 +24,24 @@ namespace SIPKK.DataAccess.Repository
         // update type modelnya
         public async Task UpdateAsync(Mahasiswa obj)
         {
-            var existingEntity = await _db.Mahasiswa.FindAsync(obj.Id);
-            if(existingEntity != null)
+            var objFromDb = await _db.Mahasiswa.FirstOrDefaultAsync(m => m.Id == obj.Id);
+
+            if(objFromDb != null)
             {
-                _db.Entry(existingEntity).CurrentValues.SetValues(obj);
-                await _db.SaveChangesAsync();
+                objFromDb.NIM = obj.NIM;
+                objFromDb.FirstName = obj.FirstName;
+                objFromDb.LastName = obj.LastName;
+                objFromDb.TanggalLahir = obj.TanggalLahir;
+                objFromDb.IdProgramStudi = obj.IdProgramStudi;
+                objFromDb.IdKonsentrasi = obj.IdKonsentrasi;
+                objFromDb.IdProyek = obj.IdProyek;
+                objFromDb.IdUser = obj.IdUser;
+                objFromDb.Semester = obj.Semester;
+
+                if(obj.FotoProfil != null)
+                {
+                    objFromDb.FotoProfil = obj.FotoProfil;
+                }
             }
         }
     }
