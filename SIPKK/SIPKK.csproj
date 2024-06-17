@@ -29,4 +29,10 @@
     <ProjectReference Include="..\SIPKK.Ultilities\SIPKK.Ultilities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\mahasiswa\" />
+    <Folder Include="wwwroot\images\laporan\" />
+    <Folder Include="wwwroot\images\proyek\" />
+  </ItemGroup>
+
 </Project>
