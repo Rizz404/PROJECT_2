@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,10 +24,12 @@ namespace SIPKK.Areas.Admin.Controllers
     public class LaporanController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public LaporanController(IUnitOfWork unitOfWork)
+        public LaporanController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Laporan
@@ -72,23 +75,60 @@ namespace SIPKK.Areas.Admin.Controllers
         // POST: Laporan/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(LaporanVM LaporanVM)
+        public async Task<IActionResult> Create(LaporanVM laporanVM, IFormFile? img, IFormFile? file)
         {
             if(ModelState.IsValid)
             {
-                await _unitOfWork.Laporan.CreateAsync(LaporanVM.Laporan);
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+
+                if(img != null)
+                {
+                    string filename1 = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
+                    string imgPath = Path.Combine(wwwRootPath, @"images\laporan");
+
+                    if(!Directory.Exists(imgPath))
+                    {
+                        Directory.CreateDirectory(imgPath);
+                    }
+
+                    using(var fileStream = new FileStream(Path.Combine(imgPath, filename1), FileMode.Create))
+                    {
+                        img.CopyTo(fileStream);
+                    }
+
+                    laporanVM.Laporan.FotoLaporan = @"\images\laporan\" + filename1;
+                }
+
+                if(file != null)
+                {
+                    string filename2 = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string filePath = Path.Combine(wwwRootPath, @"images\laporan");
+
+                    if(!Directory.Exists(filePath))
+                    {
+                        Directory.CreateDirectory(filePath);
+                    }
+
+                    using(var fileStream = new FileStream(Path.Combine(filePath, filename2), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    laporanVM.Laporan.FileLaporan = @"\images\laporan\" + filename2;
+                }
+                await _unitOfWork.Laporan.CreateAsync(laporanVM.Laporan);
                 await _unitOfWork.SaveAsync();
                 TempData["Success"] = "Laporan created successfully";
                 return RedirectToAction(nameof(Index));
             }
             else
             {
-                LaporanVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                laporanVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.NamaProyek,
                     Value = p.Id
                 });
-                return View(LaporanVM);
+                return View(laporanVM);
             }
         }
 
@@ -122,23 +162,60 @@ namespace SIPKK.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(LaporanVM LaporanVM)
+        public async Task<IActionResult> Edit(LaporanVM laporanVM, IFormFile? img, IFormFile? file)
         {
             if(ModelState.IsValid)
             {
-                await _unitOfWork.Laporan.UpdateAsync(LaporanVM.Laporan);
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+
+                if(img != null)
+                {
+                    string filename1 = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
+                    string imgPath = Path.Combine(wwwRootPath, @"images\laporan");
+
+                    if(!Directory.Exists(imgPath))
+                    {
+                        Directory.CreateDirectory(imgPath);
+                    }
+
+                    using(var fileStream = new FileStream(Path.Combine(imgPath, filename1), FileMode.Create))
+                    {
+                        img.CopyTo(fileStream);
+                    }
+
+                    laporanVM.Laporan.FotoLaporan = @"\images\laporan\" + filename1;
+                }
+
+                if(file != null)
+                {
+                    string filename2 = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string filePath = Path.Combine(wwwRootPath, @"images\laporan");
+
+                    if(!Directory.Exists(filePath))
+                    {
+                        Directory.CreateDirectory(filePath);
+                    }
+
+                    using(var fileStream = new FileStream(Path.Combine(filePath, filename2), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    laporanVM.Laporan.FileLaporan = @"\images\laporan\" + filename2;
+                }
+                await _unitOfWork.Laporan.UpdateAsync(laporanVM.Laporan);
                 await _unitOfWork.SaveAsync();
                 TempData["Success"] = "Laporan updated successfully";
                 return RedirectToAction(nameof(Index));
             }
             else
             {
-                LaporanVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                laporanVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.NamaProyek,
                     Value = p.Id
                 });
-                return View(LaporanVM);
+                return View(laporanVM);
             }
         }
 

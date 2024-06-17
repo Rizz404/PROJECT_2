@@ -82,9 +82,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <img src="@Model.FotoProfil" alt="Alternate Text" class="img-fluid img-thumbnail" />
-            </div>
+            @if(!string.IsNullOrEmpty(Model.FotoProfil))
+            {
+                <div class="col-md-6">
+                    <img src="@Model.FotoProfil" alt="Alternate Text" class="img-fluid img-thumbnail" />
+                </div>
+            }
         </form>
     </div>
 </div>

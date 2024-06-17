@@ -1,14 +1,13 @@
 ﻿
+using SIPKK.Ultilities.Abstractions;
 using SIPKK.Ultilities.Interface;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SIPKK.Models
 {
-    public class Proyek : ITimestampedEntity
+    public class Proyek : CuidTimestampedEntity
     {
-        public string Id { get; set; }
-
         [MaxLength(100)]
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Nama Proyek")]
@@ -44,10 +43,6 @@ namespace SIPKK.Models
         [Display(Name = "Kuota")]
         [Range(0, short.MaxValue, ErrorMessage = "Nilai {0} harus di antara {1} dan {2}.")]
         public short Kuota { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-
-        public DateTime UpdatedAt { get; set; }
 
         public ICollection<Mahasiswa>? Mahasiswa { get; set; }
         public ICollection<Dosen>? Dosen { get; set; }

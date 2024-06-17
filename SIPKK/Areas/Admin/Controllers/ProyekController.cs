@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -22,10 +23,12 @@ namespace SIPKK.Areas.Admin.Controllers
     public class ProyekController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProyekController(IUnitOfWork unitOfWork)
+        public ProyekController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Proyek
@@ -62,15 +65,30 @@ namespace SIPKK.Areas.Admin.Controllers
         // POST: Proyek/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProyekVM programStudiVM)
+        public async Task<IActionResult> Create(ProyekVM proyekVM, IFormFile? file)
         {
             if(ModelState.IsValid)
             {
-                await _unitOfWork.Proyek.CreateAsync(programStudiVM.Proyek);
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+
+                if(file != null)
+                {
+                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string mahasiswaPath = Path.Combine(wwwRootPath, @"images\proyek");
+
+                    using(var fileStream = new FileStream(Path.Combine(mahasiswaPath, filename), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    proyekVM.Proyek.FotoProyek = @"\images\proyek\" + filename;
+                }
+                await _unitOfWork.Proyek.CreateAsync(proyekVM.Proyek);
                 await _unitOfWork.SaveAsync();
                 TempData["Success"] = "Proyek created successfully";
                 return RedirectToAction(nameof(Index));
             }
+
             return View();
         }
 
@@ -89,21 +107,36 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            ProyekVM programStudiVM = new()
+            ProyekVM proyekVM = new()
             {
                 Proyek = biayaOperasional,
             };
 
-            return View(programStudiVM);
+            return View(proyekVM);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ProyekVM programStudiVM)
+        public async Task<IActionResult> Edit(ProyekVM proyekVM, IFormFile? file)
         {
             if(ModelState.IsValid)
             {
-                await _unitOfWork.Proyek.UpdateAsync(programStudiVM.Proyek);
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+
+                if(file != null)
+                {
+                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string mahasiswaPath = Path.Combine(wwwRootPath, @"images\proyek");
+
+                    using(var fileStream = new FileStream(Path.Combine(mahasiswaPath, filename), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    proyekVM.Proyek.FotoProyek = @"\images\proyek\" + filename;
+                }
+
+                await _unitOfWork.Proyek.UpdateAsync(proyekVM.Proyek);
                 await _unitOfWork.SaveAsync();
                 TempData["Success"] = "Proyek updated successfully";
                 return RedirectToAction(nameof(Index));
