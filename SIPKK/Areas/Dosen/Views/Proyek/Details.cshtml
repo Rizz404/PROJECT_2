@@ -1,0 +1,40 @@
+﻿@model ProyekVM
+
+<div class="row">
+    <div class="">
+        @if(TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        }
+        @if(TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        }
+        <div class="card mb-3">
+            <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">@Model.Proyek.NamaProyek</h5>
+                <p class="card-text">@Model.Proyek.Deskripsi</p>
+                <div class="my-2 d-flex gap-2 flex-wrap">
+                    <button class="btn btn-danger badge">@Model.Proyek.Kuota</button>
+                    <button class="btn btn-danger badge">@Model.Proyek.Lokasi</button>
+                </div>
+               
+            </div>
+        </div>
+
+      <!--   <div>
+            <h3>Mahasiswa Terdaftar</h3>
+            <ul class="list-group mb-2">
+                @foreach(var mahasiswa in Model.Proyek.Mahasiswa)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @mahasiswa.FirstName
+                        <span>Pending</span>
+                    </li>
+                }
+
+            </ul>
+          </div>-->
+    </div>
+</div>

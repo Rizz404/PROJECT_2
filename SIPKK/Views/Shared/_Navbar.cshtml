@@ -56,10 +56,10 @@
                     else if(roles.Contains("Dosen"))
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Dosen" asp-action="Index">Dosen</a>
+                            <a class="nav-link text-dark" asp-area="Dosen" asp-controller="Home" asp-action="Index">Dosen</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Laporan" asp-action="Index">Laporan</a>
+                            <a class="nav-link text-dark" asp-area="Dosen" asp-controller="Laporan" asp-action="Index">Laporan</a>
                         </li>
                     }
                     else if(roles.Contains("Mahasiswa"))

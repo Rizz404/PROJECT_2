@@ -12,10 +12,10 @@ namespace SIPKK.Controllers
     public class HomeController : Controller
     {
         private readonly IProyekService _proyekService;
-        private readonly IMahasiswaService _mahasiswaService;
+        private readonly IDosenService _mahasiswaService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(UserManager<ApplicationUser> userManager, IProyekService proyekService, IMahasiswaService mahasiswaService)
+        public HomeController(UserManager<ApplicationUser> userManager, IProyekService proyekService, IDosenService mahasiswaService)
         {
             _userManager = userManager;
             _proyekService = proyekService;

@@ -11,11 +11,11 @@ using System.Transactions;
 
 namespace SIPKK.DataAccess.Services
 {
-    public class MahasiswaService : IMahasiswaService
+    public class DosenService : IDosenService
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public MahasiswaService(IUnitOfWork unitOfWork)
+        public DosenService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
