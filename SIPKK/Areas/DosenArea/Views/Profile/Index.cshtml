@@ -1,0 +1,99 @@
+﻿@model ProfileVM
+
+@{
+    ViewData["Title"] = "Update Profile";
+}
+
+<h2>Update Profile</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Index" method="post" enctype="multipart/form-data" class="row">
+            <div class="col-md-6">
+                <input asp-for="Id" type="hidden" />
+                <input asp-for="IdUser" type="hidden" />
+                <input asp-for="FotoProfil" type="hidden" />
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-4">
+                    <h4>Update User Information</h4>
+                    <div class="form-group">
+                        <label asp-for="UserName" class="control-label"></label>
+                        <input asp-for="UserName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber" class="control-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>Update Mahasiswa Information</h4>
+                    <div class="form-group">
+                        <label asp-for="NIM" class="control-label"></label>
+                        <input asp-for="NIM" class="form-control" readonly />
+                        <span asp-validation-for="NIM" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="FirstName" class="control-label"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LastName" class="control-label"></label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="TanggalLahir" class="control-label"></label>
+                        <input asp-for="TanggalLahir" class="form-control" type="date" />
+                        <span asp-validation-for="TanggalLahir" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="FotoProfil" class="control-label"></label>
+                        <input asp-for="FotoProfil" type="file" name="file" class="form-control" />
+                        <span asp-validation-for="FotoProfil" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ProgramStudi" class="control-label"></label>
+                        <input asp-for="ProgramStudi" class="form-control" readonly />
+                        <span asp-validation-for="ProgramStudi" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ProgramStudi" class="control-label"></label>
+                        <input asp-for="ProgramStudi" class="form-control" readonly />
+                        <span asp-validation-for="ProgramStudi" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Semester" class="control-label"></label>
+                        <input asp-for="Semester" class="form-control" readonly />
+                        <span asp-validation-for="Semester" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+            @if(!string.IsNullOrEmpty(Model.FotoProfil))
+            {
+                <div class="col-md-6">
+                    <img src="@Model.FotoProfil" alt="Alternate Text" class="img-fluid img-thumbnail" />
+                </div>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
