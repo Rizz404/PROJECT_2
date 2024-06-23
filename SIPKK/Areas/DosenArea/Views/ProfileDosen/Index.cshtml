@@ -1,4 +1,4 @@
-﻿@model ProfileVM
+﻿@model ProfileDosenVM
 
 @{
     ViewData["Title"] = "Update Profile";
@@ -37,20 +37,16 @@
                 <div>
                     <h4>Update Mahasiswa Information</h4>
                     <div class="form-group">
-                        <label asp-for="NIM" class="control-label"></label>
-                        <input asp-for="NIM" class="form-control" readonly />
-                        <span asp-validation-for="NIM" class="text-danger"></span>
+                        <label asp-for="NIDN" class="control-label"></label>
+                        <input asp-for="NIDN" class="form-control" readonly />
+                        <span asp-validation-for="NIDN" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="FirstName" class="control-label"></label>
-                        <input asp-for="FirstName" class="form-control" />
-                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                        <label asp-for="NamaDosen" class="control-label"></label>
+                        <input asp-for="NamaDosen" class="form-control" />
+                        <span asp-validation-for="NamaDosen" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="LastName" class="control-label"></label>
-                        <input asp-for="LastName" class="form-control" />
-                        <span asp-validation-for="LastName" class="text-danger"></span>
-                    </div>
+                    
                     <div class="form-group">
                         <label asp-for="TanggalLahir" class="control-label"></label>
                         <input asp-for="TanggalLahir" class="form-control" type="date" />
@@ -61,21 +57,8 @@
                         <input asp-for="FotoProfil" type="file" name="file" class="form-control" />
                         <span asp-validation-for="FotoProfil" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="ProgramStudi" class="control-label"></label>
-                        <input asp-for="ProgramStudi" class="form-control" readonly />
-                        <span asp-validation-for="ProgramStudi" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="ProgramStudi" class="control-label"></label>
-                        <input asp-for="ProgramStudi" class="form-control" readonly />
-                        <span asp-validation-for="ProgramStudi" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Semester" class="control-label"></label>
-                        <input asp-for="Semester" class="form-control" readonly />
-                        <span asp-validation-for="Semester" class="text-danger"></span>
-                    </div>
+                   
+                   
 
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary">Submit</button>

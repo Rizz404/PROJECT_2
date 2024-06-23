@@ -11,7 +11,7 @@ using System.Diagnostics;
 namespace SIPKK.Areas.DosenArea.Controllers
 {
     [Area(nameof(DosenArea))]
-    [Authorize(Roles = nameof(DosenArea))]
+    [Authorize(Roles = "Dosen")]
     public class HomeController : Controller
     {
       
