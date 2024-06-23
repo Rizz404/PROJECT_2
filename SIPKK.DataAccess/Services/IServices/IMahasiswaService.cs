@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SIPKK.DataAccess.Services.IServices
 {
-    public interface IMahasiswaService
+    public interface IDosenService
     {
         Task<List<Mahasiswa>> GetAllMahasiswaAsync();
         Task<Mahasiswa> GetMahasiswaByIdAsync(string id);
