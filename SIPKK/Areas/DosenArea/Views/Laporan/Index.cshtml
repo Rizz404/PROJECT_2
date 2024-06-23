@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Laporan>
+
+@{
+    ViewData["Title"] = "Index";
+    var excludedProps = new List<string> { "Id", "Password", "ProyekOptions" };
+    var properties = typeof(Laporan).GetProperties()
+    .Where(prop => !excludedProps.Contains(prop.Name)).ToList();
+    var headers = properties.Select(prop => prop.Name).ToList();
+    int counter = 1;
+}
+
+<h1>Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>No</td>
+            @foreach(var header in headers)
+            {
+                <th>@header</th>
+            }
+            <th>Opsi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>@counter</td>
+                @foreach(var prop in properties)
+                {
+                    <td>@prop.GetValue(item)</td>
+                }
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                  
+                </td>
+            </tr>
+            counter++;
+        }
+    </tbody>
+</table>

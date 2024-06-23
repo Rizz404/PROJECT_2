@@ -1,29 +1,84 @@
-﻿@model IEnumerable<ProyekVM>
+﻿@model IEnumerable<Proyek>
 
-<div class="row">
-    @foreach(var proyek in Model)
-    {
-        <div class="col-md-3 mb-2">
-            <div class="card">
-                @if(!string.IsNullOrEmpty(proyek.Proyek.FotoProyek))
-                {
-                    <img src="@proyek.Proyek.FotoProyek" class="card-img-top img-fluid" alt="...">
-                }
-                else
-                {
-                    <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
-                }
-                <div class="card-body">
-                    <h5 class="card-title">@proyek.Proyek.NamaProyek</h5>
-                    <p class="card-text">@proyek.Proyek.Deskripsi</p>
-                   
-                    <div class="my-2 d-flex gap-2 flex-wrap">
-                        <button class="btn btn-danger badge">@proyek.Proyek.Kuota</button>
-                        <button class="btn btn-danger badge">@proyek.Proyek.Lokasi</button>
-                    </div>
-                    <a asp-action="Details" asp-route-id="@proyek.Proyek.Id" class="btn btn-primary">Detail</a>
-                </div>
-            </div>
-        </div>
-    }
-</div>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NamaProyek)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Deskripsi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FotoProyek)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TanggalMulai)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TanggalSelesai)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Lokasi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Kuota)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdatedAt)
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NamaProyek)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Deskripsi)
+                </td>
+                <td>
+                    <img src="@Html.DisplayFor(modelItem => item.FotoProyek)" alt="@Html.DisplayFor(modelItem => item.FotoProyek)" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TanggalMulai)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TanggalSelesai)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Lokasi)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Kuota)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdatedAt)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

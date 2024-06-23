@@ -13,161 +13,165 @@ using System.Transactions;
 namespace SIPKK.Areas.DosenArea.Controllers
 {
     [Area(nameof(DosenArea))]
-    [Authorize(Roles = nameof(DosenArea))]
+    [Authorize(Roles = "Dosen")]
 
     public class ProyekController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProyekController(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork)
+        public ProyekController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
-            _userManager = userManager;
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-        protected string GetUserId()
-        {
-            return _userManager.GetUserId(User);
-        }
-
+        // GET: Proyek
         public async Task<IActionResult> Index()
         {
-            var proyekList = (await _unitOfWork.Proyek.GetAllAsync(
-                p => p.Mahasiswa,
-                p => p.Dosen,
-                p => p.BiayaOperasional,
-                p => p.Laporan))
-                .ToList();
-
-            var proyekVMList = proyekList.Select(proyek => new ProyekVM
-            {
-                Proyek = proyek,
-                IsMahasiswaTerdaftar = proyek.Mahasiswa.Any(m => m.IdUser == GetUserId())
-            }).ToList();
-
-            return View(proyekVMList);
+            List<Proyek> biayaOperasionalList = (await _unitOfWork.Proyek.GetAllAsync()).ToList();
+            return View(biayaOperasionalList);
         }
 
+        // GET: Proyek/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            if(id == null || id == string.Empty)
+            if (id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
-            var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id,
-                p => p.Mahasiswa,
-                p => p.Dosen,
-                p => p.BiayaOperasional,
-                p => p.Laporan
-            );
+            Proyek biayaOperasional = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
 
-            if(proyek == null)
+            if (biayaOperasional == null)
             {
                 return NotFound();
             }
 
-            var userId = GetUserId();
-            var isMahasiswaTerdaftar = proyek.Mahasiswa.Any(m => m.IdUser == userId);
+            return View(biayaOperasional);
+        }
 
-            var proyekVM = new ProyekVM()
+        // GET: Proyek/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Proyek/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(ProyekVM proyekVM, IFormFile? file)
+        {
+            if (ModelState.IsValid)
             {
-                Proyek = proyek,
-                IsMahasiswaTerdaftar = isMahasiswaTerdaftar
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+
+                if (file != null)
+                {
+                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string mahasiswaPath = Path.Combine(wwwRootPath, @"images\proyek");
+
+                    using (var fileStream = new FileStream(Path.Combine(mahasiswaPath, filename), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    proyekVM.Proyek.FotoProyek = @"\images\proyek\" + filename;
+                }
+                await _unitOfWork.Proyek.CreateAsync(proyekVM.Proyek);
+                await _unitOfWork.SaveAsync();
+                TempData["Success"] = "Proyek created successfully";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View();
+        }
+
+        // GET: Proyek/Edit/5
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (id == null || id == string.Empty)
+            {
+                return NotFound();
+            }
+
+            Proyek? biayaOperasional = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+
+            if (biayaOperasional == null)
+            {
+                return NotFound();
+            }
+
+            ProyekVM proyekVM = new()
+            {
+                Proyek = biayaOperasional,
             };
 
             return View(proyekVM);
         }
 
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Daftar(string id)
+        public async Task<IActionResult> Edit(ProyekVM proyekVM, IFormFile? file)
         {
-            if(string.IsNullOrEmpty(id))
+            if (ModelState.IsValid)
+            {
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+
+                if (file != null)
+                {
+                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string mahasiswaPath = Path.Combine(wwwRootPath, @"images\proyek");
+
+                    using (var fileStream = new FileStream(Path.Combine(mahasiswaPath, filename), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    proyekVM.Proyek.FotoProyek = @"\images\proyek\" + filename;
+                }
+
+                await _unitOfWork.Proyek.UpdateAsync(proyekVM.Proyek);
+                await _unitOfWork.SaveAsync();
+                TempData["Success"] = "Proyek updated successfully";
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+        }
+
+        // GET: Proyek/Delete/5
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
-            var userId = GetUserId();
+            Proyek biayaOperasional = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
 
-            using(var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            if (biayaOperasional == null)
             {
-                var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
-
-                if(mahasiswa == null)
-                {
-                    return NotFound();
-                }
-
-                var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == id);
-
-                if(proyek == null)
-                {
-                    return NotFound();
-                }
-
-                if(proyek.Kuota <= 0)
-                {
-                    TempData["ErrorMessage"] = "Kuota proyek sudah penuh";
-                    return RedirectToAction(nameof(Details), new { id });
-                }
-
-                var persyaratan = await _unitOfWork.Persyaratan.GetAsync(p => p.IdMahasiswa == mahasiswa.Id);
-                if(persyaratan == null)
-                {
-                    persyaratan = new Persyaratan
-                    {
-                        IdMahasiswa = mahasiswa.Id,
-                        KetKelakuanBaik = false,
-                        KetOrangTua = false,
-                        KetSehat = false,
-                        KetPembayaran = false
-                    };
-                    await _unitOfWork.Persyaratan.CreateAsync(persyaratan);
-                    await _unitOfWork.SaveAsync();
-                }
-
-                if(!persyaratan.KetPembayaran || !persyaratan.KetKelakuanBaik || !persyaratan.KetOrangTua || !persyaratan.KetSehat)
-                {
-                    TempData["ErrorMessage"] = "Syarat belum lengkap! Silahkan hubungi dosen terkait";
-                    return RedirectToAction(nameof(Details), new { id });
-                }
-
-                mahasiswa.IdProyek = proyek.Id;
-                proyek.Kuota -= 1;
-
-                try
-                {
-                    await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
-                    await _unitOfWork.Proyek.UpdateAsync(proyek);
-
-                    var pendaftaran = new Pendaftaran
-                    {
-                        IdMahasiswa = mahasiswa.Id,
-                        IdProyek = proyek.Id,
-                        TanggalPendaftaran = DateTime.UtcNow,
-                        Status = "PENDING",
-                    };
-
-                    Debug.WriteLine(pendaftaran);
-                    await _unitOfWork.Pendaftaran.CreateAsync(pendaftaran);
-                    await _unitOfWork.SaveAsync();
-
-                    scope.Complete(); // Commit transaction
-
-                    TempData["SuccessMessage"] = "Pendaftaran berhasil";
-                    return RedirectToAction(nameof(Details), new { id });
-                }
-                catch(Exception ex)
-                {
-                    TempData["ErrorMessage"] = "Terjadi kesalahan internal saat mendaftar mahasiswa ke proyek.";
-                    return RedirectToAction(nameof(Details), new { id });
-                }
+                return NotFound();
             }
+
+            return View(biayaOperasional);
         }
 
+        // POST: Proyek/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            Proyek? biayaOperasional = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
 
+            if (biayaOperasional == null)
+            {
+                return NotFound();
+            }
+            await _unitOfWork.Proyek.DeleteAsync(biayaOperasional);
+            await _unitOfWork.SaveAsync();
+            TempData["Success"] = "Proyek deleted successfully";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
