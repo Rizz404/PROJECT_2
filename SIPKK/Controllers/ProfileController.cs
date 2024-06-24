@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
-using System.Diagnostics;
 
 public class ProfileController : Controller
 {
@@ -27,7 +25,7 @@ public class ProfileController : Controller
         var user = await _userManager.FindByIdAsync(userId);
         var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Proyek);
 
-        if(user == null || mahasiswa == null)
+        if (user == null || mahasiswa == null)
         {
             return NotFound();
         }
@@ -58,27 +56,27 @@ public class ProfileController : Controller
     public async Task<IActionResult> Index(ProfileVM profileVM, IFormFile? file)
     {
         // parameter file itu sesuaikan sama name file input ya
-        if(ModelState.IsValid)
+        if (ModelState.IsValid)
         {
             string wwwRootPath = _webHostEnvironment.WebRootPath;
 
-            if(file != null)
+            if (file != null)
             {
                 string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                 string mahasiswaPath = Path.Combine(wwwRootPath, @"images\mahasiswa");
 
-                //if(string.IsNullOrEmpty(profileVM.FotoProfil))
-                //{
-                //    // hapus image old
-                //    var oldImagePath = Path.Combine(wwwRootPath, profileVM.FotoProfil.TrimStart('\\'));
+                if (!string.IsNullOrEmpty(profileVM.FotoProfil))
+                {
+                    // hapus image old
+                    var oldImagePath = Path.Combine(wwwRootPath, profileVM.FotoProfil.TrimStart('\\'));
 
-                //    if(System.IO.File.Exists(oldImagePath))
-                //    {
-                //        System.IO.File.Delete(oldImagePath);
-                //    }
-                //}
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
 
-                using(var fileStream = new FileStream(Path.Combine(mahasiswaPath, filename), FileMode.Create))
+                using (var fileStream = new FileStream(Path.Combine(mahasiswaPath, filename), FileMode.Create))
                 {
                     file.CopyTo(fileStream);
                 }
@@ -88,7 +86,7 @@ public class ProfileController : Controller
             var user = await _userManager.FindByIdAsync(profileVM.IdUser);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == profileVM.IdUser);
 
-            if(user == null || mahasiswa == null)
+            if (user == null || mahasiswa == null)
             {
                 return NotFound();
             }
@@ -99,7 +97,7 @@ public class ProfileController : Controller
             user.PhoneNumber = profileVM.PhoneNumber;
 
             var userUpdateResult = await _userManager.UpdateAsync(user);
-            if(!userUpdateResult.Succeeded)
+            if (!userUpdateResult.Succeeded)
             {
                 ModelState.AddModelError(string.Empty, "Gagal memperbarui pengguna");
                 return View(profileVM);

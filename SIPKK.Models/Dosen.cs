@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SIPKK.Ultilities.Abstractions;
-using SIPKK.Ultilities.Interface;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,7 +18,7 @@ namespace SIPKK.Models
         public string NamaDosen { get; set; }
 
         [MaxLength(36)]
-        [Display(Name = "Program Studi")]
+        [Display(Name = "Proyek")]
         public string? IdProyek { get; set; }
 
         [MaxLength(10)]

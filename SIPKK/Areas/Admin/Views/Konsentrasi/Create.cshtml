@@ -15,12 +15,14 @@
             <div class="form-group">
                 <label asp-for="Konsentrasi.IdProgramStudi" class="control-label"></label>
                 <select asp-for="@Model.Konsentrasi.IdProgramStudi" asp-items="@Model.ProgramStudiList" class="form-select">
-                    <option disabled selected>Pilih Proyek</option>
+                    <option disabled selected>Pilih Prodi</option>
                 </select>
                 <span asp-validation-for="Konsentrasi.IdProgramStudi" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Konsentrasi.Nama" class="control-label"></label>
+                <label asp-for="Konsentrasi.Nama" class="control-label">
+                    Nama Konsentrasi
+                </label>
                 <input asp-for="Konsentrasi.Nama" class="form-control" />
                 <span asp-validation-for="Konsentrasi.Nama" class="text-danger"></span>
             </div>
