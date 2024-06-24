@@ -1,4 +1,5 @@
-﻿@inject SignInManager<ApplicationUser> SignInManager
+﻿@model IEnumerable<Proyek>
+@inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
 @{
@@ -7,30 +8,198 @@
 @if (SignInManager.IsSignedIn(User) && user != null)
 {
     var roles = await UserManager.GetRolesAsync(user);
-
-
     if (roles.Contains("Admin"))
     {
-        <h1>
-            Test
-        </h1>
-    }
-    else if (roles.Contains("Dosen"))
+    }else
     {
-        <h2>
-            Dosen
-        </h2>
+    <section class="container hero-container">
+        <div class="flex-col left-hero-container">
+            <h2 class="heading">
+                Find your dream
+                KKN for anyone,
+                anywhere
+            </h2>
+            <p>
+                Achieve your dream and passion with us
+            </p>
+        </div>
+        <div class="right-hero-container">
+            <img src="~/images/assets/person-hero.png" alt="Hero Image" />
+            <div class="right-hero-box">
+                <p>
+                    Join KKN ?
+                    Verify
+                    First
+                </p>
+            </div>
+        </div>
+    </section>
+    <!---->
+    <div class="separator-hero-container ">
+        <div class="separator-hero-inner flex-center">
+            <svg width="170" height="144" viewBox="0 0 170 144" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M121 0.5C122 19.5 120.3 57.2 79.4997 66C28.4997 77 7.99973 133 7.99973 144" stroke="#0E171F" stroke-width="15" />
+                <path d="M165 16.5C165 35 163.616 84.7 122.816 93.5C71.8161 104.5 46.5 125.5 46.5 136.5" stroke="#0E171F" stroke-width="10" />
+            </svg>
+            <div class="flex-center">
+                <img src="~/images/assets/kampus-merdeka.png" alt="Kampus Merdeka" />
+                <img src="~/images/assets/campus-logo.png" alt="Global" />
+                <img src="~/images/assets/lpdp-logo.png" alt="LPDP" />
+
+            </div>
+            <svg width="170" height="144" viewBox="0 0 170 144" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M49.5 0.5C48.4999 19.5 50.2002 57.2 91.0002 66C142 77 162.5 133 162.5 144" stroke="#0E171F" stroke-width="15" />
+                <path d="M5.5 16.5C5.5 35 6.88388 84.7 47.6839 93.5C98.6839 104.5 124 125.5 124 136.5" stroke="#0E171F" stroke-width="10" />
+            </svg>
+        </div>
+    </div>
+    <!---->
+    <section class="global-institute-container flex-center">
+        <div class="base-container">
+            <div>
+                <h3 class="sub-heading">
+                    GLOBAL INSTITUTE
+                </h3>
+                <p>
+                    The Global Institute of Technology and Business is a campus that possesses core competencies in the fields of technology
+                    and business to compete in the era of globalization. This campus was established to create a generation that is ready to
+                    compete, has a broad perspective, noble attitudes and ethics, and contributes to the progress of the world. Join us…!!
+                </p>
+                <a asp-area="User" asp-controller="Home" asp-action="Index" class="tertiary-btn flex-center">
+                    View Profile
+                    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1.125 18C1.125 27.3198 8.68019 34.875 18 34.875C27.3198 34.875 34.875 27.3198 34.875 18C34.875 8.68019 27.3198 1.125 18 1.125C8.68019 1.125 1.125 8.68019 1.125 18Z" fill="#C2E4FF" />
+                        <path d="M18.9562 27L27.5625 18L18.9563 9L18.9562 14.9625L8.4375 14.9625L8.4375 20.7562L18.9562 20.7563L18.9562 27Z" fill="white" />
+                    </svg>
+                </a>
+
+            </div>
+
+        </div>
+        <img src="~/images/assets/below-hero.png" />
+    </section>
+    <section class="result-alumni-container base-container">
+        <h3 class="sub-heading">
+            Result Alumni KKN
+        </h3>
+        <div class="flex-col">
+            @foreach (var proyek in Model)
+            {
+                @if (proyek.TanggalSelesai != null)
+                {
+                    <div>
+                    <img src="@Html.DisplayFor(modelItem => proyek.FotoProyek)" alt="@Html.DisplayFor(modelItem => proyek.FotoProyek)" />
+                    <div class="result-alumni-text">
+                            <h4 class="sub-title">
+                                @proyek.NamaProyek
+                            </h4>
+                            <p>
+                                @proyek.Deskripsi
+                            </p>
+                        </div>
+                        <a asp-controller="Proyek" asp-area="" asp-action="Details" asp-route-id="@proyek.Id">Details</a>
+
+                    </div>
+                }
+            }
+
+        </div>
+    </section>
+
     }
-    else if (roles.Contains("Mahasiswa"))
-    {
-        <h2>
-            Mahasiswa
-        </h2>
-    }
-}
-else
-{
-    <h1>
-        Not Logged in user
-    </h1>
+}else {
+    <section class="container hero-container">
+        <div class="flex-col left-hero-container">
+            <h2 class="heading">
+                Find your dream
+                KKN for anyone,
+                anywhere
+            </h2>
+            <p>
+                Achieve your dream and passion with us
+            </p>
+        </div>
+        <div class="right-hero-container">
+            <img src="~/images/assets/person-hero.png" alt="Hero Image" />
+            <div class="right-hero-box">
+                <p>
+                    Join KKN ?
+                    Verify
+                    First
+                </p>
+            </div>
+        </div>
+    </section>
+    <!---->
+    <div class="separator-hero-container ">
+        <div class="separator-hero-inner flex-center">
+            <svg width="170" height="144" viewBox="0 0 170 144" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M121 0.5C122 19.5 120.3 57.2 79.4997 66C28.4997 77 7.99973 133 7.99973 144" stroke="#0E171F" stroke-width="15" />
+                <path d="M165 16.5C165 35 163.616 84.7 122.816 93.5C71.8161 104.5 46.5 125.5 46.5 136.5" stroke="#0E171F" stroke-width="10" />
+            </svg>
+            <div class="flex-center">
+                <img src="~/images/assets/kampus-merdeka.png" alt="Kampus Merdeka" />
+                <img src="~/images/assets/campus-logo.png" alt="Global" />
+                <img src="~/images/assets/lpdp-logo.png" alt="LPDP" />
+
+            </div>
+            <svg width="170" height="144" viewBox="0 0 170 144" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M49.5 0.5C48.4999 19.5 50.2002 57.2 91.0002 66C142 77 162.5 133 162.5 144" stroke="#0E171F" stroke-width="15" />
+                <path d="M5.5 16.5C5.5 35 6.88388 84.7 47.6839 93.5C98.6839 104.5 124 125.5 124 136.5" stroke="#0E171F" stroke-width="10" />
+            </svg>
+        </div>
+    </div>
+    <!---->
+    <section class="global-institute-container flex-center">
+        <div class="base-container">
+            <div>
+                <h3 class="sub-heading">
+                    GLOBAL INSTITUTE
+                </h3>
+                <p>
+                    The Global Institute of Technology and Business is a campus that possesses core competencies in the fields of technology
+                    and business to compete in the era of globalization. This campus was established to create a generation that is ready to
+                    compete, has a broad perspective, noble attitudes and ethics, and contributes to the progress of the world. Join us…!!
+                </p>
+                <a asp-area="User" asp-controller="Home" asp-action="Index" class="tertiary-btn flex-center">
+                    View Profile
+                    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1.125 18C1.125 27.3198 8.68019 34.875 18 34.875C27.3198 34.875 34.875 27.3198 34.875 18C34.875 8.68019 27.3198 1.125 18 1.125C8.68019 1.125 1.125 8.68019 1.125 18Z" fill="#C2E4FF" />
+                        <path d="M18.9562 27L27.5625 18L18.9563 9L18.9562 14.9625L8.4375 14.9625L8.4375 20.7562L18.9562 20.7563L18.9562 27Z" fill="white" />
+                    </svg>
+                </a>
+
+            </div>
+
+        </div>
+        <img src="~/images/assets/below-hero.png" />
+    </section>
+    <section class="result-alumni-container base-container">
+        <h3 class="sub-heading">
+            Result Alumni KKN
+        </h3>
+        <div class="flex-col">
+            @foreach (var proyek in Model)
+            {
+                @if (proyek.TanggalSelesai != null)
+                {
+                    <div>
+                    <img src="@Html.DisplayFor(modelItem => proyek.FotoProyek)" alt="@Html.DisplayFor(modelItem => proyek.FotoProyek)" />
+                    <div class="result-alumni-text">
+                            <h4 class="sub-title">
+                                @proyek.NamaProyek
+                            </h4>
+                            <p>
+                                @proyek.Deskripsi
+                            </p>
+                        </div>
+                        <a asp-controller="Proyek" asp-area="" asp-action="Details" asp-route-id="@proyek.Id">Details</a>
+
+                    </div>
+                }
+            }
+
+        </div>
+    </section>
+
 }

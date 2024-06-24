@@ -29,6 +29,8 @@
 
     <script src="~/materio/assets/vendor/js/helpers.js"></script>
     <script src="~/materio/assets/js/config.js"></script>
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+
 </head>
 <body>
     @inject SignInManager<ApplicationUser> SignInManager
@@ -36,6 +38,7 @@
 
     @{
         var user = await UserManager.GetUserAsync(User);
+
     }
     @if (SignInManager.IsSignedIn(User) && user != null)
     {
@@ -57,9 +60,11 @@
             </div>
         }else
         {
+            
             <header>
-                @await Html.PartialAsync("_Navbar")
+                @await Html.PartialAsync("_Nav")
             </header>
+            
             <div class="container">
                 <main role="main" class="pb-3">
                     @RenderBody()
@@ -69,11 +74,14 @@
         }
     }else
     {
+
         
-    <header>
-                @await Html.PartialAsync("_Navbar")
-            </header>
-            <div class="container">
+        <header>
+            @await Html.PartialAsync("_Nav")
+            
+        </header>
+        
+        <div class="container">
                 <main role="main" class="pb-3">
                     @RenderBody()
                 </main>
