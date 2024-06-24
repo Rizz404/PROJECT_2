@@ -78,6 +78,7 @@ namespace SIPKK.Models
         public Pendaftaran? Pendaftaran { get; set; }
 
         public Persyaratan? Persyaratan { get; set; }
+        public BiayaOperasional? BiayaOperasional { get; set; }
 
         // Custom validation method for Tanggal Lahir
         public static ValidationResult? ValidateTanggalLahir(DateTime tanggalLahir, ValidationContext context)

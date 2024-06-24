@@ -44,6 +44,12 @@ namespace SIPKK.Models
         [Range(0, short.MaxValue, ErrorMessage = "Nilai {0} harus di antara {1} dan {2}.")]
         public short Kuota { get; set; }
 
+        [Display(Name = "Verified")]
+        public bool? Verified { get; set; }
+
+        [Display(Name = "Sudah Selesai")]
+        public bool? SudahSelesai { get; set; }
+
         public ICollection<Mahasiswa>? Mahasiswa { get; set; }
         public ICollection<Dosen>? Dosen { get; set; }
         public ICollection<Pendaftaran>? Pendaftaran { get; set; }

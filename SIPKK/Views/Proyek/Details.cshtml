@@ -2,14 +2,7 @@
 
 <div class="row">
     <div class="">
-        @if(TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-        }
-        @if(TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-        }
+        <partial name="Notification" />
         <div class="card mb-3">
             <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
             <div class="card-body">
@@ -25,10 +18,10 @@
                 }
                 else
                 {
-                <form asp-action="Daftar" method="post">
-                    <input type="hidden" name="id" value="@Model.Proyek.Id" />
-                    <button type="submit" class="btn btn-primary">Daftar</button>
-                </form>
+                    <form asp-action="Daftar" method="post">
+                        <input type="hidden" name="id" value="@Model.Proyek.Id" />
+                        <button type="submit" class="btn btn-primary">Daftar</button>
+                    </form>
                 }
             </div>
         </div>
