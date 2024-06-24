@@ -1,4 +1,36 @@
-﻿<div>
-    <h1>Ini adalah home page</h1>
-    <h2>Gak tau tiba-tiba footer naek ke atas coba fix bang</h2>
-</div>
+﻿@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+}
+@if (SignInManager.IsSignedIn(User) && user != null)
+{
+    var roles = await UserManager.GetRolesAsync(user);
+
+
+    if (roles.Contains("Admin"))
+    {
+        <h1>
+            Test
+        </h1>
+    }
+    else if (roles.Contains("Dosen"))
+    {
+        <h2>
+            Dosen
+        </h2>
+    }
+    else if (roles.Contains("Mahasiswa"))
+    {
+        <h2>
+            Mahasiswa
+        </h2>
+    }
+}
+else
+{
+    <h1>
+        Not Logged in user
+    </h1>
+}
