@@ -102,12 +102,20 @@ namespace SIPKK.Areas.Admin.Controllers
                 {
                     if(ModelState.IsValid)
                     {
+                        var existingMahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.NIM == mahasiswaVM.Mahasiswa.NIM);
+                        if(existingMahasiswa != null)
+                        {
+                            TempData["ErrorMessage"] = "Mahasiswa telah ada";
+                            return View(mahasiswaVM);
+                        }
+
                         var user = new ApplicationUser
                         {
                             UserName = username,
                             Email = email,
                             EmailConfirmed = true
                         };
+
                         var createNewUser = await _userManager.CreateAsync(user, password);
 
                         if(createNewUser.Succeeded)
