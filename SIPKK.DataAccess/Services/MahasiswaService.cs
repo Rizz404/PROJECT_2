@@ -129,7 +129,7 @@ namespace SIPKK.DataAccess.Services
                         IdMahasiswa = mahasiswa.Id,
                         IdProyek = proyek.Id,
                         TanggalPendaftaran = DateTime.UtcNow,
-                        Status = "PENDING",
+                        StatusPembayaran = false,
                     };
 
                     Debug.WriteLine(pendaftaran);

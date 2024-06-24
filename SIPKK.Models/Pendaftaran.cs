@@ -24,7 +24,12 @@ namespace SIPKK.Models
 
         // nanti kasih enum aja
         [Required(ErrorMessage = "{0} harus diisi")]
-        public string Status { get; set; }
+        [Display(Name = "Status Pembayaran")]
+        public bool StatusPembayaran { get; set; }
+
+        [Required(ErrorMessage = "{0} harus diisi")]
+        [Display(Name = "Bukti Pembayaran")]
+        public string? BuktiPembayaran { get; set; }
 
         [ForeignKey(nameof(IdMahasiswa))]
         [ValidateNever]

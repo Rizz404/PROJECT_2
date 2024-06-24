@@ -80,7 +80,8 @@ namespace SIPKK.Areas.Admin.Controllers
                     {
                         file.CopyTo(fileStream);
                     }
-
+                    proyekVM.Proyek.Verified = false;
+                    proyekVM.Proyek.SudahSelesai = false;
                     proyekVM.Proyek.FotoProyek = @"\images\proyek\" + filename;
                 }
                 await _unitOfWork.Proyek.CreateAsync(proyekVM.Proyek);

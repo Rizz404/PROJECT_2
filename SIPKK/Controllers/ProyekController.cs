@@ -98,6 +98,12 @@ namespace SIPKK.Controllers
                     return NotFound();
                 }
 
+                if(!string.IsNullOrEmpty(mahasiswa.IdProyek))
+                {
+                    TempData["ErrorMessage"] = "Sudah terdaftar di proyek";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+
                 var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == id);
 
                 if(proyek == null)
@@ -145,7 +151,7 @@ namespace SIPKK.Controllers
                         IdMahasiswa = mahasiswa.Id,
                         IdProyek = proyek.Id,
                         TanggalPendaftaran = DateTime.UtcNow,
-                        Status = "PENDING",
+                        StatusPembayaran = false,
                     };
 
                     Debug.WriteLine(pendaftaran);
@@ -154,7 +160,7 @@ namespace SIPKK.Controllers
 
                     scope.Complete(); // Commit transaction
 
-                    TempData["SuccessMessage"] = "Pendaftaran berhasil";
+                    TempData["SuccessMessage"] = "Pendaftaran berhasil silahkan melakukan pembayaran";
                     return RedirectToAction(nameof(Details), new { id });
                 }
                 catch(Exception ex)
