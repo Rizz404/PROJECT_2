@@ -32,7 +32,10 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: BiayaOperasional
         public async Task<IActionResult> Index()
         {
-            List<BiayaOperasional> biayaOperasionalList = (await _unitOfWork.BiayaOperasional.GetAllAsync(d => d.Proyek)).ToList();
+            List<BiayaOperasional> biayaOperasionalList = (await _unitOfWork.BiayaOperasional.GetAllAsync(includedProperties:
+            [
+                d => d.Proyek
+            ])).ToList();
             return View(biayaOperasionalList);
         }
 

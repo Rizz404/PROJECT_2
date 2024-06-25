@@ -27,33 +27,37 @@ namespace SIPKK.DataAccess.Repository
             await dbSet.AddAsync(entity);
         }
 
-        public async Task<T> GetAsync(System.Linq.Expressions.Expression<Func<T, bool>> filter, params Expression<Func<T, object>>[] includedProperties)
+        public async Task<T> GetAsync(Expression<Func<T, bool>>? filter = null, params Expression<Func<T, object>>[] includedProperties)
         {
             IQueryable<T> query = dbSet;
-            if(includedProperties.Any())
+
+            if(filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if(includedProperties != null && includedProperties.Any())
             {
                 query = includedProperties.Aggregate(query, (current, includedProp) => current.Include(includedProp));
             }
-            return await query.Where(filter).FirstOrDefaultAsync();
+
+            return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includedProperties)
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, params Expression<Func<T, object>>[] includedProperties)
         {
             IQueryable<T> query = dbSet;
-            if(includedProperties.Any())
-            {
-                query = includedProperties.Aggregate(query, (current, includedProp) => current.Include(includedProp));
-            }
-            return await query.ToListAsync();
-        }
 
-        public async Task<IEnumerable<T>> GetAllWithIncludesAsync(params Expression<Func<T, object>>[] includedProperties)
-        {
-            IQueryable<T> query = dbSet;
-            if(includedProperties.Any())
+            if(filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if(includedProperties != null && includedProperties.Any())
             {
                 query = includedProperties.Aggregate(query, (current, includedProp) => current.Include(includedProp));
             }
+
             return await query.ToListAsync();
         }
 

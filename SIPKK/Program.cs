@@ -5,8 +5,6 @@ using SIPKK.DataAccess;
 using SIPKK.DataAccess.Data;
 using SIPKK.DataAccess.Repository;
 using SIPKK.DataAccess.Repository.IRepository;
-using SIPKK.DataAccess.Services;
-using SIPKK.DataAccess.Services.IServices;
 using SIPKK.Models;
 using SIPKK.Ultilities;
 using System;
@@ -41,10 +39,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IProyekService, ProyekService>();
-builder.Services.AddScoped<IMahasiswaService, MahasiswaService>();
-builder.Services.AddScoped<IPendaftaranService, PendaftaranService>();
-builder.Services.AddScoped<IPersyaratanService, PersyaratanService>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 var app = builder.Build();

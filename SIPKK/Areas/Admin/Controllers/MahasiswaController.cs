@@ -37,7 +37,14 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Mahasiswa
         public async Task<IActionResult> Index()
         {
-            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(m => m.Proyek, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Persyaratan, m => m.Pendaftaran)).ToList();
+            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(includedProperties:
+            [
+                m => m.Proyek,
+                m => m.ProgramStudi,
+                m => m.Konsentrasi,
+                m => m.Persyaratan,
+                m => m.Pendaftaran
+            ])).ToList();
             return View(mahasiswaList);
         }
 

@@ -39,11 +39,11 @@
     @{
         var user = await UserManager.GetUserAsync(User);
     }
-    @if (SignInManager.IsSignedIn(User) && user != null)
+    @if(SignInManager.IsSignedIn(User) && user != null)
     {
         var roles = await UserManager.GetRolesAsync(user);
 
-        if (roles.Contains("Admin"))
+        if(roles.Contains("Admin"))
         {
             <div class="layout-wrapper layout-content-navbar">
                 <div class="layout-container">
@@ -57,13 +57,14 @@
                     </div>
                 </div>
             </div>
-        }else
+        }
+        else
         {
-            
+
             <header>
                 @await Html.PartialAsync("_Nav")
             </header>
-            
+
             <div class="container">
                 <main role="main" class="pb-3">
                     @RenderBody()
@@ -71,20 +72,21 @@
             </div>
 
         }
-    }else
+    }
+    else
     {
 
-        
+
         <header>
             @await Html.PartialAsync("_Nav")
-            
+
         </header>
-        
+
         <div class="container">
-                <main role="main" class="pb-3">
-                    @RenderBody()
-                </main>
-            </div>
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
     }
 
 
