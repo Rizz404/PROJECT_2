@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SIPKK.Ultilities.Abstractions;
-using SIPKK.Ultilities.Interface;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -26,6 +25,7 @@ namespace SIPKK.Models
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Status Pembayaran")]
         public bool StatusPembayaran { get; set; }
+
 
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Bukti Pembayaran")]
