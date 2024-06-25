@@ -31,7 +31,10 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Persyaratan
         public async Task<IActionResult> Index()
         {
-            List<Persyaratan> persyaratanList = (await _unitOfWork.Persyaratan.GetAllAsync(p => p.Mahasiswa)).ToList();
+            List<Persyaratan> persyaratanList = (await _unitOfWork.Persyaratan.GetAllAsync(includedProperties:
+            [
+                p => p.Mahasiswa,
+            ])).ToList();
             return View(persyaratanList);
         }
 

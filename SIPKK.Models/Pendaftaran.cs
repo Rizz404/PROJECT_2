@@ -17,17 +17,21 @@ namespace SIPKK.Models
         [Display(Name = "Mahasiswa")]
         public string IdProyek { get; set; }
 
+        private DateTime _tanggalPendaftaran;
+
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Tanggal Pendaftaran")]
-        public DateTime TanggalPendaftaran { get; set; }
+        public DateTime TanggalPendaftaran
+        {
+            get => _tanggalPendaftaran;
+            set => _tanggalPendaftaran = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
 
         // nanti kasih enum aja
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Status Pembayaran")]
         public bool StatusPembayaran { get; set; }
 
-
-        [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Bukti Pembayaran")]
         public string? BuktiPembayaran { get; set; }
 

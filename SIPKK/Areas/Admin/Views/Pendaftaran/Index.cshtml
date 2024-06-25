@@ -2,11 +2,6 @@
 
 @{
     ViewData["Title"] = "Index";
-    ViewData["Title"] = "Index";
-    var excludedProps = new List<string> { "Id", "Password", "ProyekOptions" };
-    var properties = typeof(Pendaftaran).GetProperties()
-    .Where(prop => !excludedProps.Contains(prop.Name)).ToList();
-    var headers = properties.Select(prop => prop.Name).ToList();
     int counter = 1;
 }
 
@@ -18,11 +13,14 @@
 <table class="table">
     <thead>
         <tr>
-            <td>No</td>
-            @foreach(var header in headers)
-            {
-                <th>@header</th>
-            }
+            <th>No</th>
+            <th>@Html.DisplayNameFor(model => model.Mahasiswa.FirstName)</th>
+            <th>@Html.DisplayNameFor(model => model.Proyek.NamaProyek)</th>
+            <th>@Html.DisplayNameFor(model => model.TanggalPendaftaran)</th>
+            <th>@Html.DisplayNameFor(model => model.StatusPembayaran)</th>
+            <th>@Html.DisplayNameFor(model => model.BuktiPembayaran)</th>
+            <th>@Html.DisplayNameFor(model => model.CreatedAt)</th>
+            <th>@Html.DisplayNameFor(model => model.UpdatedAt)</th>
             <th>Opsi</th>
         </tr>
     </thead>
@@ -31,10 +29,22 @@
         {
             <tr>
                 <td>@counter</td>
-                @foreach(var prop in properties)
-                {
-                    <td>@prop.GetValue(item)</td>
-                }
+                <td>@item.Mahasiswa.FirstName</td>
+                <td>@item.Proyek.NamaProyek</td>
+                <td>@item.TanggalPendaftaran</td>
+                <td>@item.StatusPembayaran</td>
+                <td>
+                    @if(@item.BuktiPembayaran != null)
+                    {
+                        <img src="@item.BuktiPembayaran" alt="Alternate Text" />
+                    }
+                    else
+                    {
+                        <span>My ass</span>
+                    }
+                </td>
+                <td>@item.CreatedAt</td>
+                <td>@item.UpdatedAt</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

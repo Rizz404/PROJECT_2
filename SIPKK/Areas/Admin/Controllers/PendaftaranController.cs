@@ -31,7 +31,7 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Pendaftaran
         public async Task<IActionResult> Index()
         {
-            List<Pendaftaran> pendaftaranList = (await _unitOfWork.Pendaftaran.GetAllAsync()).ToList();
+            List<Pendaftaran> pendaftaranList = (await _unitOfWork.Pendaftaran.GetAllAsync(includedProperties: [p => p.Mahasiswa, p => p.Proyek])).ToList();
             return View(pendaftaranList);
         }
 

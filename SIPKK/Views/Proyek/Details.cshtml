@@ -38,10 +38,7 @@
                     }
                     else
                     {
-                        <form asp-action="Daftar" method="post">
-                            <input type="hidden" name="id" value="@Model.Proyek.Id" />
-                            <button type="submit" class="btn btn-primary">Daftar</button>
-                        </form>
+                        <a asp-action="UploadBiayaPendaftaran" asp-controller="Pendaftaran" asp-route-id="@Model.Proyek.Id">Daftar</a>
                     }
                 }
                 else if(roles.Contains("Dosen"))

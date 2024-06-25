@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal;
 using SIPKK.DataAccess.Repository.IRepository;
-using SIPKK.DataAccess.Services;
-using SIPKK.DataAccess.Services.IServices;
 using SIPKK.Models;
 using System.Diagnostics;
 
@@ -11,20 +10,19 @@ namespace SIPKK.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IProyekService _proyekService;
-        private readonly IMahasiswaService _mahasiswaService;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(UserManager<ApplicationUser> userManager, IProyekService proyekService, IMahasiswaService mahasiswaService)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public HomeController(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
-            _proyekService = proyekService;
-            _mahasiswaService = mahasiswaService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IActionResult> Index()
         {
-            var proyekList = await _proyekService.GetAllProyekAsync();
+            var proyekList = await _unitOfWork.Proyek.GetAllAsync();
             return View(proyekList);
         }
 
@@ -35,7 +33,7 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            var proyek = await _proyekService.GetProyekByIdAsync(id);
+            var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == id);
 
             if(proyek == null)
             {
@@ -44,30 +42,5 @@ namespace SIPKK.Controllers
 
             return View(proyek);
         }
-
-        [Authorize]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Daftar(string id)
-        {
-            if(string.IsNullOrEmpty(id))
-            {
-                return NotFound();
-            }
-
-            var userId = _userManager.GetUserId(User);
-            var (success, message) = await _mahasiswaService.DaftarProyekAsync(id, userId);
-
-            if(!success)
-            {
-                TempData["ErrorMessage"] = message;
-                return RedirectToAction(nameof(Details), new { id = id });
-            }
-
-            TempData["SuccessMessage"] = message;
-            return RedirectToAction(nameof(Details), new { id = id });
-        }
-
-
     }
 }

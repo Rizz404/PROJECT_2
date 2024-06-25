@@ -39,7 +39,10 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Dosens
         public async Task<IActionResult> Index()
         {
-            List<Dosen> dosenList = (await _unitOfWork.Dosen.GetAllAsync(d => d.Proyek)).ToList();
+            List<Dosen> dosenList = (await _unitOfWork.Dosen.GetAllAsync(includedProperties:
+            [
+                d => d.Proyek,
+            ])).ToList();
             return View(dosenList);
         }
 

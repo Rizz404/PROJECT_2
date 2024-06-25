@@ -3,11 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SIPKK.DataAccess.Repository;
 using SIPKK.DataAccess.Repository.IRepository;
-using SIPKK.DataAccess.Services;
-using SIPKK.DataAccess.Services.IServices;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
 using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Transactions;
 
 namespace SIPKK.Controllers
@@ -32,12 +31,13 @@ namespace SIPKK.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var proyekList = (await _unitOfWork.Proyek.GetAllAsync(
+            var proyekList = await _unitOfWork.Proyek.GetAllAsync(includedProperties:
+            [
                 p => p.Mahasiswa,
                 p => p.Dosen,
                 p => p.BiayaOperasional,
-                p => p.Laporan))
-                .ToList();
+                p => p.Laporan
+            ]);
 
             var proyekVMList = proyekList.Select(proyek => new ProyekVM
             {
@@ -50,7 +50,16 @@ namespace SIPKK.Controllers
 
         public async Task<IActionResult> Details(string id)
         {
-            if(id == null || id == string.Empty)
+            if(string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var userId = GetUserId();
+
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
+
+            if(mahasiswa == null)
             {
                 return NotFound();
             }
@@ -62,13 +71,14 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             );
 
+            var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(filter: p => p.IdMahasiswa == mahasiswa.Id);
+
             if(proyek == null)
             {
                 return NotFound();
             }
 
-            var userId = GetUserId();
-            var isMahasiswaTerdaftar = proyek.Mahasiswa.Any(m => m.IdUser == userId);
+            bool isMahasiswaTerdaftar = pendaftaran != null;
 
             var proyekVM = new ProyekVM()
             {
