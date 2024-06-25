@@ -1,10 +1,26 @@
-﻿@model ProyekVM
+﻿@using Microsoft.AspNetCore.Identity
+@model ProyekVM
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var roles = await UserManager.GetRolesAsync(user);
+}
 
 <div class="row">
     <div class="">
-        <partial name="Notification" />
+        <partial name="_Notification" />
         <div class="card mb-3">
-            <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
+            @if(Model.Proyek.FotoProyek != null)
+            {
+                <img src="@Model.Proyek.FotoProyek" class="card-img-top" alt="...">
+            }
+            else
+            {
+                <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
+            }
             <div class="card-body">
                 <h5 class="card-title">@Model.Proyek.NamaProyek</h5>
                 <p class="card-text">@Model.Proyek.Deskripsi</p>
@@ -12,17 +28,34 @@
                     <button class="btn btn-danger badge">@Model.Proyek.Kuota</button>
                     <button class="btn btn-danger badge">@Model.Proyek.Lokasi</button>
                 </div>
-                @if(Model.IsMahasiswaTerdaftar)
+
+
+                @if(roles.Contains("Mahasiswa"))
                 {
-                    <button type="submit" class="btn btn-success" disabled>Terdaftar</button>
+                    @if(Model.IsMahasiswaTerdaftar)
+                    {
+                        <button type="submit" class="btn btn-success" disabled>Terdaftar</button>
+                    }
+                    else
+                    {
+                        <form asp-action="Daftar" method="post">
+                            <input type="hidden" name="id" value="@Model.Proyek.Id" />
+                            <button type="submit" class="btn btn-primary">Daftar</button>
+                        </form>
+                    }
                 }
-                else
+                else if(roles.Contains("Dosen"))
                 {
-                    <form asp-action="Daftar" method="post">
+                    <form asp-action="DaftarForDosen" method="post">
                         <input type="hidden" name="id" value="@Model.Proyek.Id" />
-                        <button type="submit" class="btn btn-primary">Daftar</button>
+                        <button type="submit" class="btn btn-primary">Jadi pembimbing</button>
                     </form>
                 }
+                else if(roles.Contains("Admin"))
+                {
+                    <button type="button" class="btn btn-success" disabled>Youre gay</button>
+                }
+
             </div>
         </div>
 

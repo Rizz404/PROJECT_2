@@ -27,8 +27,9 @@ namespace SIPKK.Models
         [Display(Name = "Status Pembayaran")]
         public bool StatusPembayaran { get; set; }
 
-        [Required(ErrorMessage = "{0} harus diisi")]
-        [Display(Name = "Bukti Pembayaran")]
+        [ValidateNever]
+        // [Required(ErrorMessage = "{0} harus diisi")]
+        // [Display(Name = "Bukti Pembayaran")]
         public string? BuktiPembayaran { get; set; }
 
         [ForeignKey(nameof(IdMahasiswa))]

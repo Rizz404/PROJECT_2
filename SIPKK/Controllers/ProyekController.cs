@@ -16,11 +16,13 @@ namespace SIPKK.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<ProyekController> _logger; // Tambahkan logger
 
-        public ProyekController(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork)
+        public ProyekController(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, ILogger<ProyekController> logger)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         protected string GetUserId()
@@ -118,19 +120,6 @@ namespace SIPKK.Controllers
                 }
 
                 var persyaratan = await _unitOfWork.Persyaratan.GetAsync(p => p.IdMahasiswa == mahasiswa.Id);
-                if(persyaratan == null)
-                {
-                    persyaratan = new Persyaratan
-                    {
-                        IdMahasiswa = mahasiswa.Id,
-                        KetKelakuanBaik = false,
-                        KetOrangTua = false,
-                        KetSehat = false,
-                        KetPembayaran = false
-                    };
-                    await _unitOfWork.Persyaratan.CreateAsync(persyaratan);
-                    await _unitOfWork.SaveAsync();
-                }
 
                 if(!persyaratan.KetPembayaran || !persyaratan.KetKelakuanBaik || !persyaratan.KetOrangTua || !persyaratan.KetSehat)
                 {
@@ -165,12 +154,64 @@ namespace SIPKK.Controllers
                 }
                 catch(Exception ex)
                 {
-                    TempData["ErrorMessage"] = "Terjadi kesalahan internal saat mendaftar mahasiswa ke proyek.";
+                    // Log the full exception including inner exception
+                    _logger.LogError(ex, "Error occurred while registering mahasiswa to proyek.");
+
+                    // Output the exception details to the debug console
+                    Debug.WriteLine($"Exception: {ex.Message}");
+                    if(ex.InnerException != null)
+                    {
+                        Debug.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                        TempData["ErrorMessage"] = $"Inner Exception: {ex.InnerException.Message}";
+                    }
+
                     return RedirectToAction(nameof(Details), new { id });
                 }
             }
         }
 
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DaftarForDosen(string id)
+        {
+            var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == id);
 
+            if(string.IsNullOrEmpty(id) || proyek == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                var userId = GetUserId();
+
+                var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId);
+
+                dosen.IdProyek = proyek.Id;
+
+                await _unitOfWork.Dosen.UpdateAsync(dosen);
+                await _unitOfWork.SaveAsync();
+
+                TempData["SuccessMessage"] = "Berhasil menjadi pembimbing proyek";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch(Exception ex)
+            {
+                // Log the full exception including inner exception
+                _logger.LogError(ex, "Error intinya");
+
+                // Output the exception details to the debug console
+                Debug.WriteLine($"Exception: {ex.Message}");
+                if(ex.InnerException != null)
+                {
+                    Debug.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                    TempData["ErrorMessage"] = $"Inner Exception: {ex.InnerException.Message}";
+                }
+
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+        }
     }
 }
