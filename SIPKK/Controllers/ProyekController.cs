@@ -71,7 +71,7 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             );
 
-            var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(filter: p => p.IdMahasiswa == mahasiswa.Id && p.IdProyek == id);
+            var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(filter: p => p.IdMahasiswa == mahasiswa.Id);
 
             if(proyek == null)
             {
