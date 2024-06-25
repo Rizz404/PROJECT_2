@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SIPKK.Ultilities.Abstractions;
-using SIPKK.Ultilities.Interface;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -27,9 +26,9 @@ namespace SIPKK.Models
         [Display(Name = "Status Pembayaran")]
         public bool StatusPembayaran { get; set; }
 
-        [ValidateNever]
-        // [Required(ErrorMessage = "{0} harus diisi")]
-        // [Display(Name = "Bukti Pembayaran")]
+
+        [Required(ErrorMessage = "{0} harus diisi")]
+        [Display(Name = "Bukti Pembayaran")]
         public string? BuktiPembayaran { get; set; }
 
         [ForeignKey(nameof(IdMahasiswa))]

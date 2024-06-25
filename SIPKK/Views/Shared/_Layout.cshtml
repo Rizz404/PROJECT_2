@@ -1,31 +1,114 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      class="light-style layout-menu-fixed layout-compact"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="~/materio/assets/"
+      data-template="vertical-menu-template-free">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] GEH</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/sistem_informasi_pendaftaran_KKN_KKP.styles.css" asp-append-version="true" />
+    <link rel="icon" type="image/x-icon" href="~/materio/assets/img/favicon/favicon.ico" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link rel="stylesheet" href="~/materio/assets/vendor/fonts/materialdesignicons.css" />
+
+    <link rel="stylesheet" href="~/materio/assets/vendor/libs/node-waves/node-waves.css" />
+
+    <link rel="stylesheet" href="~/materio/assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="~/materio/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="~/materio/assets/css/demo.css" />
+
+    <link rel="stylesheet" href="~/materio/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="~/materio/assets/vendor/libs/apex-charts/apex-charts.css" />
+
+
+    <script src="~/materio/assets/vendor/js/helpers.js"></script>
+    <script src="~/materio/assets/js/config.js"></script>
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+
 </head>
 <body>
-    <header>
-          @await Html.PartialAsync("_Navbar")   
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    @inject SignInManager<ApplicationUser> SignInManager
+    @inject UserManager<ApplicationUser> UserManager
+
+    @{
+        var user = await UserManager.GetUserAsync(User);
+    }
+    @if (SignInManager.IsSignedIn(User) && user != null)
+    {
+        var roles = await UserManager.GetRolesAsync(user);
+
+        if (roles.Contains("Admin"))
+        {
+            <div class="layout-wrapper layout-content-navbar">
+                <div class="layout-container">
+                    <partial name="AsideAdmin" />
+                    <div class="layout-page">
+                        <partial name="NavAdmin" />
+                        <div class="container min-vh-100">
+                            @RenderBody()
+                            <div class="content-backdrop fade"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }else
+        {
+            
+            <header>
+                @await Html.PartialAsync("_Nav")
+            </header>
+            
+            <div class="container">
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+            </div>
+
+        }
+    }else
+    {
+
+        
+        <header>
+            @await Html.PartialAsync("_Nav")
+            
+        </header>
+        
+        <div class="container">
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+            </div>
+    }
+
 
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - sistem_informasi_pendaftaran_KKN_KKP - <a asp-area="Public" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <!--<script src="~/js/site.js" asp-append-version="true"></script>-->
+    <script src="~/materio/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="~/materio/assets/vendor/libs/popper/popper.js"></script>
+    <script src="~/materio/assets/vendor/js/bootstrap.js"></script>
+    <script src="~/materio/assets/vendor/libs/node-waves/node-waves.js"></script>
+    <script src="~/materio/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="~/materio/assets/vendor/js/menu.js"></script>
+
+
+    <script src="~/materio/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+
+    <script src="~/materio/assets/js/main.js"></script>
+
+    <script src="~/materio/assets/js/dashboards-analytics.js"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
