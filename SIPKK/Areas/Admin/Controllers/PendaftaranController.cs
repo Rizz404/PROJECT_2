@@ -109,11 +109,6 @@ namespace SIPKK.Areas.Admin.Controllers
             PendaftaranVM pendaftaranVM = new()
             {
                 Pendaftaran = pendaftaran,
-                MahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.FirstName,
-                    Value = p.Id
-                }),
             };
 
             return View(pendaftaranVM);
@@ -132,11 +127,6 @@ namespace SIPKK.Areas.Admin.Controllers
             }
             else
             {
-                pendaftaranVM.MahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.FirstName,
-                    Value = p.Id
-                });
                 return View(pendaftaranVM);
             }
         }

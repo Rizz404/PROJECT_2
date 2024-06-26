@@ -10,6 +10,7 @@ namespace SIPKK.Models.ViewModels
 {
     public class PendaftaranVM
     {
+        [ValidateNever]
         public Pendaftaran Pendaftaran { get; set; }
 
         [ValidateNever]

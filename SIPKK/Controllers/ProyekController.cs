@@ -24,13 +24,58 @@ namespace SIPKK.Controllers
             _logger = logger;
         }
 
-        protected string GetUserId()
+        public enum UserRole
         {
-            return _userManager.GetUserId(User);
+            Mahasiswa,
+            Dosen,
+            Admin
         }
+
+        protected async Task<UserRoleData> GetAssociatedRoleId(UserRole role)
+        {
+            var IdUser = _userManager.GetUserId(User);
+
+            switch(role)
+            {
+                case UserRole.Mahasiswa:
+                var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.IdUser == IdUser, includedProperties: [
+                    m => m.Proyek
+                ]);
+                if(mahasiswa != null)
+                {
+                    return new UserRoleData { Id = mahasiswa.Id, Proyek = mahasiswa.Proyek };
+                }
+                break;
+
+                case UserRole.Dosen:
+                var dosen = await _unitOfWork.Dosen.GetAsync(filter: d => d.IdUser == IdUser, includedProperties: [
+                    d => d.Proyek
+                ]);
+                if(dosen != null)
+                {
+                    return new UserRoleData { Id = dosen.Id, Proyek = dosen.Proyek };
+                }
+                break;
+
+                case UserRole.Admin:
+                var admin = await _unitOfWork.Admin.GetAsync(filter: a => a.IdUser == IdUser);
+                if(admin != null)
+                {
+                    return new UserRoleData { Id = admin.Id };
+                }
+                break;
+
+                default:
+                throw new ArgumentException("Role tidak dikenali", nameof(role));
+            }
+
+            throw new InvalidOperationException($"Tidak ditemukan entitas yang cocok untuk user dengan Id {IdUser} dan role {role}.");
+        }
+
 
         public async Task<IActionResult> Index()
         {
+            var currentMahasiswa = await GetAssociatedRoleId(UserRole.Mahasiswa);
             var proyekList = await _unitOfWork.Proyek.GetAllAsync(includedProperties:
             [
                 p => p.Mahasiswa,
@@ -39,11 +84,14 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             ]);
 
-            var proyekVMList = proyekList.Select(proyek => new ProyekVM
+            var proyekVMTasks = proyekList.Select(async proyek => new ProyekVM
             {
                 Proyek = proyek,
-                IsMahasiswaTerdaftar = proyek.Mahasiswa.Any(m => m.IdUser == GetUserId())
+                IsMahasiswaTerdaftar = proyek.Mahasiswa.Any(m => m.Id == currentMahasiswa.Id),
+                ProyekTerdaftarNameForCurrentMahasiswa = currentMahasiswa.Proyek.NamaProyek,
             }).ToList();
+
+            var proyekVMList = await Task.WhenAll(proyekVMTasks);
 
             return View(proyekVMList);
         }
@@ -55,14 +103,7 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            var userId = GetUserId();
-
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
-
-            if(mahasiswa == null)
-            {
-                return NotFound();
-            }
+            var currentMahasiswa = await GetAssociatedRoleId(UserRole.Mahasiswa);
 
             var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id,
                 p => p.Mahasiswa,
@@ -71,7 +112,7 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             );
 
-            var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(filter: p => p.IdMahasiswa == mahasiswa.Id);
+            var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(filter: p => p.IdMahasiswa == currentMahasiswa.Id);
 
             if(proyek == null)
             {
@@ -83,7 +124,8 @@ namespace SIPKK.Controllers
             var proyekVM = new ProyekVM()
             {
                 Proyek = proyek,
-                IsMahasiswaTerdaftar = isMahasiswaTerdaftar
+                IsMahasiswaTerdaftar = isMahasiswaTerdaftar,
+                ProyekTerdaftarNameForCurrentMahasiswa = currentMahasiswa.Proyek.NamaProyek
             };
 
             return View(proyekVM);
@@ -99,11 +141,11 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            var userId = GetUserId();
+            var currentMahasiswa = await GetAssociatedRoleId(UserRole.Mahasiswa);
 
             using(var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
+                var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.Id == currentMahasiswa.Id);
 
                 if(mahasiswa == null)
                 {
@@ -194,9 +236,8 @@ namespace SIPKK.Controllers
 
             try
             {
-                var userId = GetUserId();
-
-                var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId);
+                var currentDosen = await GetAssociatedRoleId(UserRole.Dosen);
+                var dosen = await _unitOfWork.Dosen.GetAsync(d => d.Id == currentDosen.Id);
 
                 dosen.IdProyek = proyek.Id;
 

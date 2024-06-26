@@ -14,5 +14,8 @@ namespace SIPKK.Models.ViewModels
 
         [ValidateNever]
         public bool IsMahasiswaTerdaftar { get; set; }
+
+        [ValidateNever]
+        public string? ProyekTerdaftarNameForCurrentMahasiswa { get; set; }
     }
 }

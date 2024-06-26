@@ -13,11 +13,7 @@
         <form asp-action="Edit">
             <input asp-for="Pendaftaran.Id" hidden />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Pendaftaran.IdMahasiswa" class="control-label"></label>
-                <select asp-for="@Model.Pendaftaran.IdMahasiswa" class="form-control" asp-items="@Model.MahasiswaList"></select>
-                <span asp-validation-for="Pendaftaran.IdMahasiswa" class="text-danger"></span>
-            </div>
+            <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Pendaftaran.TanggalPendaftaran" class="control-label"></label>
                 <input asp-for="Pendaftaran.TanggalPendaftaran" class="form-control" />
@@ -27,11 +23,6 @@
                 <label asp-for="Pendaftaran.StatusPembayaran" class="control-label"></label>
                 <input asp-for="Pendaftaran.StatusPembayaran" class="form-control" />
                 <span asp-validation-for="Pendaftaran.StatusPembayaran" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Pendaftaran.Id" class="control-label"></label>
-                <input asp-for="Pendaftaran.Id" class="form-control" />
-                <span asp-validation-for="Pendaftaran.Id" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Edit" class="btn btn-primary" />
