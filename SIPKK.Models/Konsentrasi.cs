@@ -18,7 +18,7 @@ namespace SIPKK.Models
 
         [MaxLength(100)]
         [Required(ErrorMessage = "{0} harus diisi")]
-        [Display(Name = "Proyek")]
+        [Display(Name = "Id Proyek")]
         [StringLength(100, ErrorMessage = "{0} harus diantara {2} sampai {1}.", MinimumLength = 3)]
         public required string Nama { get; set; }
 

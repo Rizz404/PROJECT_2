@@ -18,7 +18,7 @@ namespace SIPKK.Models
         public string NamaDosen { get; set; }
 
         [MaxLength(36)]
-        [Display(Name = "Proyek")]
+        [Display(Name = "Id Proyek")]
         public string? IdProyek { get; set; }
 
         [MaxLength(10)]
