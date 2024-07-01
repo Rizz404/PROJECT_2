@@ -32,13 +32,13 @@
 
                 @if(roles.Contains("Mahasiswa"))
                 {
-                    @if(Model.IsMahasiswaTerdaftar)
+                    @if(Model.IsMahasiswaTerdaftar != false)
                     {
                         <span>terdaftar di proyek @Model.ProyekTerdaftarNameForCurrentMahasiswa menungu konfirmasi pembayaran</span>
                     }
                     else
                     {
-                        <a asp-action="UploadBiayaPendaftaran" asp-controller="Pendaftaran" asp-route-id="@Model.Proyek.Id">Daftar</a>
+                        <a asp-action="UploadBiayaPendaftaran" asp-controller="Pendaftaran" asp-route-id="@Model.Proyek.Id" class="btn btn-primary">Daftar</a>
                     }
                 }
                 else if(roles.Contains("Dosen"))

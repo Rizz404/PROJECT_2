@@ -84,17 +84,35 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             ]);
 
-            var proyekVMTasks = proyekList.Select(async proyek => new ProyekVM
+            TempData["ErrorMessage"] = currentMahasiswa.Proyek;
+
+            var proyekVMTasks = proyekList.Select(proyek =>
             {
-                Proyek = proyek,
-                IsMahasiswaTerdaftar = proyek.Mahasiswa.Any(m => m.Id == currentMahasiswa.Id),
-                ProyekTerdaftarNameForCurrentMahasiswa = currentMahasiswa.Proyek.NamaProyek,
+                bool isMahasiswaTerdaftar = false;
+                string? proyekTerdaftarNameForCurrentMahasiswa = null;
+
+                if(currentMahasiswa != null && currentMahasiswa.Proyek != null)
+                {
+                    isMahasiswaTerdaftar = proyek.Mahasiswa.Any(m => m.Id == currentMahasiswa.Id);
+                    if(isMahasiswaTerdaftar == true)
+                    {
+                        proyekTerdaftarNameForCurrentMahasiswa = currentMahasiswa.Proyek.NamaProyek;
+                    }
+                }
+
+                return Task.FromResult(new ProyekVM
+                {
+                    Proyek = proyek,
+                    IsMahasiswaTerdaftar = isMahasiswaTerdaftar,
+                    ProyekTerdaftarNameForCurrentMahasiswa = proyekTerdaftarNameForCurrentMahasiswa
+                });
             }).ToList();
 
             var proyekVMList = await Task.WhenAll(proyekVMTasks);
 
             return View(proyekVMList);
         }
+
 
         public async Task<IActionResult> Details(string id)
         {
@@ -120,12 +138,18 @@ namespace SIPKK.Controllers
             }
 
             bool isMahasiswaTerdaftar = pendaftaran != null;
+            string? proyekTerdaftarNameForCurrentMahasiswa = null;
+
+            if(currentMahasiswa.Proyek != null)
+            {
+                proyekTerdaftarNameForCurrentMahasiswa = currentMahasiswa.Proyek.NamaProyek;
+            }
 
             var proyekVM = new ProyekVM()
             {
                 Proyek = proyek,
                 IsMahasiswaTerdaftar = isMahasiswaTerdaftar,
-                ProyekTerdaftarNameForCurrentMahasiswa = currentMahasiswa.Proyek.NamaProyek
+                ProyekTerdaftarNameForCurrentMahasiswa = proyekTerdaftarNameForCurrentMahasiswa
             };
 
             return View(proyekVM);
