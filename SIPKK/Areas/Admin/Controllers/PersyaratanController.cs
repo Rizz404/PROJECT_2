@@ -128,15 +128,6 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             if(ModelState.IsValid)
             {
-                // Logging data for debugging
-                Debug.WriteLine("Editing Persyaratan:");
-                Debug.WriteLine($"Id: {persyaratanVM.Persyaratan.Id}");
-                Debug.WriteLine($"IdMahasiswa: {persyaratanVM.Persyaratan.IdMahasiswa}");
-                Debug.WriteLine($"KetSehat: {persyaratanVM.Persyaratan.KetSehat}");
-                Debug.WriteLine($"KetPembayaran: {persyaratanVM.Persyaratan.KetPembayaran}");
-                Debug.WriteLine($"KetOrangTua: {persyaratanVM.Persyaratan.KetOrangTua}");
-                Debug.WriteLine($"KetKelakuanBaik: {persyaratanVM.Persyaratan.KetKelakuanBaik}");
-
                 await _unitOfWork.Persyaratan.UpdateAsync(persyaratanVM.Persyaratan);
                 await _unitOfWork.SaveAsync();
                 TempData["Success"] = "Persyaratan updated successfully";

@@ -34,11 +34,38 @@ namespace SIPKK.Controllers
         {
             var userId = GetUserId();
 
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.IdUser == userId, includedProperties: [
+                m => m.Persyaratan,
+                ]);
 
             if(mahasiswa == null)
             {
                 return NotFound();
+            }
+
+            var errorMessages = new List<string>();
+
+            if(mahasiswa.Persyaratan.KetPembayaran == false)
+            {
+                errorMessages.Add("Kamu belum mengupload bukti pembayaran");
+            }
+            if(mahasiswa.Persyaratan.KetOrangTua == false)
+            {
+                errorMessages.Add("Kamu belum mengupload bukti persetujuan orang tua");
+            }
+            if(mahasiswa.Persyaratan.KetKelakuanBaik == false)
+            {
+                errorMessages.Add("Kamu belum mengupload bukti kelakuan baik");
+            }
+            if(mahasiswa.Persyaratan.KetSehat == false)
+            {
+                errorMessages.Add("Kamu belum mengupload bukti keterangan sehat");
+            }
+
+            if(errorMessages.Any())
+            {
+                TempData["ErrorMessage"] = errorMessages;
+                return Redirect(Request.Headers["Referer"].ToString());
             }
 
             var pendaftaran = new Pendaftaran()
@@ -96,10 +123,9 @@ namespace SIPKK.Controllers
                     pendaftaranVM.Pendaftaran.BuktiPembayaran = @"\images\bukti-pembayaran\" + filename;
                 }
                 // Log the TanggalPendaftaran to ensure it is set correctly
-                Debug.WriteLine("TanggalPendaftaran: " + pendaftaranVM.Pendaftaran.TanggalPendaftaran.ToString("o")); // ISO 8601 format
                 await _unitOfWork.Pendaftaran.CreateAsync(pendaftaranVM.Pendaftaran);
                 await _unitOfWork.SaveAsync();
-                TempData["ErrorMessage"] = "Berhasil upload bukti pembayaran";
+                TempData["SuccessMessage"] = "Berhasil upload bukti pembayaran menunggu konfirmasi admin";
                 return Redirect($"/Proyek/Details/{pendaftaranVM.Pendaftaran.IdProyek}");
             }
             return View(pendaftaranVM);
