@@ -34,11 +34,38 @@ namespace SIPKK.Controllers
         {
             var userId = GetUserId();
 
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.IdUser == userId, includedProperties: [
+                m => m.Persyaratan,
+                ]);
 
             if(mahasiswa == null)
             {
                 return NotFound();
+            }
+
+            var errorMessages = new List<string>();
+
+            if(mahasiswa.Persyaratan.KetPembayaran == false)
+            {
+                errorMessages.Add("Kamu belum mengupload bukti pembayaran");
+            }
+            if(mahasiswa.Persyaratan.KetOrangTua == false)
+            {
+                errorMessages.Add("Kamu belum mengupload bukti persetujuan orang tua");
+            }
+            if(mahasiswa.Persyaratan.KetKelakuanBaik == false)
+            {
+                errorMessages.Add("Kamu belum mengupload bukti kelakuan baik");
+            }
+            if(mahasiswa.Persyaratan.KetSehat == false)
+            {
+                errorMessages.Add("Kamu belum mengupload bukti keterangan sehat");
+            }
+
+            if(errorMessages.Any())
+            {
+                TempData["ErrorMessage"] = errorMessages;
+                return Redirect(Request.Headers["Referer"].ToString());
             }
 
             var pendaftaran = new Pendaftaran()
