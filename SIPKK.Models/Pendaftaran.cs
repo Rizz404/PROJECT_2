@@ -9,12 +9,12 @@ namespace SIPKK.Models
     {
         [MaxLength(36)]
         [Required(ErrorMessage = "{0} harus diisi")]
-        [Display(Name = "Mahasiswa")]
+        [Display(Name = "Id Mahasiswa")]
         public string IdMahasiswa { get; set; }
 
         [MaxLength(36)]
         [Required(ErrorMessage = "{0} harus diisi")]
-        [Display(Name = "Mahasiswa")]
+        [Display(Name = "Id Proyek")]
         public string IdProyek { get; set; }
 
         private DateTime _tanggalPendaftaran;
@@ -27,7 +27,6 @@ namespace SIPKK.Models
             set => _tanggalPendaftaran = DateTime.SpecifyKind(value, DateTimeKind.Utc);
         }
 
-        // nanti kasih enum aja
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Status Pembayaran")]
         public bool StatusPembayaran { get; set; }

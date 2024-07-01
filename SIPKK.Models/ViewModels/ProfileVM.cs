@@ -51,7 +51,7 @@ namespace SIPKK.Models.ViewModels
         public string Konsentrasi { get; set; }
 
         [ValidateNever]
-        [Display(Name = "Proyek")]
+        [Display(Name = "Id Proyek")]
         public string? Proyek { get; set; }
 
         [ValidateNever]

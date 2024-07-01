@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<ProyekVM>
 
 <div class="row">
+    <partial name="_Notification" />
     @foreach(var proyek in Model)
     {
         <div class="col-md-3 mb-2">
@@ -16,7 +17,7 @@
                 <div class="card-body">
                     <h5 class="card-title">@proyek.Proyek.NamaProyek</h5>
                     <p class="card-text">@proyek.Proyek.Deskripsi</p>
-                    @if(proyek.IsMahasiswaTerdaftar)
+                    @if(proyek.IsMahasiswaTerdaftar != false)
                     {
                         <span class="btn btn-success badge">Terdaftar</span>
                     }

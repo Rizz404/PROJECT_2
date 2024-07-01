@@ -52,7 +52,7 @@ namespace SIPKK.Models
         public string IdKonsentrasi { get; set; }
 
         [MaxLength(36)]
-        [Display(Name = "Proyek")]
+        [Display(Name = "Id Proyek")]
         public string? IdProyek { get; set; }
 
         [Range(1, 12, ErrorMessage = "Semester harus di antara 1 sampai 12")]
