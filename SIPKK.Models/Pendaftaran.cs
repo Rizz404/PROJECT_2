@@ -27,7 +27,6 @@ namespace SIPKK.Models
             set => _tanggalPendaftaran = DateTime.SpecifyKind(value, DateTimeKind.Utc);
         }
 
-        // nanti kasih enum aja
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Status Pembayaran")]
         public bool StatusPembayaran { get; set; }

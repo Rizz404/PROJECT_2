@@ -72,7 +72,6 @@ namespace SIPKK.Controllers
             throw new InvalidOperationException($"Tidak ditemukan entitas yang cocok untuk user dengan Id {IdUser} dan role {role}.");
         }
 
-
         public async Task<IActionResult> Index()
         {
             var currentMahasiswa = await GetAssociatedRoleId(UserRole.Mahasiswa);
