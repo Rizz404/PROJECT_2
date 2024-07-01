@@ -63,6 +63,11 @@ namespace SIPKK.Areas.Admin.Controllers
                     Text = p.FirstName,
                     Value = p.Id
                 }),
+                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaProyek,
+                    Value = p.Id
+                }),
             };
 
             return View(pendaftaranVM);
@@ -118,17 +123,25 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(PendaftaranVM pendaftaranVM)
         {
+            // karena ada upload image mungkin jadi error 
             if(ModelState.IsValid)
             {
-                await _unitOfWork.Pendaftaran.UpdateAsync(pendaftaranVM.Pendaftaran);
-                await _unitOfWork.SaveAsync();
-                TempData["Success"] = "Pendaftaran updated successfully";
-                return RedirectToAction(nameof(Index));
+                var pendaftaranFromDb = await _unitOfWork.Pendaftaran.GetAsync(d => d.Id == pendaftaranVM.Pendaftaran.Id);
+                if(pendaftaranFromDb == null)
+                {
+                    return NotFound();
+                }
+
+                if(await TryUpdateModelAsync(pendaftaranFromDb, "Pendaftaran",
+                    p => p.TanggalPendaftaran, p => p.StatusPembayaran))
+                {
+                    await _unitOfWork.SaveAsync();
+                    TempData["Success"] = "Pendaftaran updated successfully";
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            else
-            {
-                return View(pendaftaranVM);
-            }
+
+            return View(pendaftaranVM);
         }
 
         // GET: Pendaftaran/Delete/5

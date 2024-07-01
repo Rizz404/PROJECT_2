@@ -123,10 +123,9 @@ namespace SIPKK.Controllers
                     pendaftaranVM.Pendaftaran.BuktiPembayaran = @"\images\bukti-pembayaran\" + filename;
                 }
                 // Log the TanggalPendaftaran to ensure it is set correctly
-                Debug.WriteLine("TanggalPendaftaran: " + pendaftaranVM.Pendaftaran.TanggalPendaftaran.ToString("o")); // ISO 8601 format
                 await _unitOfWork.Pendaftaran.CreateAsync(pendaftaranVM.Pendaftaran);
                 await _unitOfWork.SaveAsync();
-                TempData["ErrorMessage"] = "Berhasil upload bukti pembayaran";
+                TempData["SuccessMessage"] = "Berhasil upload bukti pembayaran menunggu konfirmasi admin";
                 return Redirect($"/Proyek/Details/{pendaftaranVM.Pendaftaran.IdProyek}");
             }
             return View(pendaftaranVM);

@@ -15,5 +15,8 @@ namespace SIPKK.Models.ViewModels
 
         [ValidateNever]
         public IEnumerable<SelectListItem> MahasiswaList { get; set; }
+
+        [ValidateNever]
+        public IEnumerable<SelectListItem> ProyekList { get; set; }
     }
 }
