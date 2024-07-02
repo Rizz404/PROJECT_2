@@ -34,8 +34,8 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Proyek
         public async Task<IActionResult> Index()
         {
-            List<Proyek> biayaOperasionalList = (await _unitOfWork.Proyek.GetAllAsync()).ToList();
-            return View(biayaOperasionalList);
+            List<Proyek> proyekList = (await _unitOfWork.Proyek.GetAllAsync()).ToList();
+            return View(proyekList);
         }
 
         // GET: Proyek/Details/5
@@ -46,14 +46,14 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Proyek biayaOperasional = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+            Proyek proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
 
-            if(biayaOperasional == null)
+            if(proyek == null)
             {
                 return NotFound();
             }
 
-            return View(biayaOperasional);
+            return View(proyek);
         }
 
         // GET: Proyek/Create
@@ -101,16 +101,16 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Proyek? biayaOperasional = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+            Proyek? proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
 
-            if(biayaOperasional == null)
+            if(proyek == null)
             {
                 return NotFound();
             }
 
             ProyekVM proyekVM = new()
             {
-                Proyek = biayaOperasional,
+                Proyek = proyek,
             };
 
             return View(proyekVM);
@@ -123,27 +123,53 @@ namespace SIPKK.Areas.Admin.Controllers
             if(ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
+                var proyekFromDb = await _unitOfWork.Proyek.GetAsync(d => d.Id == proyekVM.Proyek.Id);
 
-                if(file != null)
+                if(proyekFromDb == null)
                 {
-                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string mahasiswaPath = Path.Combine(wwwRootPath, @"images\proyek");
-
-                    using(var fileStream = new FileStream(Path.Combine(mahasiswaPath, filename), FileMode.Create))
-                    {
-                        file.CopyTo(fileStream);
-                    }
-
-                    proyekVM.Proyek.FotoProyek = @"\images\proyek\" + filename;
+                    return NotFound();
                 }
 
-                await _unitOfWork.Proyek.UpdateAsync(proyekVM.Proyek);
-                await _unitOfWork.SaveAsync();
-                TempData["Success"] = "Proyek updated successfully";
-                return RedirectToAction(nameof(Index));
+                // Update the Proyek fields
+                if(await TryUpdateModelAsync(proyekFromDb, "Proyek",
+                    p => p.NamaProyek, p => p.Deskripsi, p => p.TanggalMulai, p => p.TanggalSelesai, p => p.Lokasi, p => p.Kuota, p => p.Verified, p => p.SudahSelesai))
+                {
+                    // If a new file is uploaded, update the FotoProyek field
+                    if(file != null)
+                    {
+                        string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                        string proyekPath = Path.Combine(wwwRootPath, @"images\proyek");
+
+                        using(var fileStream = new FileStream(Path.Combine(proyekPath, filename), FileMode.Create))
+                        {
+                            file.CopyTo(fileStream);
+                        }
+
+                        // Optionally, delete the old image file
+                        if(!string.IsNullOrEmpty(proyekFromDb.FotoProyek))
+                        {
+                            var oldImagePath = Path.Combine(wwwRootPath, proyekFromDb.FotoProyek.TrimStart('\\'));
+                            if(System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                        }
+
+                        proyekFromDb.FotoProyek = @"\images\proyek\" + filename;
+                    }
+
+                    // Update Proyek entity
+                    await _unitOfWork.Proyek.UpdateAsync(proyekFromDb);
+                    await _unitOfWork.SaveAsync();
+
+                    TempData["SuccessMessage"] = "Proyek updated successfully";
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            return View();
+
+            return View(proyekVM);
         }
+
 
         // GET: Proyek/Delete/5
         public async Task<IActionResult> Delete(string id)
@@ -153,14 +179,14 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Proyek biayaOperasional = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+            Proyek proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
 
-            if(biayaOperasional == null)
+            if(proyek == null)
             {
                 return NotFound();
             }
 
-            return View(biayaOperasional);
+            return View(proyek);
         }
 
         // POST: Proyek/Delete/5
@@ -168,13 +194,13 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Proyek? biayaOperasional = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+            Proyek? proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
 
-            if(biayaOperasional == null)
+            if(proyek == null)
             {
                 return NotFound();
             }
-            await _unitOfWork.Proyek.DeleteAsync(biayaOperasional);
+            await _unitOfWork.Proyek.DeleteAsync(proyek);
             await _unitOfWork.SaveAsync();
             TempData["Success"] = "Proyek deleted successfully";
             return RedirectToAction(nameof(Index));

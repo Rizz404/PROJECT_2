@@ -1,0 +1,93 @@
+﻿@using System.Web
+@model IEnumerable<Mahasiswa>
+
+@{
+    ViewData["Title"] = "Laporan";
+    int counter = 1;
+}
+
+<h1>Mahasiswa terdaftar ke proyek yang sama</h1>
+
+<div class="table-responsive mh-100">
+    <table class="table table-striped align-middle text-center">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>@Html.DisplayNameFor(model => model.NIM)</th>
+                <th>Nama Lengkap</th>
+                <th>@Html.DisplayNameFor(model => model.IdProgramStudi)</th>
+                <th>@Html.DisplayNameFor(model => model.IdProgramStudi)</th>
+                <th>@Html.DisplayNameFor(model => model.Semester)</th>
+                <th>Proyek</th>
+                <th>@Html.DisplayNameFor(model => model.Laporan)</th>
+                <th>Biaya Proyek</th>
+                <th>Biaya Transportasi</th>
+                <th>Biaya Dll</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Model)
+            {
+                string fullname = item.FirstName + " " + item.LastName;
+
+                <tr>
+                    <td>@counter</td>
+                    <td>@item.NIM</td>
+                    <td>@fullname</td>
+                    <td>@item.ProgramStudi.Nama</td>
+                    <td>@item.Konsentrasi.Nama</td>
+                    <td>@item.Semester</td>
+                    <td>
+                        @if(item.Proyek != null)
+                        {
+                            @item.Proyek.NamaProyek
+                        }
+                    </td>
+                    <td>
+                        @if(item.Laporan != null && item.Laporan.FileLaporan != null)
+                        {
+                            string fileLaporanPath = $"{item.Laporan.FileLaporan}";
+                            <a href="@fileLaporanPath" download="laporan">Unduh Laporan</a>
+                        }
+                        else
+                        {
+                            <span>Belum upload laporan</span>
+                        }
+                    </td>
+                    <td>
+                        @if(item.BiayaOperasional != null)
+                        {
+                            @item.BiayaOperasional.BiayaProyek
+                        }
+                        else
+                        {
+                            <span>Belum upload biaya proyek</span>
+                        }
+                    </td>
+                    <td>
+                        @if(item.BiayaOperasional != null)
+                        {
+                            @item.BiayaOperasional.BiayaTransportasi
+                        }
+                        else
+                        {
+                            <span>Belum upload biaya transportasi</span>
+                        }
+                    </td>
+                    <td>
+                        @if(item.BiayaOperasional != null)
+                        {
+                            @item.BiayaOperasional.BiayaDll
+                        }
+                        else
+                        {
+                            <span>Belum upload biaya dll</span>
+                        }
+                    </td>
+
+                </tr>
+                counter++;
+            }
+        </tbody>
+    </table>
+</div>

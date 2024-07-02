@@ -27,15 +27,15 @@
                     }
                     <div class="my-2 d-flex gap-2 flex-wrap">
                         <button class="btn btn-danger badge">@proyek.Proyek.Kuota</button>
-                        @if(proyek.Proyek.Verified == true)
+                        <button class="btn btn-danger badge">@proyek.Proyek.Lokasi</button>
+                        @if(proyek.Proyek.Verified == true && proyek.Proyek.SudahSelesai == false)
                         {
                             <button class="btn btn-warning badge">Berjalan</button>
                         }
-                        @if(proyek.Proyek.SudahSelesai == true)
+                        else if(proyek.Proyek.SudahSelesai == true)
                         {
                             <button class="btn btn-warning badge">Selesai</button>
                         }
-                        <button class="btn btn-danger badge">@proyek.Proyek.Lokasi</button>
                     </div>
                     <a asp-action="Details" asp-route-id="@proyek.Proyek.Id" class="btn btn-primary">Detail</a>
                 </div>
