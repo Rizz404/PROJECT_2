@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using Visus.Cuid;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -82,7 +83,7 @@ namespace SIPKK.Areas.Admin.Controllers
             {
                 await _unitOfWork.Pendaftaran.CreateAsync(pendaftaranVM.Pendaftaran);
                 await _unitOfWork.SaveAsync();
-                TempData["Success"] = "Pendaftaran created successfully";
+                TempData["SuccessMessage"] = "Pendaftaran created successfully";
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -132,12 +133,41 @@ namespace SIPKK.Areas.Admin.Controllers
                     return NotFound();
                 }
 
-                if(await TryUpdateModelAsync(pendaftaranFromDb, "Pendaftaran",
-                    p => p.TanggalPendaftaran, p => p.StatusPembayaran))
+                using(var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
-                    await _unitOfWork.SaveAsync();
-                    TempData["Success"] = "Pendaftaran updated successfully";
-                    return RedirectToAction(nameof(Index));
+                    try
+                    {
+                        if(await TryUpdateModelAsync(pendaftaranFromDb, "Pendaftaran",
+                        p => p.TanggalPendaftaran, p => p.StatusPembayaran))
+                        {
+                            if(!string.IsNullOrEmpty(pendaftaranFromDb.BuktiPembayaran) && pendaftaranFromDb.StatusPembayaran == true)
+                            {
+                                Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.Id == pendaftaranFromDb.IdMahasiswa);
+                                if(mahasiswa != null)
+                                {
+                                    mahasiswa.IdProyek = pendaftaranFromDb.IdProyek;
+                                    await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
+                                }
+                            }
+
+                            await _unitOfWork.SaveAsync();
+                            scope.Complete();
+                            TempData["SuccessMessage"] = "Pendaftaran updated successfully";
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        // Output the exception details to the debug console
+                        Debug.WriteLine($"Exception: {ex.Message}");
+                        if(ex.InnerException != null)
+                        {
+                            Debug.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                            TempData["ErrorMessage"] = $"Inner Exception: {ex.InnerException.Message}";
+                        }
+
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
             }
 
@@ -175,7 +205,7 @@ namespace SIPKK.Areas.Admin.Controllers
             }
             await _unitOfWork.Pendaftaran.DeleteAsync(pendaftaran);
             await _unitOfWork.SaveAsync();
-            TempData["Success"] = "Pendaftaran deleted successfully";
+            TempData["SuccessMessage"] = "Pendaftaran deleted successfully";
             return RedirectToAction(nameof(Index));
         }
     }

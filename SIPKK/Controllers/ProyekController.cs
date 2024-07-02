@@ -31,6 +31,7 @@ namespace SIPKK.Controllers
             Admin
         }
 
+        // nanti ini fix kalo udah jadi dan jadiin service aja
         protected async Task<UserRoleData> GetAssociatedRoleId(UserRole role)
         {
             var IdUser = _userManager.GetUserId(User);
@@ -39,7 +40,7 @@ namespace SIPKK.Controllers
             {
                 case UserRole.Mahasiswa:
                 var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.IdUser == IdUser, includedProperties: [
-                    m => m.Proyek
+                    m => m.Proyek,
                 ]);
                 if(mahasiswa != null)
                 {
@@ -74,6 +75,12 @@ namespace SIPKK.Controllers
 
         public async Task<IActionResult> Index()
         {
+            if(!User.Identity.IsAuthenticated)
+            {
+                var proyekListNotAuth = await _unitOfWork.Proyek.GetAllAsync();
+                return View(proyekListNotAuth.Select(proyek => new ProyekVM() { Proyek = proyek }));
+            }
+
             var currentMahasiswa = await GetAssociatedRoleId(UserRole.Mahasiswa);
             var proyekList = await _unitOfWork.Proyek.GetAllAsync(includedProperties:
             [
@@ -83,31 +90,54 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             ]);
 
-            TempData["ErrorMessage"] = currentMahasiswa.Proyek;
+            if(proyekList == null || !proyekList.Any())
+            {
+                TempData["ErrorMessage"] = "Tidak ada proyek";
+                return View();
+            }
+
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.Id == currentMahasiswa.Id, includedProperties: [
+               m => m.Proyek,
+            ]);
+            var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(filter: p => p.IdMahasiswa == currentMahasiswa.Id, includedProperties: [
+               p => p.Proyek
+            ]);
 
             var proyekVMTasks = proyekList.Select(proyek =>
             {
-                bool isMahasiswaTerdaftar = false;
                 string? proyekTerdaftarNameForCurrentMahasiswa = null;
+                ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-                if(currentMahasiswa != null && currentMahasiswa.Proyek != null)
+                if(pendaftaran.StatusPembayaran == false)
                 {
-                    isMahasiswaTerdaftar = proyek.Mahasiswa.Any(m => m.Id == currentMahasiswa.Id);
-                    if(isMahasiswaTerdaftar == true)
+                    status = ProyekVM.Status.PENDING;
+                    proyekTerdaftarNameForCurrentMahasiswa = pendaftaran.Proyek.NamaProyek;
+                }
+
+                if(!string.IsNullOrEmpty(mahasiswa.IdProyek) && mahasiswa.Proyek != null)
+                {
+                    if(mahasiswa.IdProyek == proyek.Id)
                     {
-                        proyekTerdaftarNameForCurrentMahasiswa = currentMahasiswa.Proyek.NamaProyek;
+                        status = ProyekVM.Status.TERDAFTAR;
                     }
+                    else
+                    {
+                        status = ProyekVM.Status.TERDAFTAR_PROYEK_LAIN;
+                    }
+                    proyekTerdaftarNameForCurrentMahasiswa = mahasiswa.Proyek.NamaProyek;
                 }
 
                 return Task.FromResult(new ProyekVM
                 {
                     Proyek = proyek,
-                    IsMahasiswaTerdaftar = isMahasiswaTerdaftar,
-                    ProyekTerdaftarNameForCurrentMahasiswa = proyekTerdaftarNameForCurrentMahasiswa
+                    ProyekTerdaftarNameForCurrentMahasiswa = proyekTerdaftarNameForCurrentMahasiswa,
+                    StatusMahasiswa = status
                 });
+                ;
             }).ToList();
 
             var proyekVMList = await Task.WhenAll(proyekVMTasks);
+
 
             return View(proyekVMList);
         }
@@ -120,7 +150,11 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            var currentMahasiswa = await GetAssociatedRoleId(UserRole.Mahasiswa);
+            if(!User.Identity.IsAuthenticated)
+            {
+                var proyekNotAuth = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+                return View(new ProyekVM() { Proyek = proyekNotAuth });
+            }
 
             var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id,
                 p => p.Mahasiswa,
@@ -129,28 +163,51 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             );
 
-            var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(filter: p => p.IdMahasiswa == currentMahasiswa.Id);
-
             if(proyek == null)
             {
                 return NotFound();
             }
 
-            bool isMahasiswaTerdaftar = pendaftaran != null;
-            string? proyekTerdaftarNameForCurrentMahasiswa = null;
+            var currentMahasiswa = await GetAssociatedRoleId(UserRole.Mahasiswa);
 
-            if(currentMahasiswa.Proyek != null)
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.Id == currentMahasiswa.Id, includedProperties: [
+                m=> m.Proyek
+            ]);
+            var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(filter: p => p.IdMahasiswa == currentMahasiswa.Id, includedProperties: [
+                p=> p.Proyek
+            ]);
+
+
+            string? proyekTerdaftarNameForCurrentMahasiswa = null;
+            ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
+
+            if(pendaftaran.StatusPembayaran == false)
             {
-                proyekTerdaftarNameForCurrentMahasiswa = currentMahasiswa.Proyek.NamaProyek;
+                status = ProyekVM.Status.PENDING;
+                proyekTerdaftarNameForCurrentMahasiswa = pendaftaran.Proyek.NamaProyek;
+            }
+
+            if(!string.IsNullOrEmpty(mahasiswa.IdProyek) && mahasiswa.Proyek != null)
+            {
+                if(mahasiswa.IdProyek == proyek.Id)
+                {
+                    status = ProyekVM.Status.TERDAFTAR;
+                }
+                else
+                {
+                    status = ProyekVM.Status.TERDAFTAR_PROYEK_LAIN;
+                }
+                proyekTerdaftarNameForCurrentMahasiswa = mahasiswa.Proyek.NamaProyek;
             }
 
             var proyekVM = new ProyekVM()
             {
                 Proyek = proyek,
-                IsMahasiswaTerdaftar = isMahasiswaTerdaftar,
-                ProyekTerdaftarNameForCurrentMahasiswa = proyekTerdaftarNameForCurrentMahasiswa
+                ProyekTerdaftarNameForCurrentMahasiswa = proyekTerdaftarNameForCurrentMahasiswa,
+                StatusMahasiswa = status
             };
 
+            TempData["SuccessMessage"] = proyekTerdaftarNameForCurrentMahasiswa;
             return View(proyekVM);
         }
 

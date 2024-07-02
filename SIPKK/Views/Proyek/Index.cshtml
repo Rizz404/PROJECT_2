@@ -17,12 +17,24 @@
                 <div class="card-body">
                     <h5 class="card-title">@proyek.Proyek.NamaProyek</h5>
                     <p class="card-text">@proyek.Proyek.Deskripsi</p>
-                    @if(proyek.IsMahasiswaTerdaftar != false)
+                    @if(proyek.StatusMahasiswa == ProyekVM.Status.PENDING)
+                    {
+                        <span>terdaftar di proyek  <span class="btn btn-success badge"> @proyek.ProyekTerdaftarNameForCurrentMahasiswa</span> menungu konfirmasi pembayaran</span>
+                    }
+                    else if(proyek.StatusMahasiswa == ProyekVM.Status.TERDAFTAR)
                     {
                         <span class="btn btn-success badge">Terdaftar</span>
                     }
                     <div class="my-2 d-flex gap-2 flex-wrap">
                         <button class="btn btn-danger badge">@proyek.Proyek.Kuota</button>
+                        @if(proyek.Proyek.Verified == true)
+                        {
+                            <button class="btn btn-warning badge">Berjalan</button>
+                        }
+                        @if(proyek.Proyek.SudahSelesai == true)
+                        {
+                            <button class="btn btn-warning badge">Selesai</button>
+                        }
                         <button class="btn btn-danger badge">@proyek.Proyek.Lokasi</button>
                     </div>
                     <a asp-action="Details" asp-route-id="@proyek.Proyek.Id" class="btn btn-primary">Detail</a>

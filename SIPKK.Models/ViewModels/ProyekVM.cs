@@ -10,10 +10,15 @@ namespace SIPKK.Models.ViewModels
 {
     public class ProyekVM
     {
+        public enum Status
+        {
+            TIDAK_TERDAFTAR, TERDAFTAR, PENDING, TERDAFTAR_PROYEK_LAIN
+        }
+
         public Proyek Proyek { get; set; }
 
         [ValidateNever]
-        public bool? IsMahasiswaTerdaftar { get; set; }
+        public Status StatusMahasiswa { get; set; }
 
         [ValidateNever]
         public string? ProyekTerdaftarNameForCurrentMahasiswa { get; set; }

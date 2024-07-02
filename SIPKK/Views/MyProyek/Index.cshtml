@@ -1,22 +1,25 @@
 ﻿@model MyProyekVM
 
 <h2>Proyek Kamu</h2>
-<div>
-    <h3>@Model.Mahasiswa.FirstName</h3>
-    <p>Program Studi: @Model.Mahasiswa.ProgramStudi.Nama</p>
-    <p>Konsentrasi: @Model.Mahasiswa.Konsentrasi.Nama</p>
-</div>
-
-<h2>Detail Proyek</h2>
 @if(Model.Proyek != null)
 {
-    <div>
-        <h3>@Model.Proyek.NamaProyek</h3>
-        <p>Deskripsi: @Model.Proyek.Deskripsi</p>
+    <div class="card mb-4" style="width:42rem;">
         @if(!string.IsNullOrEmpty(Model.Proyek.FotoProyek))
         {
-            <p>Foto Proyek: <img src="@Model.Proyek.FotoProyek" alt="Foto Proyek" /></p>
+            <img src="@Model.Proyek.FotoProyek" class="card-img-top img-fluid" alt="...">
         }
+        else
+        {
+            <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
+        }
+        <div class="card-body">
+            <h5 class="card-title">@Model.Proyek.NamaProyek</h5>
+            <p class="card-text">@Model.Proyek.Deskripsi</p>
+            <div class="my-2 d-flex gap-2 flex-wrap">
+                <button class="btn btn-danger badge">@Model.Proyek.Kuota</button>
+                <button class="btn btn-danger badge">@Model.Proyek.Lokasi</button>
+            </div>
+        </div>
     </div>
 }
 else
@@ -24,30 +27,38 @@ else
     <p>Kamu belum mendaftar ke proyek manapun</p>
 }
 
-<h2>Detail Laporan</h2>
-@if(Model.Laporan != null)
+@if(Model.Proyek != null && Model.Proyek.SudahSelesai == true)
 {
-    <div>
-        <h3>@Model.Laporan.Keterangan</h3>
-        @if(!string.IsNullOrEmpty(Model.Laporan.FotoLaporan))
-        {
-            <p>Foto Proyek: <img src="@Model.Laporan.FotoLaporan" alt="Foto Proyek" /></p>
-        }
-    </div>
-}
-else
-{
-    <a asp-action="CreateLaporan">Create Laporan</a>
-}
-<h2>Detail Pendaftaran</h2>
-@if(Model.Pendaftaran != null)
-{
-    <div>
-        <h3>Tanggal: @Model.Pendaftaran.TanggalPendaftaran</h3>
-        <p>StatusPembayaran: @Model.Pendaftaran.StatusPembayaran</p>
-    </div>
-}
-else
-{
-    <p>Tidak ada pendaftaran yang ditemukan.</p>
+    @if(Model.Laporan != null)
+    {
+        <h2>Detail Laporan</h2>
+        <div>
+            <h3>@Model.Laporan.Keterangan</h3>
+            @if(!string.IsNullOrEmpty(Model.Laporan.FotoLaporan))
+            {
+                <p>Foto Proyek: <img src="@Model.Laporan.FotoLaporan" alt="Foto Proyek" /></p>
+            }
+        </div>
+    }
+    else
+    {
+        <a asp-action="CreateLaporan" class="btn btn-danger badge">Buat Laporan</a>
+    }
+
+    @if(Model.BiayaOperasional != null)
+    {
+        <h2>Detail Biaya Operasional</h2>
+        <div>
+            <h3>@Model.BiayaOperasional.Keterangan</h3>
+            <h3>@Model.BiayaOperasional.BiayaDll</h3>
+            <h3>@Model.BiayaOperasional.BiayaProyek</h3>
+            <h3>@Model.BiayaOperasional.BiayaTransportasi</h3>
+            <h3>@Model.BiayaOperasional.TanggalBiaya</h3>
+        </div>
+    }
+    else
+    {
+        <a asp-action="CreateLaporan" class="btn btn-danger badge">Buat Laporan</a>
+    }
+
 }
