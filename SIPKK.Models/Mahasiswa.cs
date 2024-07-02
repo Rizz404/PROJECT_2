@@ -76,7 +76,7 @@ namespace SIPKK.Models
         public Proyek? Proyek { get; set; }
 
         public Pendaftaran? Pendaftaran { get; set; }
-
+        public Laporan? Laporan { get; set; }
         public Persyaratan? Persyaratan { get; set; }
         public BiayaOperasional? BiayaOperasional { get; set; }
 

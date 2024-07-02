@@ -1,5 +1,7 @@
 ﻿@model MyProyekVM
 
+<partial name="_Notification" />
+
 <h2>Proyek Kamu</h2>
 @if(Model.Proyek != null)
 {
@@ -42,7 +44,7 @@ else
     }
     else
     {
-        <a asp-action="CreateLaporan" class="btn btn-danger badge">Buat Laporan</a>
+        <a asp-action="CreateLaporan" class="btn btn-danger">Buat Laporan</a>
     }
 
     @if(Model.BiayaOperasional != null)
@@ -58,7 +60,7 @@ else
     }
     else
     {
-        <a asp-action="CreateLaporan" class="btn btn-danger badge">Buat Laporan</a>
+        <a asp-action="CreateBiayaOperasional" class="btn btn-warning">Buat Laporan Biaya Pendaftaran</a>
     }
 
 }

@@ -108,7 +108,7 @@ namespace SIPKK.Controllers
                 string? proyekTerdaftarNameForCurrentMahasiswa = null;
                 ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-                if(pendaftaran.StatusPembayaran == false)
+                if(pendaftaran != null && pendaftaran.StatusPembayaran == false)
                 {
                     status = ProyekVM.Status.PENDING;
                     proyekTerdaftarNameForCurrentMahasiswa = pendaftaran.Proyek.NamaProyek;
@@ -181,7 +181,7 @@ namespace SIPKK.Controllers
             string? proyekTerdaftarNameForCurrentMahasiswa = null;
             ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-            if(pendaftaran.StatusPembayaran == false)
+            if(pendaftaran != null && pendaftaran.StatusPembayaran == false)
             {
                 status = ProyekVM.Status.PENDING;
                 proyekTerdaftarNameForCurrentMahasiswa = pendaftaran.Proyek.NamaProyek;

@@ -53,37 +53,37 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.NamaProyek)
+                    @item.NamaProyek
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Deskripsi)
+                    @item.Deskripsi
                 </td>
                 <td>
-                    <img src="@Html.DisplayFor(modelItem => item.FotoProyek)" alt="@Html.DisplayFor(modelItem => item.FotoProyek)" />
+                    <img src="@item.FotoProyek" alt="@item.FotoProyek" />
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.TanggalMulai)
+                    @item.TanggalMulai
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.TanggalSelesai)
+                    @item.TanggalSelesai
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Lokasi)
+                    @item.Lokasi
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Kuota)
+                    @item.Kuota
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Verified)
+                    @item.Verified
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.SudahSelesai)
+                    @item.SudahSelesai
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                    @item.CreatedAt
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.UpdatedAt)
+                    @item.UpdatedAt
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
