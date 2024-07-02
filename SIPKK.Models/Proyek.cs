@@ -45,10 +45,10 @@ namespace SIPKK.Models
         public short Kuota { get; set; }
 
         [Display(Name = "Verified")]
-        public bool? Verified { get; set; }
+        public bool Verified { get; set; } = false;
 
         [Display(Name = "Sudah Selesai")]
-        public bool? SudahSelesai { get; set; }
+        public bool SudahSelesai { get; set; } = false;
 
         public ICollection<Mahasiswa>? Mahasiswa { get; set; }
         public ICollection<Dosen>? Dosen { get; set; }

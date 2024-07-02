@@ -35,13 +35,15 @@ namespace SIPKK.Controllers
 
             var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(p => p.IdMahasiswa == mahasiswa.Id);
             var laporan = await _unitOfWork.Laporan.GetAsync(l => l.IdMahasiswa == mahasiswa.Id);
+            var biayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(b => b.IdMahasiswa == mahasiswa.Id);
 
             var myProyekVM = new MyProyekVM()
             {
                 Mahasiswa = mahasiswa,
                 Proyek = mahasiswa.Proyek,
                 Laporan = laporan,
-                Pendaftaran = pendaftaran
+                Pendaftaran = pendaftaran,
+                BiayaOperasional = biayaOperasional
             };
 
             return View(myProyekVM);

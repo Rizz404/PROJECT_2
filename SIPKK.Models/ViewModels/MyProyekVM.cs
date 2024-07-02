@@ -21,6 +21,9 @@ namespace SIPKK.Models.ViewModels
         [ValidateNever]
         public Pendaftaran Pendaftaran { get; set; }
 
+        [ValidateNever]
+        public BiayaOperasional BiayaOperasional { get; set; }
+
         // Add these properties
         public string IdMahasiswa { get; set; }
         public string IdProyek { get; set; }

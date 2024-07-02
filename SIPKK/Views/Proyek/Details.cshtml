@@ -32,9 +32,17 @@
 
                 @if(roles.Contains("Mahasiswa"))
                 {
-                    @if(Model.IsMahasiswaTerdaftar != false)
+                    @if(Model.StatusMahasiswa == ProyekVM.Status.PENDING)
                     {
-                        <span>terdaftar di proyek @Model.ProyekTerdaftarNameForCurrentMahasiswa menungu konfirmasi pembayaran</span>
+                        <span>terdaftar di proyek  <span class="btn btn-success badge"> @Model.ProyekTerdaftarNameForCurrentMahasiswa</span> menungu konfirmasi pembayaran</span>
+                    }
+                    else if(Model.StatusMahasiswa == ProyekVM.Status.TERDAFTAR)
+                    {
+                        <span class="btn btn-success badge">Terdaftar</span>
+                    }
+                    else if(Model.StatusMahasiswa == ProyekVM.Status.TERDAFTAR_PROYEK_LAIN)
+                    {
+                        <span class="btn btn-secondary badge">Terdaftar Proyek Lain</span>
                     }
                     else
                     {
