@@ -9,9 +9,9 @@
     var roles = await UserManager.GetRolesAsync(user);
 }
 
+<partial name="_Notification" />
 <div class="row">
     <div class="">
-        <partial name="_Notification" />
         <div class="card mb-3">
             @if(Model.Proyek.FotoProyek != null)
             {

@@ -169,7 +169,7 @@ namespace SIPKK.Areas.Admin.Controllers
                         await _unitOfWork.SaveAsync();
 
                         transaction.Complete();
-                        TempData["Success"] = "Mahasiswa created successfully";
+                        TempData["SuccessMessage"] = "Mahasiswa created successfully";
                         return RedirectToAction(nameof(Index));
                     }
                     mahasiswaVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
@@ -255,31 +255,22 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             if(ModelState.IsValid)
             {
-                Debug.WriteLine(mahasiswaVM.Mahasiswa);
-                await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswaVM.Mahasiswa);
-                await _unitOfWork.SaveAsync();
-                TempData["Success"] = "Mahasiswa updated successfully";
-                return RedirectToAction(nameof(Index));
+                var mahasiswaFromDb = await _unitOfWork.Mahasiswa.GetAsync(d => d.Id == mahasiswaVM.Mahasiswa.Id);
+                if(mahasiswaFromDb == null)
+                {
+                    return NotFound();
+                }
+
+                if(await TryUpdateModelAsync(mahasiswaFromDb, "Mahasiswa",
+                   m => m.NIM, m => m.FirstName, m => m.LastName, m => m.TanggalLahir, m => m.IdProgramStudi, m => m.IdKonsentrasi, m => m.IdProyek, m => m.Semester))
+                {
+                    await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswaFromDb);
+                    await _unitOfWork.SaveAsync();
+                    TempData["SuccessMessage"] = "Mahasiswa updated successfully";
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            else
-            {
-                mahasiswaVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.Nama,
-                    Value = p.Id
-                });
-                mahasiswaVM.KonsentrasiList = (await _unitOfWork.Konsentrasi.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.Nama,
-                    Value = p.Id
-                });
-                mahasiswaVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.NamaProyek,
-                    Value = p.Id
-                });
-                return View(mahasiswaVM);
-            }
+            return View(mahasiswaVM);
         }
 
         // GET: Mahasiswa/Delete/5
@@ -337,7 +328,7 @@ namespace SIPKK.Areas.Admin.Controllers
                     // Commit transaction
                     transaction.Complete();
 
-                    TempData["Success"] = "Mahasiswa deleted successfully";
+                    TempData["SuccessMessage"] = "Mahasiswa deleted successfully";
                     return RedirectToAction(nameof(Index));
                 }
                 catch(Exception)
