@@ -143,17 +143,12 @@ namespace SIPKK.Controllers
         }
 
 
+        [Authorize]
         public async Task<IActionResult> Details(string id)
         {
             if(string.IsNullOrEmpty(id))
             {
                 return NotFound();
-            }
-
-            if(!User.Identity.IsAuthenticated)
-            {
-                var proyekNotAuth = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
-                return View(new ProyekVM() { Proyek = proyekNotAuth });
             }
 
             var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id,

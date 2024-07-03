@@ -44,9 +44,14 @@
                     <td>@item.LastName</td>
                     <td>@item.TanggalLahir</td>
                     <td>
-                        <img src="@item.FotoProfil" alt="Foto Profil" style="width: 100px; height: 100px;"
-                            
-                        />
+                        @if(!string.IsNullOrEmpty(item.FotoProfil))
+                        {
+                            <img src="@item.FotoProfil" alt="Foto Profil" style="width: 100px; height: 100px;" />
+                        }
+                        else
+                        {
+                            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTF0Ynd2cHZwM2ZuNjRyM3NjNWJ2OHd6aHFranNpenBrMGNzZXpnOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ObXgWWGHzMlVe/giphy.gif" alt="Foto Profil" class="img-fluid object-fit-cover img-thumbnail" />
+                        }
                     </td>
                     <td>@item.ProgramStudi.Nama</td>
                     <td>@item.Konsentrasi.Nama</td>
