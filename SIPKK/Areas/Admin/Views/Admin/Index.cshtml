@@ -1,11 +1,6 @@
 ﻿@model IEnumerable<Admin>
 
 @{
-    ViewData["Title"] = "Index";
-    var excludedProps = new List<string> { "Id", "Password" };
-    var properties = typeof(Admin).GetProperties()
-    .Where(prop => !excludedProps.Contains(prop.Name)).ToList();
-    var headers = properties.Select(prop => prop.Name).ToList();
     int counter = 1;
 }
 
@@ -18,12 +13,11 @@
 <table class="table">
     <thead>
         <tr>
-            <td>No</td>
-            @foreach (var header in headers)
-            {
-                <th>@header</th>
-            }
-            <th>Options</th>
+            <th>No</th>
+            <th>@Html.DisplayNameFor(model => model.Username)</th>
+            <th>@Html.DisplayNameFor(model => model.Email)</th>
+            <th>@Html.DisplayNameFor(model => model.Password)</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -31,10 +25,9 @@
         {
             <tr>
                 <td>@counter</td>
-                @foreach (var prop in properties)
-                {
-                    <td>@prop.GetValue(item)</td>
-                }
+                <td>@item.Username</td>
+                <td>@item.Email</td>
+                <td>@item.Password</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

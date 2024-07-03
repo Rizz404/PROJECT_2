@@ -1,4 +1,5 @@
-﻿using SIPKK.Ultilities.Abstractions;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using SIPKK.Ultilities.Abstractions;
 using SIPKK.Ultilities.Interface;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,6 +9,7 @@ namespace SIPKK.Models
     {
         //public string? Id { get; set; }
 
+        [ValidateNever]
         public string IdUser { get; set; }
 
         // Don't forget to add it in database 

@@ -169,7 +169,7 @@ namespace SIPKK.Areas.Admin.Controllers
                         await _unitOfWork.SaveAsync();
 
                         transaction.Complete();
-                        TempData["Success"] = "Mahasiswa created successfully";
+                        TempData["SuccessMessage"] = "Mahasiswa created successfully";
                         return RedirectToAction(nameof(Index));
                     }
                     mahasiswaVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
@@ -266,7 +266,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 {
                     await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswaFromDb);
                     await _unitOfWork.SaveAsync();
-                    TempData["Success"] = "Mahasiswa updated successfully";
+                    TempData["SuccessMessage"] = "Mahasiswa updated successfully";
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -328,7 +328,7 @@ namespace SIPKK.Areas.Admin.Controllers
                     // Commit transaction
                     transaction.Complete();
 
-                    TempData["Success"] = "Mahasiswa deleted successfully";
+                    TempData["SuccessMessage"] = "Mahasiswa deleted successfully";
                     return RedirectToAction(nameof(Index));
                 }
                 catch(Exception)
