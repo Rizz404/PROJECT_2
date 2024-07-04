@@ -15,13 +15,11 @@
     <thead>
         <tr>
             <th>No</th>
-            <th>@Html.DisplayNameFor(model => model.Mahasiswa.FirstName)</th>
+            <th>@Html.DisplayNameFor(model => model.Mahasiswa)</th>
             <th>@Html.DisplayNameFor(model => model.Proyek.NamaProyek)</th>
             <th>@Html.DisplayNameFor(model => model.TanggalPendaftaran)</th>
             <th>@Html.DisplayNameFor(model => model.StatusPembayaran)</th>
             <th>@Html.DisplayNameFor(model => model.BuktiPembayaran)</th>
-            <th>@Html.DisplayNameFor(model => model.CreatedAt)</th>
-            <th>@Html.DisplayNameFor(model => model.UpdatedAt)</th>
             <th>Opsi</th>
         </tr>
     </thead>
@@ -44,8 +42,6 @@
                         <span>My ass</span>
                     }
                 </td>
-                <td>@item.CreatedAt</td>
-                <td>@item.UpdatedAt</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
