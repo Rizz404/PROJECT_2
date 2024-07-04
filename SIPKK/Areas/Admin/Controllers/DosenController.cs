@@ -130,89 +130,6 @@ namespace SIPKK.Areas.Admin.Controllers
             return View(dosenVM);
         }
 
-        // GET: Dosens/Upsert
-        public async Task<IActionResult> Upsert(string? id)
-        {
-            DosenVM dosenVM = new()
-            {
-                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.NamaProyek,
-                    Value = p.Id
-                }).ToList(),
-                Dosen = new Dosen()
-            };
-
-            if(!string.IsNullOrEmpty(dosenVM.Dosen.NamaDosen))
-            {
-                dosenVM.Dosen = await _unitOfWork.Dosen.GetAsync(d => d.Id == id, d => d.Proyek);
-                if(dosenVM == null)
-                {
-                    return NotFound();
-                }
-            }
-            return View(dosenVM);
-        }
-
-        // POST: Dosens/Upsert
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Upsert(DosenVM dosenVM)
-        {
-            string[] namaDosenArr = dosenVM.Dosen.NamaDosen.Split(" ");
-
-            // Buat username, email, dan password
-            string username = namaDosenArr.Length > 1 ? namaDosenArr[0] : dosenVM.Dosen.NamaDosen + new Cuid2().ToString();
-            string email = $"{dosenVM.Dosen.NIDN}@global.ac.id";
-            string password = "123456789"; // nanti ganti ke tanggal lahir aja
-
-            if(ModelState.IsValid)
-            {
-                if(string.IsNullOrEmpty(dosenVM.Dosen.Id) || string.IsNullOrEmpty(dosenVM.Dosen.NamaDosen))
-                {
-                    // sebenarnya bisa type explisit tapi gini lebih mudah dibaca
-                    var user = new ApplicationUser { UserName = username, Email = email };
-                    var createNewUser = await _userManager.CreateAsync(user, password);
-
-                    if(createNewUser.Succeeded)
-                    {
-                        var addRoleToUser = await _userManager.AddToRoleAsync(user, SD.Role_Dosen);
-
-                        if(addRoleToUser.Succeeded)
-                        {
-                            Dosen dosen = new()
-                            {
-                                IdUser = user.Id,
-                                NIDN = dosenVM.Dosen.NIDN,
-                                NamaDosen = dosenVM.Dosen.NamaDosen,
-                                IdProyek = dosenVM.Dosen.IdProyek,
-                                TanggalLahir = dosenVM.Dosen.TanggalLahir,
-                                FotoProfil = dosenVM.Dosen.FotoProfil,
-                            };
-                            await _unitOfWork.Dosen.CreateAsync(dosen);
-                            TempData["Success"] = "Dosen created successfully";
-                        }
-                        foreach(var error in addRoleToUser.Errors)
-                        {
-                            ModelState.AddModelError(string.Empty, error.Description);
-                        }
-                    }
-                    foreach(var error in createNewUser.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                }
-                else
-                {
-                    await _unitOfWork.Dosen.UpdateAsync(dosenVM.Dosen);
-                    TempData["Success"] = "Dosen Updated successfully";
-                }
-                await _unitOfWork.SaveAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(dosenVM);
-        }
-
         // GET: Dosens/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
@@ -247,17 +164,21 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             if(ModelState.IsValid)
             {
-                await _unitOfWork.Dosen.UpdateAsync(dosenVM.Dosen);
-                await _unitOfWork.SaveAsync();
-                TempData["Success"] = "Dosen updated successfully";
-                return RedirectToAction(nameof(Index));
-            }
-            dosenVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
-            {
-                Text = p.NamaProyek,
-                Value = p.Id
-            }).ToList();
+                var dosenFromDb = await _unitOfWork.Dosen.GetAsync(d => d.Id == dosenVM.Dosen.Id);
+                if(dosenFromDb == null)
+                {
+                    return NotFound();
+                }
 
+                if(await TryUpdateModelAsync(dosenFromDb, "Dosen",
+                   d => d.NamaDosen, d => d.NIDN, d => d.IdProyek, d => d.TanggalLahir))
+                {
+                    await _unitOfWork.Dosen.UpdateAsync(dosenFromDb);
+                    await _unitOfWork.SaveAsync();
+                    TempData["SuccessMessage"] = "Dosen updated successfully";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
             return View(dosenVM);
         }
 

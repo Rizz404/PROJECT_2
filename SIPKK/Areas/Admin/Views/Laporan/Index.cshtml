@@ -2,10 +2,6 @@
 
 @{
     ViewData["Title"] = "Index";
-    var excludedProps = new List<string> { "Id", "Password", "ProyekOptions" };
-    var properties = typeof(Laporan).GetProperties()
-    .Where(prop => !excludedProps.Contains(prop.Name)).ToList();
-    var headers = properties.Select(prop => prop.Name).ToList();
     int counter = 1;
 }
 
@@ -17,12 +13,23 @@
 <table class="table">
     <thead>
         <tr>
-            <td>No</td>
-            @foreach(var header in headers)
-            {
-                <th>@header</th>
-            }
-            <th>Opsi</th>
+            <th>No</th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mahasiswa.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Proyek.NamaProyek)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Keterangan)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FotoLaporan)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FileLaporan)
+            </th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -30,10 +37,21 @@
         {
             <tr>
                 <td>@counter</td>
-                @foreach(var prop in properties)
-                {
-                    <td>@prop.GetValue(item)</td>
-                }
+                <td>
+                    @item.Mahasiswa.FirstName
+                </td>
+                <td>
+                    @item.Proyek.NamaProyek
+                </td>
+                <td>
+                    @item.Keterangan
+                </td>
+                <td>
+                    @item.FotoLaporan
+                </td>
+                <td>
+                    @item.FileLaporan
+                </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

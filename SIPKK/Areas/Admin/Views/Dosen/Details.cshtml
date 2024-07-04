@@ -2,12 +2,6 @@
 
 @{
     ViewData["Title"] = "Detail Dosen";
-    var dosenDetails = new Dictionary<string, object>
-    {
-        { "Nama Dosen", Model.NamaDosen },
-        { "NIDN", Model.NIDN },
-        { "Nama Proyek", Model.IdProyek }
-    };
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -16,11 +10,36 @@
     <h4>Dosen</h4>
     <hr />
     <dl class="row">
-        @foreach(var detail in dosenDetails)
-        {
-            <dt class="col-sm-2">@detail.Key</dt>
-            <dd class="col-sm-10">@detail.Value</dd>
-        }
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.NamaDosen)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.NamaDosen)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.NIDN)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.NIDN)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Proyek.NamaProyek)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Proyek.NamaProyek)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TanggalLahir)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TanggalLahir)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FotoProfil)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="@Model.FotoProfil" />
+        </dd>
     </dl>
 </div>
 <div>
