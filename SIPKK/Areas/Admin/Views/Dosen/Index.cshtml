@@ -1,11 +1,6 @@
 ﻿@model IEnumerable<Dosen>
 
 @{
-    ViewData["Title"] = "Index";
-    var excludedProps = new List<string> { "Id", "Password", "ProyekOptions" };
-    var properties = typeof(Dosen).GetProperties()
-    .Where(prop => !excludedProps.Contains(prop.Name)).ToList();
-    var headers = properties.Select(prop => prop.Name).ToList();
     int counter = 1;
 }
 
@@ -18,11 +13,12 @@
     <thead>
         <tr>
             <th>No</th>
-            @foreach(var header in headers)
-            {
-                <th>@header</th>
-            }
-            <th>Options</th>
+            <th>@Html.DisplayNameFor(model => model.NamaDosen)</th>
+            <th>@Html.DisplayNameFor(model => model.NIDN)</th>
+            <th>@Html.DisplayNameFor(model => model.Proyek.NamaProyek)</th>
+            <th>@Html.DisplayNameFor(model => model.TanggalLahir)</th>
+            <th>@Html.DisplayNameFor(model => model.FotoProfil)</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -30,10 +26,29 @@
         {
             <tr>
                 <td>@counter</td>
-                @foreach(var prop in properties)
-                {
-                    <td>@prop.GetValue(item)</td>
-                }
+                <td>@item.NamaDosen</td>
+                <td>@item.NIDN</td>
+                <td>
+                    @if(item.Proyek != null && item.Proyek.NamaProyek != null)
+                    {
+                        <span>@item.Proyek.NamaProyek</span>
+                    }
+                    else
+                    {
+                        <span>Belum ambil proyek</span>
+                    }
+                </td>
+                <td>@item.TanggalLahir</td>
+                <td>
+                    @if(item.FotoProfil != null)
+                    {
+                        <img src="@item.FotoProfil" />
+                    }
+                    else
+                    {
+                        <span>Kont</span>
+                    }
+                </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

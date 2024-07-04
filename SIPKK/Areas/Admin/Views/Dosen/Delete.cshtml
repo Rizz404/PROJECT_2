@@ -24,10 +24,22 @@
             @Html.DisplayFor(model => model.NIDN)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.IdProyek)
+            @Html.DisplayNameFor(model => model.Proyek.NamaProyek)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.IdProyek)
+            @Html.DisplayFor(model => model.Proyek.NamaProyek)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TanggalLahir)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TanggalLahir)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FotoProfil)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="@Model.FotoProfil" />
         </dd>
     </dl>
 
