@@ -124,7 +124,7 @@ namespace SIPKK.Controllers
 
             if (mahasiswa == null || mahasiswa.IdProyek == null)
             {
-                TempData["ErrorMessage"] = "Daftar proyek aja belum";
+                TempData["ErrorMessage"] = "Maaf tapi anda belum daftar proyek";
                 return Redirect(Request.Headers["Referer"].ToString());
             }
 
@@ -146,7 +146,7 @@ namespace SIPKK.Controllers
 
             if (dosen == null || dosen.IdProyek == null)
             {
-                TempData["ErrorMessage"] = "Daftar proyek aja belum";
+                TempData["ErrorMessage"] = "Maaf tapi anda belum daftar proyek";
                 return Redirect(Request.Headers["Referer"].ToString());
             }
 

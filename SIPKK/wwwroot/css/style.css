@@ -155,12 +155,19 @@ p, h1, h2, h3, h4, h5, h6 {
     text-decoration: none;
 }
 .orange-btn {
-    background-color:var(--primary-orange);
+    background-color: var(--primary-orange);
     padding: 6px 12px;
     border-radius: 4px;
-    color:white;
+    color: white;
     border: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center; 
+    font-size: 16px;
+    font-weight: 600;
 }
+
 .muted-btn {
     background-color:var(--dark-grey);
     padding: 6px 12px;
@@ -561,6 +568,9 @@ footer {
     border-radius: 8px;
     grid-column: span 2;
 }
+.proyek-foto {
+    width: 100%;
+}
 .proyek-foto-container > .proyek-tagline{
 }
 
@@ -612,6 +622,7 @@ footer {
     display: flex;
     flex-direction: column;
     gap: .5rem;
+    margin-top: 1rem;
 }
 .my-proyek-foto {
     object-fit: contain;
