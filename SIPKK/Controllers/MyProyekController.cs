@@ -60,27 +60,22 @@ namespace SIPKK.Controllers
         private async Task<IActionResult> HandleMahasiswaIndex()
         {
             string userId = _userManager.GetUserId(User);
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Proyek);
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
+                includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Proyek]);
 
             if (mahasiswa == null)
             {
                 return NotFound();
             }
 
-            var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == mahasiswa.IdProyek, p => p.Mahasiswa);
-            var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(p => p.IdMahasiswa == mahasiswa.Id);
-            var laporan = await _unitOfWork.Laporan.GetAsync(l => l.IdMahasiswa == mahasiswa.Id);
-            var biayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(b => b.IdMahasiswa == mahasiswa.Id);
-            var dosen = await _unitOfWork.Dosen.GetAsync(b => b.IdProyek ==proyek.Id);
-
             var myProyekVM = new MyProyekVM()
             {
                 Mahasiswa = mahasiswa,
-                Proyek = proyek,
-                Laporan = laporan,
-                Pendaftaran = pendaftaran,
-                BiayaOperasional = biayaOperasional,
-                Dosen = dosen,
+                Proyek = mahasiswa.Proyek,
+                Laporan = await _unitOfWork.Laporan.GetAsync(l => l.IdMahasiswa == mahasiswa.Id),
+                Pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(p => p.IdMahasiswa == mahasiswa.Id),
+                BiayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(b => b.IdMahasiswa == mahasiswa.Id),
+                Dosen = mahasiswa.Proyek != null ? await _unitOfWork.Dosen.GetAsync(d => d.IdProyek == mahasiswa.Proyek.Id) : null
             };
 
             return View(myProyekVM);
@@ -89,7 +84,8 @@ namespace SIPKK.Controllers
         private async Task<IActionResult> HandleDosenIndex()
         {
             string userId = _userManager.GetUserId(User);
-            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId, d => d.Proyek);
+            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId, includedProperties: [d => d.Proyek]);
+            var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == dosen.IdProyek, includedProperties: [d => d.Mahasiswa]);
 
             if (dosen == null)
             {
@@ -99,11 +95,12 @@ namespace SIPKK.Controllers
             var myProyekDosenVM = new MyProyekVM()
             {
                 Dosen = dosen,
-                Proyek = dosen.Proyek,
+                Proyek = proyek
             };
 
             return View(myProyekDosenVM);
         }
+
 
         public async Task<IActionResult> Laporan()
         {

@@ -19,7 +19,6 @@
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons mdi mdi-home-outline"></i>
                 <div data-i18n="Dashboards">Dashboards</div>
-                <div class="badge bg-danger rounded-pill ms-auto">1</div>
             </a>
             @{
                 var menuItems = new List<dynamic>
@@ -31,10 +30,10 @@
             new { Area = "Admin", Controller = "Konsentrasi", Action = "Index", Text = "Konsentrasi", Path = "/Admin/Konsentrasi" },
             new { Area = "Admin", Controller = "Dosen", Action = "Index", Text = "Dosen", Path = "/Admin/Dosen" },
             new { Area = "Admin", Controller = "Proyek", Action = "Index", Text = "Proyek", Path = "/Admin/Proyek" },
-            new { Area = "Admin", Controller = "Laporan", Action = "Index", Text = "Laporan", Path = "/Admin/Laporan" },
+           //  new { Area = "Admin", Controller = "Laporan", Action = "Index", Text = "Laporan", Path = "/Admin/Laporan" },
             new { Area = "Admin", Controller = "Persyaratan", Action = "Index", Text = "Persyaratan", Path = "/Admin/Persyaratan" },
             new { Area = "Admin", Controller = "Pendaftaran", Action = "Index", Text = "Pendaftaran", Path = "/Admin/Pendaftaran" },
-            new { Area = "Admin", Controller = "BiayaOperasional", Action = "Index", Text = "Biaya Operasional", Path = "/Admin/BiayaOperasional" }
+           //  new { Area = "Admin", Controller = "BiayaOperasional", Action = "Index", Text = "Biaya Operasional", Path = "/Admin/BiayaOperasional" }
             };
 
                 var currentPath = Context.Request.Path;
@@ -51,41 +50,43 @@
                 }
             </ul>
         </li>
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons mdi mdi-window-maximize"></i>
-                <div data-i18n="Layouts">Layouts</div>
-            </a>
+<!--
+                <li class="menu-item">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons mdi mdi-window-maximize"></i>
+                        <div data-i18n="Layouts">Layouts</div>
+                    </a>
 
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="layouts-without-menu.html" class="menu-link">
-                        <div data-i18n="Without menu">Without menu</div>
-                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item">
+                            <a href="layouts-without-menu.html" class="menu-link">
+                                <div data-i18n="Without menu">Without menu</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="layouts-without-navbar.html" class="menu-link">
+                                <div data-i18n="Without navbar">Without navbar</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="layouts-container.html" class="menu-link">
+                                <div data-i18n="Container">Container</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="layouts-fluid.html" class="menu-link">
+                                <div data-i18n="Fluid">Fluid</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="layouts-blank.html" class="menu-link">
+                                <div data-i18n="Blank">Blank</div>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="menu-item">
-                    <a href="layouts-without-navbar.html" class="menu-link">
-                        <div data-i18n="Without navbar">Without navbar</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="layouts-container.html" class="menu-link">
-                        <div data-i18n="Container">Container</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="layouts-fluid.html" class="menu-link">
-                        <div data-i18n="Fluid">Fluid</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="layouts-blank.html" class="menu-link">
-                        <div data-i18n="Blank">Blank</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
 
+-->
 
     </ul>
 </aside>

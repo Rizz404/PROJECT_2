@@ -2,6 +2,8 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
+
+
 <!--
     <div class="row">
     <partial name="_Notification" />
@@ -80,36 +82,70 @@
     <partial name="_Notification" />
     @foreach (var proyek in Model)
     {
-        <a class="proyeks-container" asp-action="Details" asp-route-id="@proyek.Proyek.Id">
-            <div class="proyeks-inner">
-                @if (!string.IsNullOrEmpty(proyek.Proyek.FotoProyek))
-                {
-                    <img class="proyeks-foto" src="@proyek.Proyek.FotoProyek"  alt="...">
-                }
-                else
-                {
-                    <img class="proyeks-foto" src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
-                }
-                <div class="proyeks-detail">
-                    <h5 class="proyeks-nama">@proyek.Proyek.NamaProyek</h5>
-                    <p class="proyeks-deskripsi">@proyek.Proyek.Deskripsi</p>
-                    <div class="proyeks-inner-detail">
-                        <div class="proyeks-kuota-lokasi">
+        if(proyek.Proyek.SudahSelesai)
+        {
+            <div class="proyeks-container" >
+                <div class="proyeks-inner">
+                    @if (!string.IsNullOrEmpty(proyek.Proyek.FotoProyek))
+                    {
+                        <img class="proyeks-foto" src="@proyek.Proyek.FotoProyek" alt="...">
+                    }
+                    else
+                    {
+                        <img class="proyeks-foto" src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
+                    }
+                    <div class="proyeks-detail">
+                        <h5 class="proyeks-nama">@proyek.Proyek.NamaProyek</h5>
+                        <p class="proyeks-deskripsi">@proyek.Proyek.Deskripsi</p>
+                        <div class="proyeks-inner-detail">
+                            <div class="proyeks-kuota-lokasi">
+                                <p>
+                                    Kuota: @proyek.Proyek.Kuota / @proyek.Proyek.Kuota
+                                </p>
+                                <p>
+                                    @proyek.Proyek.Lokasi
+                                </p>
+                            </div>
                             <p>
-                                Kuota: @proyek.Proyek.Kuota / @proyek.Proyek.Kuota
-                            </p>
-                            <p>
-                                @proyek.Proyek.Lokasi
+                                Sudah Selesai
                             </p>
                         </div>
-                        <p class="orange-btn">
-                            Register
-                        </p>
                     </div>
-                </div>                
-                <div>
+                    <div>
+                    </div>
                 </div>
             </div>
-        </a>
+        }else
+        {
+            <a class="proyeks-container" asp-action="Details" asp-route-id="@proyek.Proyek.Id">
+                <div class="proyeks-inner">
+                    @if (!string.IsNullOrEmpty(proyek.Proyek.FotoProyek))
+                    {
+                        <img class="proyeks-foto" src="@proyek.Proyek.FotoProyek" alt="...">
+                    }
+                    else
+                    {
+                        <img class="proyeks-foto" src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
+                    }
+                    <div class="proyeks-detail">
+                        <h5 class="proyeks-nama">@proyek.Proyek.NamaProyek</h5>
+                        <p class="proyeks-deskripsi">@proyek.Proyek.Deskripsi</p>
+                        <div class="proyeks-inner-detail">
+                            <div class="proyeks-kuota-lokasi">
+                                <p>
+                                    Kuota: @proyek.Proyek.Kuota / @proyek.Proyek.Kuota
+                                </p>
+                                <p>
+                                    @proyek.Proyek.Lokasi
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                    </div>
+                </div>
+            </a>
+
+        }
     }
-    </div>>
+</div>>

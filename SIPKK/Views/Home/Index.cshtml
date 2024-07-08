@@ -12,7 +12,8 @@
     {
     }else
     {
-    <section class="base-container  hero-container">
+        <partial name="_Notification" />
+        <section class="base-container  hero-container">
         <div class="flex-col left-hero-container">
             <h2 class="heading">
                 Find your dream
@@ -168,31 +169,33 @@
         </div>
         <img src="~/images/assets/below-hero.png" />
     </section>
-    <section class="result-alumni-container base-container">
-        <h3 class="sub-heading">
+    <section class="container py-5">
+        <h3 class="h3 mb-4 text-center">
             Result Alumni KKN
         </h3>
-        <div class="flex-col">
+        <div class="row">
             @foreach (var proyek in Model)
             {
                 @if (proyek.TanggalSelesai != null)
                 {
-                    <div>
-                    <img src="@Html.DisplayFor(modelItem => proyek.FotoProyek)" alt="@Html.DisplayFor(modelItem => proyek.FotoProyek)" />
-                    <div class="result-alumni-text">
-                            <h4 class="sub-title">
-                                @proyek.NamaProyek
-                            </h4>
-                            <p>
-                                @proyek.Deskripsi
-                            </p>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100">
+                            <img src="@Html.DisplayFor(modelItem => proyek.FotoProyek)" class="card-img-top" alt="@Html.DisplayFor(modelItem => proyek.FotoProyek)" />
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    @proyek.NamaProyek
+                                </h4>
+                                <p class="card-text">
+                                    @proyek.Deskripsi
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <a asp-controller="Proyek" asp-area="" asp-action="Details" asp-route-id="@proyek.Id" class="btn btn-primary">Details</a>
+                            </div>
                         </div>
-                        <a asp-controller="Proyek" asp-area="" asp-action="Details" asp-route-id="@proyek.Id">Details</a>
-
                     </div>
                 }
             }
-
         </div>
     </section>
 
