@@ -6,7 +6,6 @@
     {
         { "TanggalPendaftaran", item => item.TanggalPendaftaran },
         { "StatusPembayaran", item => item.StatusPembayaran },
-        { "NamaMahasiswa", item => item.IdMahasiswa },
         { "CreatedAt", item => item.CreatedAt },
         { "UpdatedAt", item => item.UpdatedAt }
     };
@@ -18,10 +17,10 @@
     <h4>Pendaftaran</h4>
     <hr />
     <dl class="row">
-        @foreach(var map in keyMappings)
+        @foreach (var map in keyMappings)
         {
             <dt class="col-sm-2">@map.Key</dt>
-            <dd class="col-sm-10">@map.Value</dd>
+            <dd class="col-sm-10">@map.Value(Model)</dd>
         }
     </dl>
 </div>

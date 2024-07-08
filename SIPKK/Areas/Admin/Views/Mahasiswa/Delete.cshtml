@@ -4,6 +4,7 @@
     ViewData["Title"] = "Delete";
     
 }
+<div class="hidden">
 
 <h1>Delete</h1>
 
@@ -67,4 +68,77 @@
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>
+</div>
+</div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0 text-white">Delete Confirmation</h2>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Are you sure you want to delete this student?</h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th class="bg-light">@Html.DisplayNameFor(model => model.NIM)</th>
+                                    <td>@Html.DisplayFor(model => model.NIM)</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">@Html.DisplayNameFor(model => model.FirstName)</th>
+                                    <td>@Html.DisplayFor(model => model.FirstName)</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">@Html.DisplayNameFor(model => model.LastName)</th>
+                                    <td>@Html.DisplayFor(model => model.LastName)</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">@Html.DisplayNameFor(model => model.TanggalLahir)</th>
+                                    <td>@Html.DisplayFor(model => model.TanggalLahir)</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">@Html.DisplayNameFor(model => model.FotoProfil)</th>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(Model.FotoProfil))
+                                        {
+                                            <img src="@Model.FotoProfil" alt="Profile Picture" class="img-thumbnail" style="max-width: 100px;">
+                                        }
+                                        else
+                                        {
+                                            <span>No profile picture</span>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">@Html.DisplayNameFor(model => model.ProgramStudi.Nama)</th>
+                                    <td>@Html.DisplayFor(model => model.ProgramStudi.Nama)</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">@Html.DisplayNameFor(model => model.Konsentrasi.Nama)</th>
+                                    <td>@Html.DisplayFor(model => model.Konsentrasi.Nama)</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">@Html.DisplayNameFor(model => model.Semester)</th>
+                                    <td>@Html.DisplayFor(model => model.Semester)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <form asp-action="Delete" class="mt-4">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

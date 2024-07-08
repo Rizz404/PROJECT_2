@@ -4,6 +4,8 @@
     ViewData["Title"] = "Create";
 }
 
+<div class="hidden">
+
 <h1>Create</h1>
 
 <h4>Laporan</h4>
@@ -55,6 +57,64 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+</div>
+
+<div class="container py-5">
+    <h1 class="display-4 mb-4">Create Laporan</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Laporan Details</h4>
+                    <form asp-action="Create" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Laporan.IdProyek" class="form-label">Proyek</label>
+                            <select asp-for="@Model.Laporan.IdProyek" asp-items="@Model.ProyekList" class="form-select">
+                                <option disabled selected>Pilih Proyek</option>
+                            </select>
+                            <span asp-validation-for="Laporan.IdProyek" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Laporan.IdMahasiswa" class="form-label">Mahasiswa</label>
+                            <select asp-for="@Model.Laporan.IdMahasiswa" asp-items="@Model.MahasiswaList" class="form-select">
+                                <option disabled selected>Pilih Mahasiswa</option>
+                            </select>
+                            <span asp-validation-for="Laporan.IdMahasiswa" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Laporan.Keterangan" class="form-label">Keterangan</label>
+                            <input asp-for="Laporan.Keterangan" class="form-control" />
+                            <span asp-validation-for="Laporan.Keterangan" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Laporan.FotoLaporan" class="form-label">Foto Laporan</label>
+                            <input asp-for="Laporan.FotoLaporan" type="file" name="img" class="form-control" />
+                            <span asp-validation-for="Laporan.FotoLaporan" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Laporan.FileLaporan" class="form-label">File Laporan</label>
+                            <input asp-for="Laporan.FileLaporan" type="file" name="file" class="form-control" />
+                            <span asp-validation-for="Laporan.FileLaporan" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

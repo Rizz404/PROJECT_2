@@ -4,67 +4,162 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
 
-<h4>Mahasiswa</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <partial name="_Notification" />
 
-        <form asp-action="Create" class="d-flex flex-column gap-2">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Mahasiswa.NIM" class="control-label"></label>
-                <input asp-for="Mahasiswa.NIM" class="form-control" />
-                <span asp-validation-for="Mahasiswa.NIM" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Mahasiswa.FirstName" class="control-label"></label>
-                <input asp-for="Mahasiswa.FirstName" class="form-control" />
-                <span asp-validation-for="Mahasiswa.FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Mahasiswa.LastName" class="control-label"></label>
-                <input asp-for="Mahasiswa.LastName" class="form-control" />
-                <span asp-validation-for="Mahasiswa.LastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Mahasiswa.TanggalLahir" class="control-label"></label>
-                <input asp-for="Mahasiswa.TanggalLahir" class="form-control" />
-                <span asp-validation-for="Mahasiswa.TanggalLahir" class="text-danger"></span>
-            </div>
-            @* <div class="form-group">
+<div class="hidden">
+    <h1>Create</h1>
+
+    <h4>Mahasiswa</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <partial name="_Notification" />
+
+            <form asp-action="Create" class="d-flex flex-column gap-2">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Mahasiswa.NIM" class="control-label"></label>
+                    <input asp-for="Mahasiswa.NIM" class="form-control" />
+                    <span asp-validation-for="Mahasiswa.NIM" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Mahasiswa.FirstName" class="control-label"></label>
+                    <input asp-for="Mahasiswa.FirstName" class="form-control" />
+                    <span asp-validation-for="Mahasiswa.FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Mahasiswa.LastName" class="control-label"></label>
+                    <input asp-for="Mahasiswa.LastName" class="form-control" />
+                    <span asp-validation-for="Mahasiswa.LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Mahasiswa.TanggalLahir" class="control-label"></label>
+                    <input asp-for="Mahasiswa.TanggalLahir" class="form-control" />
+                    <span asp-validation-for="Mahasiswa.TanggalLahir" class="text-danger"></span>
+                </div>
+                @* <div class="form-group">
                 <label asp-for="Mahasiswa.FotoProfil" class="control-label"></label>
                 <input asp-for="Mahasiswa.FotoProfil" class="form-control" />
                 <span asp-validation-for="Mahasiswa.FotoProfil" class="text-danger"></span>
-            </div> *@
-            <div class="form-group">
-                <label asp-for="Mahasiswa.IdProgramStudi" class="control-label"></label>
-                <select asp-for="@Model.Mahasiswa.IdProgramStudi" class="form-control" asp-items="@Model.ProgramStudiList"></select>
-                <span asp-validation-for="Mahasiswa.IdProgramStudi" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Mahasiswa.IdKonsentrasi" class="control-label"></label>
-                <select asp-for="@Model.Mahasiswa.IdKonsentrasi" class="form-control" asp-items="@Model.KonsentrasiList"></select>
-                <span asp-validation-for="Mahasiswa.IdKonsentrasi" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Mahasiswa.Semester" class="control-label"></label>
-                <input asp-for="Mahasiswa.Semester" class="form-control" type="number" />
-                <span asp-validation-for="Mahasiswa.Semester" class="text-danger"></span>
-            </div> 
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+                </div> *@
+                <div class="form-group">
+                    <label asp-for="Mahasiswa.IdProgramStudi" class="control-label"></label>
+                    <select asp-for="@Model.Mahasiswa.IdProgramStudi" class="form-control" asp-items="@Model.ProgramStudiList"></select>
+                    <span asp-validation-for="Mahasiswa.IdProgramStudi" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Mahasiswa.IdKonsentrasi" class="control-label"></label>
+                    <select asp-for="@Model.Mahasiswa.IdKonsentrasi" class="form-control" asp-items="@Model.KonsentrasiList"></select>
+                    <span asp-validation-for="Mahasiswa.IdKonsentrasi" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Mahasiswa.Semester" class="control-label"></label>
+                    <input asp-for="Mahasiswa.Semester" class="form-control" type="number" />
+                    <span asp-validation-for="Mahasiswa.Semester" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-container p-4 p-md-5">
+                <h1 class="text-center mb-4">Create Mahasiswa</h1>
+                <hr class="mb-4">
+                <partial name="_Notification" />
+                <form asp-action="Create" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Mahasiswa.NIM" class="form-label"></label>
+                        <input asp-for="Mahasiswa.NIM" class="form-control" required />
+                        <span asp-validation-for="Mahasiswa.NIM" class="text-danger"></span>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Mahasiswa.FirstName" class="form-label"></label>
+                            <input asp-for="Mahasiswa.FirstName" class="form-control" required />
+                            <span asp-validation-for="Mahasiswa.FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Mahasiswa.LastName" class="form-label"></label>
+                            <input asp-for="Mahasiswa.LastName" class="form-control" required />
+                            <span asp-validation-for="Mahasiswa.LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Mahasiswa.TanggalLahir" class="form-label"></label>
+                        <input asp-for="Mahasiswa.TanggalLahir" class="form-control" type="date" required />
+                        <span asp-validation-for="Mahasiswa.TanggalLahir" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Mahasiswa.IdProgramStudi" class="form-label"></label>
+                        <select asp-for="@Model.Mahasiswa.IdProgramStudi" class="form-select" asp-items="@Model.ProgramStudiList" required>
+                            <option value="">Select Program Studi</option>
+                        </select>
+                        <span asp-validation-for="Mahasiswa.IdProgramStudi" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Mahasiswa.IdKonsentrasi" class="form-label"></label>
+                        <select asp-for="@Model.Mahasiswa.IdKonsentrasi" class="form-select" asp-items="@Model.KonsentrasiList" required>
+                            <option value="">Select Konsentrasi</option>
+                        </select>
+                        <span asp-validation-for="Mahasiswa.IdKonsentrasi" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Mahasiswa.Semester" class="form-label"></label>
+                        <input asp-for="Mahasiswa.Semester" class="form-control" type="number" min="1" max="14" required />
+                        <span asp-validation-for="Mahasiswa.Semester" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Create Mahasiswa
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Back to List
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
+
 
 @section Scripts {
     @{
