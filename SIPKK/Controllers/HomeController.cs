@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
+using SIPKK.Models.ViewModels;
 using System.Diagnostics;
 
 namespace SIPKK.Controllers
@@ -12,11 +13,13 @@ namespace SIPKK.Controllers
     {
 
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork)
+        public HomeController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
             _unitOfWork = unitOfWork;
         }
 
@@ -24,6 +27,52 @@ namespace SIPKK.Controllers
         {
             var proyekList = await _unitOfWork.Proyek.GetAllAsync();
             return View(proyekList);
+        }
+
+        public async Task<IActionResult> NavbarData()
+        {
+            bool hasProyek = false;
+            if(_signInManager.IsSignedIn(User))
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                if(user != null)
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+
+                    if(roles.Contains("Mahasiswa"))
+                    {
+                        var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == user.Id);
+
+                        if(mahasiswa.IdProyek != null)
+                        {
+                            hasProyek = true;
+                            return View(new HelperVM
+                            {
+                                HasProyek = hasProyek
+                            });
+                        }
+                    }
+                    else if(roles.Contains("Dosen"))
+                    {
+                        var dosen = await _unitOfWork.Dosen.GetAsync(m => m.IdUser == user.Id);
+
+                        if(dosen.IdProyek != null)
+                        {
+                            hasProyek = true;
+                            return View(new HelperVM
+                            {
+                                HasProyek = hasProyek
+                            });
+                        }
+                    }
+                }
+            }
+
+            return View(new HelperVM
+            {
+                HasProyek = hasProyek
+            });
         }
 
         public async Task<IActionResult> Details(string id)
