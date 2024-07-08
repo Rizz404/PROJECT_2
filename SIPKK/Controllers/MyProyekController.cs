@@ -125,9 +125,10 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
 
-            if(mahasiswa == null)
+            if(mahasiswa == null || mahasiswa.IdProyek == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Daftar proyek aja belum";
+                return Redirect(Request.Headers["Referer"].ToString());
             }
 
             List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdProyek == mahasiswa.IdProyek, includedProperties: [
@@ -146,9 +147,10 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId);
 
-            if(dosen == null)
+            if(dosen == null || dosen.IdProyek == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Daftar proyek aja belum";
+                return Redirect(Request.Headers["Referer"].ToString());
             }
 
             List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdProyek == dosen.IdProyek, includedProperties: [

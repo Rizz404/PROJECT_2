@@ -47,19 +47,19 @@ namespace SIPKK.Controllers
 
             if(mahasiswa.Persyaratan.KetPembayaran == false)
             {
-                errorMessages.Add("Kamu belum mengupload bukti pembayaran");
+                errorMessages.Add("Kamu belum menyerahkan bukti pembayaran");
             }
             if(mahasiswa.Persyaratan.KetOrangTua == false)
             {
-                errorMessages.Add("Kamu belum mengupload bukti persetujuan orang tua");
+                errorMessages.Add("Kamu belum menyerahkan bukti persetujuan orang tua");
             }
             if(mahasiswa.Persyaratan.KetKelakuanBaik == false)
             {
-                errorMessages.Add("Kamu belum mengupload bukti kelakuan baik");
+                errorMessages.Add("Kamu belum menyerahkan bukti kelakuan baik");
             }
             if(mahasiswa.Persyaratan.KetSehat == false)
             {
-                errorMessages.Add("Kamu belum mengupload bukti keterangan sehat");
+                errorMessages.Add("Kamu belum menyerahkan bukti keterangan sehat");
             }
 
             if(errorMessages.Any())
