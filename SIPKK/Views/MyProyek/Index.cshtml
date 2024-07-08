@@ -2,7 +2,8 @@
 
 <partial name="_Notification" />
 
-<h2>Proyek Kamu</h2>
+<h2>Proyek Kamu</h2>     
+
 @if(Model.Proyek != null)
 {
     <div class="card mb-4" style="width:42rem;">
@@ -20,8 +21,40 @@
             <div class="my-2 d-flex gap-2 flex-wrap">
                 <button class="btn btn-danger badge">@Model.Proyek.Kuota</button>
                 <button class="btn btn-danger badge">@Model.Proyek.Lokasi</button>
+
+                @if (Model.Proyek.Verified)
+                {
+                    <button class="btn btn-danger badge">Sudah Terferifikasi</button>
+
+                }else
+                {
+                    <button class="btn btn-danger badge">Belum terferivikasi</button>
+
+                }
+                @if(@Model.Proyek.SudahSelesai)
+                {
+                    <button class="btn btn-danger badge">Sudah Selesai</button>
+
+                }else
+                {
+                    <button class="btn btn-danger badge">Belum Selesai</button>
+
+                }
             </div>
         </div>
+    </div>
+    <div>
+        <h3>Mahasiswa Terdaftar</h3>
+        <ul>
+            @foreach(var mahasiswa in Model.Proyek.Mahasiswa)
+            {
+                <li>
+                    @mahasiswa.FirstName
+                    <span>Pending</span>
+                </li>
+            }
+
+        </ul>
     </div>
 }
 else
