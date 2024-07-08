@@ -12,6 +12,10 @@
     --primary-darkgray: hsla(320, 1%, 78%, 1);
     --primary-lightgray: hsla(224, 6%, 91%, 1);
     --primary-aqua: hsla(207, 100%, 81%, 1);
+    --pastel-pink: #FFEFEF;
+    --pastel-blue: #ECF9FC;
+    --orange: #FE6409;
+    --dark-grey: #C8C7C7;
 }
 
 *, *::before, *::after {
@@ -21,7 +25,10 @@
 * {
     margin: 0;
 }
+p,h1,h2,h3,h4,h5,h6 {
+    margin-bottom: 0!important;
 
+}
 body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -53,7 +60,6 @@ p, h1, h2, h3, h4, h5, h6 {
 .base-container {
     max-width: 1120px;
     margin: 0 auto;
-    padding: 0 1rem;
 }
 
 .flex-center {
@@ -71,6 +77,7 @@ p, h1, h2, h3, h4, h5, h6 {
     font-size: 70px;
     font-weight: 800;
     line-height: 84.72px;
+
 }
 
 .sub-heading {
@@ -147,6 +154,19 @@ p, h1, h2, h3, h4, h5, h6 {
     line-height: 29.05px;
     text-decoration: none;
 }
+.orange-btn {
+    background-color:var(--primary-orange);
+    padding: 6px 12px;
+    border-radius: 4px;
+    color:white;
+    border: 0;
+}
+.muted-btn {
+    background-color:var(--dark-grey);
+    padding: 6px 12px;
+    border-radius: 4px;
+    color:white;
+}
 
 
 /*card*/
@@ -210,12 +230,11 @@ nav > ul {
 .hero-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 36px;
-    min-height: 60vh;
+    gap: 40px;
+    padding-top: 3rem;
 }
 
 .left-hero-container {
-    gap: 16px;
 }
 
     .left-hero-container > h2 {
@@ -232,15 +251,46 @@ nav > ul {
 .right-hero-container {
     position: relative;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.right-hero-container > .person {
+        width: 100%;
+    z-index: 1000000000000000000000000000000000000000000;
 }
 
-    .right-hero-container > img {
-        object-fit: cover;
-        position: absolute;
-        top: -14rem;
-        left: 50%;
-        transform: translateX(-50%);
-    }
+.right-hero-container > .inner,
+.right-hero-container > .right,
+.right-hero-container > .left,
+.right-hero-container > .top
+
+{
+    position: absolute;
+    
+}
+.right-hero-container > .left {
+    width: 374.5px;
+    left: -240px;
+    bottom: -96px;
+    z-index: -1;
+}
+.right-hero-container > .inner {
+    bottom: -60px;
+    left: -40px;
+    z-index:-1;
+    width: 720px;
+}
+.right-hero-container > .right {
+    z-index: -1;
+    top: 20px;
+}
+.right-hero-container > .top {
+    z-index: -1;
+    top:-80px;
+    left: -12px;
+}
+
 
 .right-hero-box {
     border-radius: 10px;
@@ -415,3 +465,150 @@ footer {
                     font-weight: 600;
                     line-height: 12.1px;
                 }
+
+/* Proyeks */
+.proyeks-wrapper{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 2rem;
+}
+.proyeks-container {
+    border-radius: 8px;
+    background-color: white;
+}
+.proyeks-inner{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.proyeks-nama {
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 19.36px;
+    text-align: left;
+}
+.proyeks-deskripsi {
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 9.68px;
+    text-align: left;
+    color:black;
+}
+.proyeks-detail {
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    
+}
+.proyeks-inner-detail {
+    display: flex;
+    gap: .5rem;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    align-items: center;
+}
+.proyeks-kuota-lokasi {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+.proyeks-kuota-lokasi > p {
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 9.68px;
+    text-align: left;
+    color: var(--dark-grey);
+}
+.btn-register {
+}
+
+.proyeks-foto {
+    object-fit: cover;
+    border-radius: 8px;
+    width: 100%;
+    max-height: 254px;
+}
+
+/* Proyek Detail */
+.proyek-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+.proyek-title {
+    font-family: Inter;
+    font-size: 55px;
+    font-weight: 800;
+    line-height: 66.56px;
+    text-align: center;
+    color: black;
+}
+.proyek-foto-container, .proyek-container-detail {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 80px;
+}
+.proyek-container-detail > button {
+    font-size: 24px;
+    font-weight: 600;
+}
+.proyek-foto-container > .proyek-foto, .proyek-detail {
+    border-radius: 8px;
+    grid-column: span 2;
+}
+.proyek-foto-container > .proyek-tagline{
+}
+
+.proyek-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.proyek-detail {
+    display:flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+.proyek-inner-detail {
+}
+.proyek-inner-detail > div,
+.proyek-inner-detail > div > div {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    justify-content: space-between;
+}
+.proyek-inner-detail > div > div > p {
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24.2px;
+    text-align: left;
+    color: var(--dark-grey);
+}
+.proyek-inner-detail > div > div > span {
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 24.2px;
+    text-align: left;
+    color: black;
+}
+
+.proyek-subtitle {
+    font-family: Inter;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 43.57px;
+    text-align: left;
+}
+
+.proyek-deskripsi, .proyek-rules {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}

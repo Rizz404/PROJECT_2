@@ -24,7 +24,7 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Laporan
         public async Task<IActionResult> Index()
         {
-            List<Laporan> laporanList = (await _unitOfWork.Laporan.GetAllAsync()).ToList();
+            List<Laporan> laporanList = (await _unitOfWork.Laporan.GetAllAsync(includedProperties: [m => m.Mahasiswa])).ToList();
             return View(laporanList);
         }
 
