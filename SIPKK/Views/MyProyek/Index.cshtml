@@ -2,98 +2,135 @@
 
 <partial name="_Notification" />
 
-<h2>Proyek Kamu</h2>     
+<div class="container mt-4">
+    <h2 class="mb-4">Proyek Kamu</h2>
 
-@if(Model.Proyek != null)
-{
-    <div class="card mb-4" style="width:42rem;">
-        @if(!string.IsNullOrEmpty(Model.Proyek.FotoProyek))
+    @if (Model.Proyek != null)
+    {
+        <div class="card mb-4 shadow">
+            @if (!string.IsNullOrEmpty(Model.Proyek.FotoProyek))
+            {
+                <img src="@Model.Proyek.FotoProyek" alt="Foto Proyek" class="my-proyek-foto">
+            }
+            else
+            {
+                <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="Default Proyek Image">
+            }
+            <div class="card-body">
+                <h5 class="card-title">@Model.Proyek.NamaProyek</h5>
+                <p class="card-text">@Model.Proyek.Deskripsi</p>
+                <div class="my-2 d-flex gap-2 flex-wrap">
+                    <span class="badge bg-primary">@Model.Proyek.Kuota</span>
+                    <span class="badge bg-secondary">@Model.Proyek.Lokasi</span>
+                    <span class="badge @(Model.Proyek.Verified ? "bg-success" : "bg-warning")">
+                        @(Model.Proyek.Verified ? "Sudah Terverifikasi" : "Belum Terverifikasi")
+                    </span>
+                    <span class="badge @(Model.Proyek.SudahSelesai ? "bg-success" : "bg-danger")">
+                        @(Model.Proyek.SudahSelesai ? "Sudah Selesai" : "Belum Selesai")
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4 shadow">
+            <div class="card-header">
+                <h3 class="mb-0">Mahasiswa Terdaftar</h3>
+            </div>
+            <div class="card-body">
+                @if (Model.Dosen != null)
+                {
+                    <p class="mb-3">Pembimbing: <strong>@Model.Dosen.NamaDosen</strong></p>
+                }
+                else
+                {
+                    <p class="mb-3 text-muted">Belum ada dosen yang terdaftar</p>
+                }
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>NIM</th>
+                                <th>Nama Depan</th>
+                                <th>Nama Belakang</th>
+                                <th>Tanggal Lahir</th>
+                                <th>Foto Profil</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var mahasiswa in Model.Proyek.Mahasiswa)
+                            {
+                                <tr>
+                                    <td>@mahasiswa.NIM</td>
+                                    <td>@mahasiswa.FirstName</td>
+                                    <td>@mahasiswa.LastName</td>
+                                    <td>@mahasiswa.TanggalLahir.ToString("dd-MM-yyyy")</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(mahasiswa.FotoProfil))
+                                        {
+                                            <img src="@mahasiswa.FotoProfil" alt="Foto Profil" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" />
+                                        }
+                                        else
+                                        {
+                                            <img src="https://i.pinimg.com/236x/07/a7/2f/07a72f2bb4d9df85c1e53e23f97276e7.jpg" alt="Default Foto Profil" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" />
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            Kamu belum mendaftar ke proyek manapun
+        </div>
+    }
+
+    @if (Model.Proyek != null)
+    {
+        @if (Model.Laporan != null)
         {
-            <img src="@Model.Proyek.FotoProyek" class="card-img-top img-fluid" alt="...">
+            <div class="card mb-4 shadow">
+                <div class="card-header">
+                    <h2 class="mb-0">Detail Laporan</h2>
+                </div>
+                <div class="card-body">
+                    <h3>@Model.Laporan.Keterangan</h3>
+                    @if (!string.IsNullOrEmpty(Model.Laporan.FotoLaporan))
+                    {
+                        <img src="@Model.Laporan.FotoLaporan" alt="Foto Proyek" class="img-fluid mt-3" />
+                    }
+                </div>
+            </div>
         }
         else
         {
-            <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
+            <a asp-action="CreateLaporan" class="btn btn-primary mb-4">Buat Laporan</a>
         }
-        <div class="card-body">
-            <h5 class="card-title">@Model.Proyek.NamaProyek</h5>
-            <p class="card-text">@Model.Proyek.Deskripsi</p>
-            <div class="my-2 d-flex gap-2 flex-wrap">
-                <button class="btn btn-danger badge">@Model.Proyek.Kuota</button>
-                <button class="btn btn-danger badge">@Model.Proyek.Lokasi</button>
 
-                @if (Model.Proyek.Verified)
-                {
-                    <button class="btn btn-danger badge">Sudah Terferifikasi</button>
-
-                }else
-                {
-                    <button class="btn btn-danger badge">Belum terferivikasi</button>
-
-                }
-                @if(@Model.Proyek.SudahSelesai)
-                {
-                    <button class="btn btn-danger badge">Sudah Selesai</button>
-
-                }else
-                {
-                    <button class="btn btn-danger badge">Belum Selesai</button>
-
-                }
+        @if (Model.BiayaOperasional != null)
+        {
+            <div class="card mb-4 shadow">
+                <div class="card-header">
+                    <h2 class="mb-0">Detail Biaya Operasional</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Keterangan:</strong> @Model.BiayaOperasional.Keterangan</li>
+                        <li class="list-group-item"><strong>Biaya Lain-lain:</strong> @Model.BiayaOperasional.BiayaDll</li>
+                        <li class="list-group-item"><strong>Biaya Proyek:</strong> @Model.BiayaOperasional.BiayaProyek</li>
+                        <li class="list-group-item"><strong>Biaya Transportasi:</strong> @Model.BiayaOperasional.BiayaTransportasi</li>
+                        <li class="list-group-item"><strong>Tanggal Biaya:</strong> @Model.BiayaOperasional.TanggalBiaya.ToString("dd-MM-yyyy")</li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </div>
-    <div>
-        <h3>Mahasiswa Terdaftar</h3>
-        <ul>
-            @foreach(var mahasiswa in Model.Proyek.Mahasiswa)
-            {
-                <li>
-                    @mahasiswa.FirstName
-                    <span>Pending</span>
-                </li>
-            }
-
-        </ul>
-    </div>
-}
-else
-{
-    <p>Kamu belum mendaftar ke proyek manapun</p>
-}
-
-@if(Model.Proyek != null && Model.Proyek.SudahSelesai == true)
-{
-    @if(Model.Laporan != null)
-    {
-        <h2>Detail Laporan</h2>
-        <div>
-            <h3>@Model.Laporan.Keterangan</h3>
-            @if(!string.IsNullOrEmpty(Model.Laporan.FotoLaporan))
-            {
-                <p>Foto Proyek: <img src="@Model.Laporan.FotoLaporan" alt="Foto Proyek" /></p>
-            }
-        </div>
+        }
+        else
+        {
+            <a asp-action="CreateBiayaOperasional" class="btn btn-warning mb-4">Buat Laporan Biaya Pendaftaran</a>
+        }
     }
-    else
-    {
-        <a asp-action="CreateLaporan" class="btn btn-danger">Buat Laporan</a>
-    }
-
-    @if(Model.BiayaOperasional != null)
-    {
-        <h2>Detail Biaya Operasional</h2>
-        <div>
-            <h3>@Model.BiayaOperasional.Keterangan</h3>
-            <h3>@Model.BiayaOperasional.BiayaDll</h3>
-            <h3>@Model.BiayaOperasional.BiayaProyek</h3>
-            <h3>@Model.BiayaOperasional.BiayaTransportasi</h3>
-            <h3>@Model.BiayaOperasional.TanggalBiaya</h3>
-        </div>
-    }
-    else
-    {
-        <a asp-action="CreateBiayaOperasional" class="btn btn-warning">Buat Laporan Biaya Pendaftaran</a>
-    }
-
-}
+</div>
