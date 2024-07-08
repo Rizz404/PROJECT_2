@@ -10,7 +10,9 @@
     var roles = await UserManager.GetRolesAsync(user);
     if (roles.Contains("Admin"))
     {
-    }else
+        <partial name="HomeAdmin"/>
+    }
+    else
     {
         <partial name="_Notification" />
         <section class="base-container  hero-container">
