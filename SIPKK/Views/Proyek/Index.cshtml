@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<ProyekVM>
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 <div class="row">
     <partial name="_Notification" />
@@ -8,22 +10,50 @@
             <div class="card">
                 @if(!string.IsNullOrEmpty(proyek.Proyek.FotoProyek))
                 {
-                    <img src="@proyek.Proyek.FotoProyek" class="card-img-top img-fluid" alt="...">
+                    <img src="@proyek.Proyek.FotoProyek" class="card-img-top img-fluid" alt="Foto Proyek">
                 }
                 else
                 {
-                    <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
+                    <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="Default Foto">
                 }
                 <div class="card-body">
                     <h5 class="card-title">@proyek.Proyek.NamaProyek</h5>
                     <p class="card-text">@proyek.Proyek.Deskripsi</p>
-                    @if(proyek.StatusMahasiswa == ProyekVM.Status.PENDING)
+                    @if(SignInManager.IsSignedIn(User))
                     {
-                        <span>terdaftar di proyek  <span class="btn btn-success badge"> @proyek.ProyekTerdaftarNameForCurrentMahasiswa</span> menungu konfirmasi pembayaran</span>
-                    }
-                    else if(proyek.StatusMahasiswa == ProyekVM.Status.TERDAFTAR)
-                    {
-                        <span class="btn btn-success badge">Terdaftar</span>
+                        @if(User.IsInRole("Mahasiswa"))
+                        {
+                            @switch(proyek.StatusMahasiswa)
+                            {
+                                case ProyekVM.Status.PENDING:
+                                <span>Terdaftar di proyek <span class="btn btn-success badge">@proyek.ProyekTerdaftarNameForCurrentMahasiswa</span> menunggu konfirmasi pembayaran</span>
+                                break;
+                                case ProyekVM.Status.TERDAFTAR:
+                                <span class="btn btn-success badge">Terdaftar</span>
+                                break;
+                                case ProyekVM.Status.TERDAFTAR_PROYEK_LAIN:
+                                <span>Terdaftar di proyek lain: <span class="btn btn-info badge">@proyek.ProyekTerdaftarNameForCurrentMahasiswa</span></span>
+                                break;
+                                default:
+                                <span>kintil</span>
+                                break;
+                            }
+                        }
+                        else if(User.IsInRole("Dosen"))
+                        {
+                            @switch(proyek.StatusMahasiswa) // Perhatikan: kita menggunakan StatusMahasiswa untuk dosen juga
+                            {
+                                case ProyekVM.Status.TERDAFTAR:
+                                <span class="btn btn-success badge">Proyek Anda</span>
+                                break;
+                                case ProyekVM.Status.TERDAFTAR_PROYEK_LAIN:
+                                <span>Anda terdaftar di proyek lain: <span class="btn btn-info badge">@proyek.ProyekTerdaftarNameForCurrentMahasiswa</span></span>
+                                break;
+                                default:
+                                <span class="btn btn-secondary badge">Bukan Proyek Anda</span>
+                                break;
+                            }
+                        }
                     }
                     <div class="my-2 d-flex gap-2 flex-wrap">
                         <button class="btn btn-danger badge">@proyek.Proyek.Kuota</button>

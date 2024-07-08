@@ -25,13 +25,47 @@ namespace SIPKK.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
+        public enum UserRole
+        {
+            Mahasiswa,
+            Dosen
+        }
+
+        private async Task<UserRole> GetUserRole()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if(user == null)
+                throw new InvalidOperationException("User not found");
+
+            if(await _userManager.IsInRoleAsync(user, "Mahasiswa"))
+                return UserRole.Mahasiswa;
+            if(await _userManager.IsInRoleAsync(user, "Dosen"))
+                return UserRole.Dosen;
+
+            throw new InvalidOperationException("User role not recognized");
+        }
+
         public async Task<IActionResult> Index()
         {
+            var userRole = await GetUserRole();
+
+            switch(userRole)
+            {
+                case UserRole.Mahasiswa:
+                return await HandleMahasiswaIndex();
+                case UserRole.Dosen:
+                return await HandleDosenIndex();
+                default:
+                return NotFound();
+            }
+        }
+
+        private async Task<IActionResult> HandleMahasiswaIndex()
+        {
             string userId = _userManager.GetUserId(User);
-            var user = await _userManager.FindByIdAsync(userId);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Proyek);
 
-            if(user == null || mahasiswa == null)
+            if(mahasiswa == null)
             {
                 return NotFound();
             }
@@ -52,30 +86,41 @@ namespace SIPKK.Controllers
             return View(myProyekVM);
         }
 
-        public async Task<IActionResult> Laporan()
+        private async Task<IActionResult> HandleDosenIndex()
         {
             string userId = _userManager.GetUserId(User);
-            var user = await _userManager.FindByIdAsync(userId);
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
+            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId, d => d.Proyek);
 
-            if(user == null || mahasiswa == null)
+            if(dosen == null)
             {
                 return NotFound();
             }
 
-            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdProyek == mahasiswa.IdProyek, includedProperties: [
-                m => m.ProgramStudi,
-                m => m.Konsentrasi,
-                m => m.Proyek      ,
-                m => m.BiayaOperasional,
-                m => m.Laporan
-            ])).ToList();
+            var myProyekDosenVM = new MyProyekVM()
+            {
+                Dosen = dosen,
+                Proyek = dosen.Proyek,
+            };
 
-            return View(mahasiswaList);
+            return View(myProyekDosenVM);
         }
 
-        // GET: CreateLaporan
-        public async Task<IActionResult> CreateLaporan()
+        public async Task<IActionResult> Laporan()
+        {
+            var userRole = await GetUserRole();
+
+            switch(userRole)
+            {
+                case UserRole.Mahasiswa:
+                return await HandleMahasiswaLaporan();
+                case UserRole.Dosen:
+                return await HandleDosenLaporan();
+                default:
+                return NotFound();
+            }
+        }
+
+        private async Task<IActionResult> HandleMahasiswaLaporan()
         {
             string userId = _userManager.GetUserId(User);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
@@ -85,69 +130,36 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            LaporanVM laporanVM = new LaporanVM
-            {
-                Laporan = new Laporan
-                {
-                    IdProyek = mahasiswa.IdProyek,
-                    IdMahasiswa = mahasiswa.Id
-                }
-            };
+            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdProyek == mahasiswa.IdProyek, includedProperties: [
+                m => m.ProgramStudi,
+                m => m.Konsentrasi,
+                m => m.Proyek,
+                m => m.BiayaOperasional,
+                m => m.Laporan
+            ])).ToList();
 
-            return View(laporanVM);
+            return View(mahasiswaList);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateLaporan(LaporanVM laporanVM, IFormFile? fotoLaporan, IFormFile? file)
+        private async Task<IActionResult> HandleDosenLaporan()
         {
-            if(ModelState.IsValid)
+            string userId = _userManager.GetUserId(User);
+            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId);
+
+            if(dosen == null)
             {
-                string wwwRootPath = _webHostEnvironment.WebRootPath;
-
-                if(fotoLaporan != null)
-                {
-                    string filename = new Cuid2().ToString() + Path.GetExtension(fotoLaporan.FileName);
-                    string laporanPath = Path.Combine(wwwRootPath, @"images\laporan");
-
-                    using(var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
-                    {
-                        fotoLaporan.CopyTo(fileStream);
-                    }
-
-                    laporanVM.Laporan.FotoLaporan = @"\images\laporan\" + filename;
-                }
-
-                if(file != null)
-                {
-                    string filename = new Cuid2().ToString() + Path.GetExtension(file.FileName);
-                    string laporanPath = Path.Combine(wwwRootPath, @"images\laporan");
-
-                    using(var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
-                    {
-                        file.CopyTo(fileStream);
-                    }
-
-                    laporanVM.Laporan.FileLaporan = @"\images\laporan\" + filename;
-                }
-
-
-                Laporan laporan = new()
-                {
-                    Keterangan = laporanVM.Laporan.Keterangan,
-                    IdProyek = laporanVM.Laporan.IdProyek,
-                    FotoLaporan = laporanVM.Laporan.FotoLaporan,
-                    FileLaporan = laporanVM.Laporan.FileLaporan,
-                    IdMahasiswa = laporanVM.Laporan.IdMahasiswa,
-                };
-
-                await _unitOfWork.Laporan.CreateAsync(laporan);
-                await _unitOfWork.SaveAsync();
-                TempData["SuccessMessage"] = "Laporan created successfully";
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
 
-            return View(laporanVM);
+            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdProyek == dosen.IdProyek, includedProperties: [
+                 m => m.ProgramStudi,
+                m => m.Konsentrasi,
+                m => m.Proyek,
+                m => m.BiayaOperasional,
+                m => m.Laporan
+             ])).ToList();
+
+            return View(mahasiswaList);
         }
 
         // GET: CreateBiayaOperasional
@@ -198,33 +210,6 @@ namespace SIPKK.Controllers
             }
 
             return View(biayaOperasionalVM);
-        }
-
-        public IActionResult DownloadLaporan(string filePath)
-        {
-            if(string.IsNullOrEmpty(filePath))
-            {
-                return Content("File path is not provided");
-            }
-
-            // Decoding file path
-            string decodedFilePath = HttpUtility.UrlDecode(filePath);
-
-            // Lokasi direktori root file laporan
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", decodedFilePath.TrimStart('\\'));
-
-            // Mengecek apakah file ada
-            if(!System.IO.File.Exists(path))
-            {
-                return Content("File not found");
-            }
-
-            // Mendapatkan file tipe konten dan nama
-            var contentType = "application/octet-stream";
-            var fileName = Path.GetFileName(path);
-
-            // Mengunduh file
-            return File(System.IO.File.ReadAllBytes(path), contentType, fileName);
         }
     }
 }

@@ -13,6 +13,9 @@ namespace SIPKK.Models.ViewModels
         public Mahasiswa Mahasiswa { get; set; }
 
         [ValidateNever]
+        public Dosen Dosen { get; set; }
+
+        [ValidateNever]
         public Proyek Proyek { get; set; }
 
         [ValidateNever]
