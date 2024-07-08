@@ -5,7 +5,6 @@ using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
 using System.Diagnostics;
-using System.Transactions;
 
 namespace SIPKK.Controllers
 {
@@ -75,25 +74,29 @@ namespace SIPKK.Controllers
         {
             var userRole = await GetUserRole();
 
-            switch(userRole)
+            switch (userRole)
             {
                 case UserRole.Mahasiswa:
-                return await HandleMahasiswaView();
+                    return await HandleMahasiswaView();
                 case UserRole.Dosen:
-                return await HandleDosenView();
+                    return await HandleDosenView();
                 default:
-                return await HandleUnauthenticatedView();
+                    return await HandleUnauthenticatedView();
             }
         }
 
         private async Task<UserRole> GetUserRole()
         {
             var user = await _userManager.GetUserAsync(User);
-            if(await _userManager.IsInRoleAsync(user, "Mahasiswa"))
-                return UserRole.Mahasiswa;
-            if(await _userManager.IsInRoleAsync(user, "Dosen"))
-                return UserRole.Dosen;
-            return UserRole.Admin; // Atau role default lainnya
+            if (user != null)
+            {
+                if (await _userManager.IsInRoleAsync(user, "Mahasiswa"))
+                    return UserRole.Mahasiswa;
+                if (await _userManager.IsInRoleAsync(user, "Dosen"))
+                    return UserRole.Dosen;
+                return UserRole.Admin; // Atau role default lainnya
+            }
+            return UserRole.Admin;
         }
 
         private async Task<IActionResult> HandleMahasiswaView()
@@ -168,7 +171,7 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             ]);
 
-            if(proyekList == null || !proyekList.Any())
+            if (proyekList == null || !proyekList.Any())
             {
                 TempData["ErrorMessage"] = "Tidak ada proyek";
                 return View();
@@ -183,9 +186,9 @@ namespace SIPKK.Controllers
                 string? proyekTerdaftarNameForCurrentDosen = null;
                 ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-                if(!string.IsNullOrEmpty(dosen.IdProyek) && dosen.Proyek != null)
+                if (!string.IsNullOrEmpty(dosen.IdProyek) && dosen.Proyek != null)
                 {
-                    if(dosen.IdProyek == proyek.Id)
+                    if (dosen.IdProyek == proyek.Id)
                     {
                         status = ProyekVM.Status.TERDAFTAR;
                     }
@@ -277,7 +280,7 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             );
 
-            if(proyek == null)
+            if (proyek == null)
             {
                 return NotFound();
             }
@@ -291,9 +294,9 @@ namespace SIPKK.Controllers
             string? proyekTerdaftarNameForCurrentMahasiswa = null;
             ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-            if(!string.IsNullOrEmpty(dosen.IdProyek) && dosen.Proyek != null)
+            if (!string.IsNullOrEmpty(dosen.IdProyek) && dosen.Proyek != null)
             {
-                if(dosen.IdProyek == proyek.Id)
+                if (dosen.IdProyek == proyek.Id)
                 {
                     status = ProyekVM.Status.TERDAFTAR;
                 }
@@ -323,18 +326,19 @@ namespace SIPKK.Controllers
             });
         }
 
+        [Authorize]
         public async Task<IActionResult> Details(string id)
         {
             var userRole = await GetUserRole();
 
-            switch(userRole)
+            switch (userRole)
             {
                 case UserRole.Mahasiswa:
-                return await HandleMahasiswaViewDetails(id);
+                    return await HandleMahasiswaViewDetails(id);
                 case UserRole.Dosen:
-                return await HandleDosenViewDetails(id);
+                    return await HandleDosenViewDetails(id);
                 default:
-                return await HandleUnauthenticatedViewDetails(id);
+                    return await HandleUnauthenticatedViewDetails(id);
             }
         }
 

@@ -1,4 +1,15 @@
 ﻿@model MyProyekVM
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var roles = await UserManager.GetRolesAsync(user);
+
+}
+
 
 <partial name="_Notification" />
 
@@ -34,18 +45,48 @@
 
         <div class="card mb-4 shadow">
             <div class="card-header">
-                <h3 class="mb-0">Mahasiswa Terdaftar</h3>
+                <h3 class="mb-0">Anggota Proyek </h3>
             </div>
             <div class="card-body">
                 @if (Model.Dosen != null)
                 {
-                    <p class="mb-3">Pembimbing: <strong>@Model.Dosen.NamaDosen</strong></p>
+                    <div class="card mb-4 shadow">
+                        <div class="card-header">
+                            <h3 class="mb-0"> Dosen Pembimbing</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    @if (!string.IsNullOrEmpty(Model.Dosen.FotoProfil))
+                                    {
+                                        <img src="@Model.Dosen.FotoProfil" alt="Foto Profil Dosen" class="img-fluid rounded-circle mb-3" style="width: 200px; height: 200px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <img src="https://i.pinimg.com/236x/07/a7/2f/07a72f2bb4d9df85c1e53e23f97276e7.jpg" alt="Default Foto Profil Dosen" class="img-fluid rounded-circle mb-3" style="width: 200px; height: 200px; object-fit: cover;">
+                                    }
+                                </div>
+                                <div class="col-md-8">
+                                    <h4 class="mb-3">@Model.Dosen.NamaDosen</h4>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong>NIDN:</strong> @Model.Dosen.NIDN</li>
+                                        <li class="list-group-item"><strong>Tanggal Lahir:</strong> @Model.Dosen.TanggalLahir.ToString("dd MMMM yyyy")</li>
+                                        @if (!string.IsNullOrEmpty(Model.Dosen.IdProyek))
+                                        {
+                                            <li class="list-group-item"><strong>ID Proyek:</strong> @Model.Dosen.IdProyek</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 }
                 else
                 {
-                    <p class="mb-3 text-muted">Belum ada dosen yang terdaftar</p>
-                }
-                <div class="table-responsive">
+                    <div class="alert alert-info" role="alert">
+                        Belum ada dosen pembimbing yang ditugaskan untuk proyek ini.
+                    </div>
+                }                <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead class="table-light">
                             <tr>
@@ -57,24 +98,34 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var mahasiswa in Model.Proyek.Mahasiswa)
+
+                            @if(Model.Proyek != null && Model.Proyek.Mahasiswa != null)
                             {
-                                <tr>
-                                    <td>@mahasiswa.NIM</td>
-                                    <td>@mahasiswa.FirstName</td>
-                                    <td>@mahasiswa.LastName</td>
-                                    <td>@mahasiswa.TanggalLahir.ToString("dd-MM-yyyy")</td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(mahasiswa.FotoProfil))
-                                        {
-                                            <img src="@mahasiswa.FotoProfil" alt="Foto Profil" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" />
-                                        }
-                                        else
-                                        {
-                                            <img src="https://i.pinimg.com/236x/07/a7/2f/07a72f2bb4d9df85c1e53e23f97276e7.jpg" alt="Default Foto Profil" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" />
-                                        }
-                                    </td>
-                                </tr>
+                                @foreach (var mahasiswa in Model.Proyek.Mahasiswa)
+                                {
+                                    <tr>
+                                        <td>@mahasiswa.NIM</td>
+                                        <td>@mahasiswa.FirstName</td>
+                                        <td>@mahasiswa.LastName</td>
+                                        <td>@mahasiswa.TanggalLahir.ToString("dd-MM-yyyy")</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(mahasiswa.FotoProfil))
+                                            {
+                                                <img src="@mahasiswa.FotoProfil" alt="Foto Profil" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" />
+                                            }
+                                            else
+                                            {
+                                                <img src="https://i.pinimg.com/236x/07/a7/2f/07a72f2bb4d9df85c1e53e23f97276e7.jpg" alt="Default Foto Profil" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" />
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+
+                            } else
+                            {
+                                <p class="heading">
+                                    belum ada mahasiswaz
+                                </p>
                             }
                         </tbody>
                     </table>
@@ -89,7 +140,7 @@
         </div>
     }
 
-    @if (Model.Proyek != null)
+    @if (Model.Proyek != null && roles.Contains("Mahasiswa"))
     {
         @if (Model.Laporan != null)
         {

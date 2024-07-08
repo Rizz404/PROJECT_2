@@ -374,7 +374,6 @@ namespace SIPKK.DataAccess.Migrations
                         .HasDatabaseName("ix_biaya_operasional_id_mahasiswa");
 
                     b.HasIndex("IdProyek")
-                        .IsUnique()
                         .HasDatabaseName("ix_biaya_operasional_id_proyek");
 
                     b.ToTable("biaya_operasional", (string)null);
@@ -522,10 +521,10 @@ namespace SIPKK.DataAccess.Migrations
                         .HasName("pk_laporan");
 
                     b.HasIndex("IdMahasiswa")
+                        .IsUnique()
                         .HasDatabaseName("ix_laporan_id_mahasiswa");
 
                     b.HasIndex("IdProyek")
-                        .IsUnique()
                         .HasDatabaseName("ix_laporan_id_proyek");
 
                     b.ToTable("laporan", (string)null);
@@ -740,35 +739,35 @@ namespace SIPKK.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "h14en52s20am3n0j8qfl8rvg",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 44, DateTimeKind.Utc).AddTicks(1490),
+                            Id = "kx5tyv1pwviukeiss489slcl",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9454),
                             Deskripsi = "Program studi yang mempelajari ilmu komputer dan teknologi informasi",
                             Nama = "Teknik Informatika",
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 44, DateTimeKind.Utc).AddTicks(1490)
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9455)
                         },
                         new
                         {
-                            Id = "o117trvfk4k9u2v6pu2ter92",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 44, DateTimeKind.Utc).AddTicks(2208),
+                            Id = "r122jeiuizwufsef6jigw68z",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9796),
                             Deskripsi = "Program studi yang mempelajari pengembangan dan pengelolaan sistem informasi",
                             Nama = "Sistem Informasi",
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 44, DateTimeKind.Utc).AddTicks(2209)
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9797)
                         },
                         new
                         {
-                            Id = "dkx2ebb52k8u1frcumh0lg8z",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 44, DateTimeKind.Utc).AddTicks(2992),
+                            Id = "ptksja2l2m8l3l8k8uwvuolw",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 853, DateTimeKind.Utc).AddTicks(112),
                             Deskripsi = "Program studi yang mempelajari manajemen dan administrasi bisnis",
                             Nama = "Manajemen Bisnis",
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 44, DateTimeKind.Utc).AddTicks(2993)
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 853, DateTimeKind.Utc).AddTicks(113)
                         },
                         new
                         {
-                            Id = "t11socm9vhyvy2v0j8csiaky",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 44, DateTimeKind.Utc).AddTicks(3671),
+                            Id = "p7qsf9uvi769euihj8uuuw7g",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 853, DateTimeKind.Utc).AddTicks(392),
                             Deskripsi = "Program studi yang mempelajari prinsip dan praktik akuntansi",
                             Nama = "Akuntansi",
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 44, DateTimeKind.Utc).AddTicks(3672)
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 853, DateTimeKind.Utc).AddTicks(393)
                         });
                 });
 
@@ -835,142 +834,142 @@ namespace SIPKK.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "hunm7qd8tzjvj88c7nfzw5lx",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(2514),
+                            Id = "amsvdevco4e24mwbrn9nnfr8",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6183),
                             Deskripsi = "Proyek pengembangan aplikasi mobile untuk bisnis ritel",
                             Kuota = (short)10,
                             Lokasi = "Jakarta",
                             NamaProyek = "Pengembangan Aplikasi Mobile",
                             SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(2501),
-                            TanggalSelesai = new DateTime(2025, 1, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(2505),
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(2515),
+                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6173),
+                            TanggalSelesai = new DateTime(2025, 1, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6176),
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6184),
                             Verified = false
                         },
                         new
                         {
-                            Id = "qs2gckg4ui8d3wfp7g8yezsk",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(3344),
+                            Id = "rday0y3zbcxyofplk4exv464",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6482),
                             Deskripsi = "Proyek desain antarmuka dan pengalaman pengguna untuk website perusahaan",
                             Kuota = (short)8,
                             Lokasi = "Bandung",
                             NamaProyek = "Desain UI/UX Website",
                             SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(3338),
-                            TanggalSelesai = new DateTime(2024, 11, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(3340),
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(3346),
+                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6479),
+                            TanggalSelesai = new DateTime(2024, 11, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6480),
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6483),
                             Verified = false
                         },
                         new
                         {
-                            Id = "ynlvk1v310zu2vu8jjxatgbr",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(4087),
+                            Id = "s8ajrjewqdqdeixxmb59kb08",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6802),
                             Deskripsi = "Proyek analisis data pemasaran untuk meningkatkan strategi penjualan",
                             Kuota = (short)6,
                             Lokasi = "Surabaya",
                             NamaProyek = "Analisis Data Pemasaran",
                             SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(4083),
-                            TanggalSelesai = new DateTime(2024, 10, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(4084),
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(4088),
+                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6800),
+                            TanggalSelesai = new DateTime(2024, 10, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6800),
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6803),
                             Verified = false
                         },
                         new
                         {
-                            Id = "bwdewgyxcr1knmxg2ynq6st6",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(4962),
+                            Id = "emfdisll88gq1d3cjlmcayt3",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7078),
                             Deskripsi = "Proyek pengembangan game 3D untuk platform mobile",
                             Kuota = (short)12,
                             Lokasi = "Yogyakarta",
                             NamaProyek = "Pengembangan Game 3D",
                             SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(4956),
-                            TanggalSelesai = new DateTime(2025, 3, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(4959),
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(4963),
+                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7076),
+                            TanggalSelesai = new DateTime(2025, 3, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7076),
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7079),
                             Verified = false
                         },
                         new
                         {
-                            Id = "raury4x4z6h1gfxxfuaegih1",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(5797),
+                            Id = "xenr3ryty8114gow6gn1e775",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7472),
                             Deskripsi = "Proyek pengembangan sistem manajemen inventaris untuk perusahaan manufaktur",
                             Kuota = (short)8,
                             Lokasi = "Semarang",
                             NamaProyek = "Sistem Manajemen Inventaris",
                             SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(5793),
-                            TanggalSelesai = new DateTime(2024, 12, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(5794),
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(5808),
+                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7469),
+                            TanggalSelesai = new DateTime(2024, 12, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7470),
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7472),
                             Verified = false
                         },
                         new
                         {
-                            Id = "c11defmk0z3k4mfambro4a52",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(6580),
+                            Id = "au0ngvltvhkpmocb4id333qk",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7793),
                             Deskripsi = "Proyek analisis keamanan siber untuk meningkatkan sistem keamanan perusahaan",
                             Kuota = (short)6,
                             Lokasi = "Medan",
                             NamaProyek = "Analisis Keamanan Siber",
                             SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(6576),
-                            TanggalSelesai = new DateTime(2024, 11, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(6577),
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(6581),
+                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7791),
+                            TanggalSelesai = new DateTime(2024, 11, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7791),
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7794),
                             Verified = false
                         },
                         new
                         {
-                            Id = "ng8gsmjky66jv21775b0gqfe",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(7292),
+                            Id = "vcvmyf2oxw4sk3aybaby6x0z",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8080),
                             Deskripsi = "Proyek pengembangan aplikasi web e-commerce untuk toko online",
                             Kuota = (short)10,
                             Lokasi = "Makassar",
                             NamaProyek = "Pengembangan Aplikasi Web E-Commerce",
                             SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(7287),
-                            TanggalSelesai = new DateTime(2025, 2, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(7289),
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(7293),
+                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8077),
+                            TanggalSelesai = new DateTime(2025, 2, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8078),
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8080),
                             Verified = false
                         },
                         new
                         {
-                            Id = "z12hosxfj9su9tmwca7zm4x9",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(8081),
+                            Id = "s12qhsxlf7ms62u8fc82wfhc",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8400),
                             Deskripsi = "Proyek otomatisasi proses bisnis untuk meningkatkan efisiensi operasional",
                             Kuota = (short)8,
                             Lokasi = "Palembang",
                             NamaProyek = "Otomatisasi Proses Bisnis",
                             SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(8077),
-                            TanggalSelesai = new DateTime(2025, 1, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(8078),
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(8081),
+                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8398),
+                            TanggalSelesai = new DateTime(2025, 1, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8398),
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8401),
                             Verified = false
                         },
                         new
                         {
-                            Id = "q7z5aojk6nsjkkbjjdzw2pv2",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(8770),
+                            Id = "ettelgsggjcjzbei6br09vv9",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8675),
                             Deskripsi = "Proyek pengembangan sistem manajemen proyek untuk perusahaan konsultan",
                             Kuota = (short)7,
                             Lokasi = "Balikpapan",
                             NamaProyek = "Pengembangan Sistem Manajemen Proyek",
                             SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(8766),
-                            TanggalSelesai = new DateTime(2024, 12, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(8767),
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(8770),
+                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8673),
+                            TanggalSelesai = new DateTime(2024, 12, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8673),
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8676),
                             Verified = false
                         },
                         new
                         {
-                            Id = "wxdvime89rfqe3qimyk765xx",
-                            CreatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(9631),
+                            Id = "i53k2o6oagrt4lnfv6erlkn9",
+                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9018),
                             Deskripsi = "Proyek analisis data keuangan untuk membantu pengambilan keputusan investasi",
                             Kuota = (short)6,
                             Lokasi = "Denpasar",
                             NamaProyek = "Analisis Data Keuangan",
                             SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(9628),
-                            TanggalSelesai = new DateTime(2024, 11, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(9629),
-                            UpdatedAt = new DateTime(2024, 7, 2, 12, 9, 2, 43, DateTimeKind.Utc).AddTicks(9632),
+                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9015),
+                            TanggalSelesai = new DateTime(2024, 11, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9016),
+                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9018),
                             Verified = false
                         });
                 });
@@ -1085,8 +1084,8 @@ namespace SIPKK.DataAccess.Migrations
                         .HasConstraintName("fk_biaya_operasional_mahasiswa_id_mahasiswa");
 
                     b.HasOne("SIPKK.Models.Proyek", "Proyek")
-                        .WithOne("BiayaOperasional")
-                        .HasForeignKey("SIPKK.Models.BiayaOperasional", "IdProyek")
+                        .WithMany("BiayaOperasional")
+                        .HasForeignKey("IdProyek")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_biaya_operasional_proyek_id_proyek");
@@ -1130,15 +1129,15 @@ namespace SIPKK.DataAccess.Migrations
             modelBuilder.Entity("SIPKK.Models.Laporan", b =>
                 {
                     b.HasOne("SIPKK.Models.Mahasiswa", "Mahasiswa")
-                        .WithMany()
-                        .HasForeignKey("IdMahasiswa")
+                        .WithOne("Laporan")
+                        .HasForeignKey("SIPKK.Models.Laporan", "IdMahasiswa")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_laporan_mahasiswa_id_mahasiswa");
 
                     b.HasOne("SIPKK.Models.Proyek", "Proyek")
-                        .WithOne("Laporan")
-                        .HasForeignKey("SIPKK.Models.Laporan", "IdProyek")
+                        .WithMany("Laporan")
+                        .HasForeignKey("IdProyek")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_laporan_proyek_id_proyek");
@@ -1226,6 +1225,8 @@ namespace SIPKK.DataAccess.Migrations
             modelBuilder.Entity("SIPKK.Models.Mahasiswa", b =>
                 {
                     b.Navigation("BiayaOperasional");
+
+                    b.Navigation("Laporan");
 
                     b.Navigation("Pendaftaran");
 

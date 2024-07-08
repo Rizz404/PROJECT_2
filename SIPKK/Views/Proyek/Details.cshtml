@@ -175,9 +175,9 @@
                         </div>
                     </div>
                 </div>
-                <button class="orange-btn ">
+                <a class="orange-btn" href="@routeUploadBiayaPendaftaran">
                     Register
-                </button>
+                </a>
             </div>
             <div class="proyek-deskripsi">
                 <h2 class="proyek-subtitle">
@@ -187,6 +187,61 @@
             @Model.Proyek.Deskripsi
                 </p>
             </div>
+            <div>
+        @if (Model.Proyek.Verified == true && Model.Proyek.SudahSelesai == false)
+        {
+                    <button>Berjalan</button>
+        }
+        else if (Model.Proyek.SudahSelesai == true)
+        {
+                    <button>Selesai</button>
+        }
+            </div>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        @if (roles.Contains("Mahasiswa"))
+        {
+            @if (Model.StatusMahasiswa == ProyekVM.Status.PENDING)
+            {
+                        <span>terdaftar di proyek  <span class="btn btn-success badge"> @Model.ProyekTerdaftarNameForCurrentMahasiswa</span> menungu konfirmasi pembayaran</span>
+            }
+            else if (Model.StatusMahasiswa == ProyekVM.Status.TERDAFTAR)
+            {
+                        <span class="btn btn-success badge">Terdaftar</span>
+            }
+            else if (Model.StatusMahasiswa == ProyekVM.Status.TERDAFTAR_PROYEK_LAIN)
+            {
+                        <span class="btn btn-secondary badge">Terdaftar Proyek Lain</span>
+            }
+            else
+            {
+                        <a href="@routeUploadBiayaPendaftaran" class="btn btn-primary">Daftar</a>
+            }
+        }
+        else if (roles.Contains("Dosen"))
+        {
+            @switch (Model.StatusMahasiswa) // Perhatikan: kita menggunakan StatusMahasiswa untuk dosen juga
+            {
+                case ProyekVM.Status.TERDAFTAR:
+                            <span class="btn btn-success badge">Proyek Anda</span>
+                    break;
+                case ProyekVM.Status.TERDAFTAR_PROYEK_LAIN:
+                            <span>Anda terdaftar di proyek lain: <span class="btn btn-info badge">@Model.ProyekTerdaftarNameForCurrentMahasiswa</span></span>
+                    break;
+                default:
+                            <form asp-action="DaftarJadiPembimbing" method="post">
+                                <input type="hidden" name="id" value="@Model.Proyek.Id" />
+                                <button type="submit" class="btn btn-primary">Jadi pembimbing</button>
+                            </form>
+                    break;
+            }
+        }
+        else if (roles.Contains("Admin"))
+        {
+                    <button type="button" class="btn btn-success" disabled>Youre gay</button>
+        }
+    }
+                </div>
             <div class="proyek-rules">
                 <h2 class="proyek-subtitle">
                     Rules
