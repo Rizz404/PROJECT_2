@@ -7,33 +7,45 @@
 @{
     var user = await UserManager.GetUserAsync(User);
     var roles = await UserManager.GetRolesAsync(user);
+    string[] rules = {
+        "Integritas dan Kejujuran",
+        "Etika dan Sikap Profesional",
+        "Penghormatan terhadap Budaya dan Adat Setempat",
+        "Tanggung Jawab Sosial",
+        "Kepatuhan terhadap Hukum dan Peraturan",
+        "Kerja Sama Tim",
+        "Adaptabilitas dan Fleksibilitas",
+        "Pelaporan yang Tepat Waktu dan Akurat"
+    };
+
 }
 
 <partial name="_Notification" />
-<div class="row">
+
+<div >
     <div class="">
-        <div class="card mb-3">
+        <div ">
             @if(Model.Proyek.FotoProyek != null)
             {
-                <img src="@Model.Proyek.FotoProyek" class="card-img-top" alt="...">
+                <img src="@Model.Proyek.FotoProyek"  alt="...">
             }
             else
             {
                 <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="card-img-top" alt="...">
             }
-            <div class="card-body">
-                <h5 class="card-title">@Model.Proyek.NamaProyek</h5>
-                <p class="card-text">@Model.Proyek.Deskripsi</p>
-                <div class="my-2 d-flex gap-2 flex-wrap">
-                    <button class="btn btn-danger badge">@Model.Proyek.Kuota</button>
-                    <button class="btn btn-danger badge">@Model.Proyek.Lokasi</button>
+            <div >
+                <h5 >@Model.Proyek.NamaProyek</h5>
+                <p >@Model.Proyek.Deskripsi</p>
+                <div >
+                    <button >@Model.Proyek.Kuota</button>
+                    <button >@Model.Proyek.Lokasi</button>
                     @if(Model.Proyek.Verified == true && Model.Proyek.SudahSelesai == false)
                     {
-                        <button class="btn btn-warning badge">Berjalan</button>
+                        <button >Berjalan</button>
                     }
                     else if(Model.Proyek.SudahSelesai == true)
                     {
-                        <button class="btn btn-warning badge">Selesai</button>
+                        <button >Selesai</button>
                     }
                 </div>
 
@@ -42,15 +54,15 @@
                 {
                     @if(Model.StatusMahasiswa == ProyekVM.Status.PENDING)
                     {
-                        <span>terdaftar di proyek  <span class="btn btn-success badge"> @Model.ProyekTerdaftarNameForCurrentMahasiswa</span> menungu konfirmasi pembayaran</span>
+                        <span>terdaftar di proyek  <span > @Model.ProyekTerdaftarNameForCurrentMahasiswa</span> menungu konfirmasi pembayaran</span>
                     }
                     else if(Model.StatusMahasiswa == ProyekVM.Status.TERDAFTAR)
                     {
-                        <span class="btn btn-success badge">Terdaftar</span>
+                        <span >Terdaftar</span>
                     }
                     else if(Model.StatusMahasiswa == ProyekVM.Status.TERDAFTAR_PROYEK_LAIN)
                     {
-                        <span class="btn btn-secondary badge">Terdaftar Proyek Lain</span>
+                        <span >Terdaftar Proyek Lain</span>
                     }
                     else
                     {
@@ -61,12 +73,12 @@
                 {
                     <form asp-action="DaftarForDosen" method="post">
                         <input type="hidden" name="id" value="@Model.Proyek.Id" />
-                        <button type="submit" class="btn btn-primary">Jadi pembimbing</button>
+                        <button type="submit" >Jadi pembimbing</button>
                     </form>
                 }
                 else if(roles.Contains("Admin"))
                 {
-                    <button type="button" class="btn btn-success" disabled>Youre gay</button>
+                    <button type="button"  disabled>Youre gay</button>
                 }
 
             </div>
@@ -74,10 +86,10 @@
 
         <div>
             <h3>Mahasiswa Terdaftar</h3>
-            <ul class="list-group mb-2">
+            <ul >
                 @foreach(var mahasiswa in Model.Proyek.Mahasiswa)
                 {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <li >
                         @mahasiswa.FirstName
                         <span>Pending</span>
                     </li>
@@ -87,3 +99,92 @@
         </div>
     </div>
 </div>
+
+
+<div class="proyek-wrapper base-container">
+    <h1 class="proyek-title ">
+        @Model.Proyek.NamaProyek
+    </h1>
+    <div class="proyek-container">
+        <div class="proyek-inner">
+            <div class="proyek-foto-container">
+                @if (Model.Proyek.FotoProyek != null)
+                {
+                    <img class="proyek-foto" src="@Model.Proyek.FotoProyek" alt="...">
+                }
+                else
+                {
+                    <img src="https://i.pinimg.com/236x/f3/14/eb/f314eb2a3b3516819825da700929c83d.jpg" class="proyek-foto" alt="...">
+                }
+                <img src="~/images/assets/tagline.png" class="proyek-tagline" />
+            </div>
+            <div class="proyek-container-detail">
+                <div class="proyek-detail">
+                    <div class="proyek-inner-detail">
+                        <div>
+                            <div>
+                                <p>
+                                    From:
+                                </p>
+                                <span>
+                                    @Model.Proyek.TanggalMulai
+                                </span>
+                            </div>                            
+                            <div>
+                                <p>
+                                    Location:
+                                </p>
+                                <span>
+                                    @Model.Proyek.Lokasi
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="proyek-inner-detail">
+                        <div>
+                            <div>
+                                <p>
+                                    Until:
+                                </p>
+                                <span>
+                                    @Model.Proyek.TanggalSelesai
+                                </span>
+                            </div>                            
+                            <div>
+                                <p>
+                                    Kuota:
+                                </p>
+                                <span>
+                                    @Model.Proyek.Kuota / @Model.Proyek.Kuota
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="orange-btn ">
+                    Register
+                </button>
+            </div>
+            <div class="proyek-deskripsi">
+                 <h2 class="proyek-subtitle">
+                     Description
+                 </h2>
+                 <p>
+                    @Model.Proyek.Deskripsi 
+                 </p>
+            </div>
+            <div class="proyek-rules">
+                <h2 class="proyek-subtitle">
+                    Rules
+                </h2>
+                <ol>
+                    @foreach (var rule in rules)
+                    {
+                        <li>@rule</li>
+                    }
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+

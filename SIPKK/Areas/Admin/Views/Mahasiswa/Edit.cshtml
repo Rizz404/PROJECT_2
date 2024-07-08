@@ -46,7 +46,10 @@
             </div>
             <div class="form-group">
                 <label asp-for="Mahasiswa.IdProyek" class="control-label"></label>
-                <select asp-for="@Model.Mahasiswa.IdProyek" class="form-control" asp-items="@Model.ProyekList"></select>
+                
+                <select asp-for="@Model.Mahasiswa.IdProyek" class="form-control" asp-items="@Model.ProyekList">
+                    <option value="">-- Pilih Proyek --</option>
+                </select>
                 <span asp-validation-for="Mahasiswa.IdProyek" class="text-danger"></span>
             </div>
             <div class="form-group">

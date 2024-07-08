@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SIPKK.DataAccess.Repository;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
 using System.Diagnostics;
-using System.Linq.Expressions;
 using System.Transactions;
 
 namespace SIPKK.Controllers
@@ -36,38 +34,38 @@ namespace SIPKK.Controllers
         {
             var IdUser = _userManager.GetUserId(User);
 
-            switch(role)
+            switch (role)
             {
                 case UserRole.Mahasiswa:
-                var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.IdUser == IdUser, includedProperties: [
-                    m => m.Proyek,
+                    var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.IdUser == IdUser, includedProperties: [
+                        m => m.Proyek,
                 ]);
-                if(mahasiswa != null)
-                {
-                    return new UserRoleData { Id = mahasiswa.Id, Proyek = mahasiswa.Proyek };
-                }
-                break;
+                    if (mahasiswa != null)
+                    {
+                        return new UserRoleData { Id = mahasiswa.Id, Proyek = mahasiswa.Proyek };
+                    }
+                    break;
 
                 case UserRole.Dosen:
-                var dosen = await _unitOfWork.Dosen.GetAsync(filter: d => d.IdUser == IdUser, includedProperties: [
-                    d => d.Proyek
-                ]);
-                if(dosen != null)
-                {
-                    return new UserRoleData { Id = dosen.Id, Proyek = dosen.Proyek };
-                }
-                break;
+                    var dosen = await _unitOfWork.Dosen.GetAsync(filter: d => d.IdUser == IdUser, includedProperties: [
+                        d => d.Proyek
+                    ]);
+                    if (dosen != null)
+                    {
+                        return new UserRoleData { Id = dosen.Id, Proyek = dosen.Proyek };
+                    }
+                    break;
 
                 case UserRole.Admin:
-                var admin = await _unitOfWork.Admin.GetAsync(filter: a => a.IdUser == IdUser);
-                if(admin != null)
-                {
-                    return new UserRoleData { Id = admin.Id };
-                }
-                break;
+                    var admin = await _unitOfWork.Admin.GetAsync(filter: a => a.IdUser == IdUser);
+                    if (admin != null)
+                    {
+                        return new UserRoleData { Id = admin.Id };
+                    }
+                    break;
 
                 default:
-                throw new ArgumentException("Role tidak dikenali", nameof(role));
+                    throw new ArgumentException("Role tidak dikenali", nameof(role));
             }
 
             throw new InvalidOperationException($"Tidak ditemukan entitas yang cocok untuk user dengan Id {IdUser} dan role {role}.");
@@ -75,7 +73,7 @@ namespace SIPKK.Controllers
 
         public async Task<IActionResult> Index()
         {
-            if(!User.Identity.IsAuthenticated)
+            if (!User.Identity.IsAuthenticated)
             {
                 var proyekListNotAuth = await _unitOfWork.Proyek.GetAllAsync();
                 return View(proyekListNotAuth.Select(proyek => new ProyekVM() { Proyek = proyek }));
@@ -90,7 +88,7 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             ]);
 
-            if(proyekList == null || !proyekList.Any())
+            if (proyekList == null || !proyekList.Any())
             {
                 TempData["ErrorMessage"] = "Tidak ada proyek";
                 return View();
@@ -108,15 +106,15 @@ namespace SIPKK.Controllers
                 string? proyekTerdaftarNameForCurrentMahasiswa = null;
                 ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-                if(pendaftaran != null && pendaftaran.StatusPembayaran == false)
+                if (pendaftaran != null && pendaftaran.StatusPembayaran == false)
                 {
                     status = ProyekVM.Status.PENDING;
                     proyekTerdaftarNameForCurrentMahasiswa = pendaftaran.Proyek.NamaProyek;
                 }
 
-                if(!string.IsNullOrEmpty(mahasiswa.IdProyek) && mahasiswa.Proyek != null)
+                if (!string.IsNullOrEmpty(mahasiswa.IdProyek) && mahasiswa.Proyek != null)
                 {
-                    if(mahasiswa.IdProyek == proyek.Id)
+                    if (mahasiswa.IdProyek == proyek.Id)
                     {
                         status = ProyekVM.Status.TERDAFTAR;
                     }
@@ -146,7 +144,7 @@ namespace SIPKK.Controllers
         [Authorize]
         public async Task<IActionResult> Details(string id)
         {
-            if(string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
@@ -158,7 +156,7 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             );
 
-            if(proyek == null)
+            if (proyek == null)
             {
                 return NotFound();
             }
@@ -176,15 +174,15 @@ namespace SIPKK.Controllers
             string? proyekTerdaftarNameForCurrentMahasiswa = null;
             ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-            if(pendaftaran != null && pendaftaran.StatusPembayaran == false)
+            if (pendaftaran != null && pendaftaran.StatusPembayaran == false)
             {
                 status = ProyekVM.Status.PENDING;
                 proyekTerdaftarNameForCurrentMahasiswa = pendaftaran.Proyek.NamaProyek;
             }
 
-            if(!string.IsNullOrEmpty(mahasiswa.IdProyek) && mahasiswa.Proyek != null)
+            if (!string.IsNullOrEmpty(mahasiswa.IdProyek) && mahasiswa.Proyek != null)
             {
-                if(mahasiswa.IdProyek == proyek.Id)
+                if (mahasiswa.IdProyek == proyek.Id)
                 {
                     status = ProyekVM.Status.TERDAFTAR;
                 }
@@ -211,23 +209,23 @@ namespace SIPKK.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Daftar(string id)
         {
-            if(string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
 
             var currentMahasiswa = await GetAssociatedRoleId(UserRole.Mahasiswa);
 
-            using(var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.Id == currentMahasiswa.Id);
 
-                if(mahasiswa == null)
+                if (mahasiswa == null)
                 {
                     return NotFound();
                 }
 
-                if(!string.IsNullOrEmpty(mahasiswa.IdProyek))
+                if (!string.IsNullOrEmpty(mahasiswa.IdProyek))
                 {
                     TempData["ErrorMessage"] = "Sudah terdaftar di proyek";
                     return RedirectToAction(nameof(Details), new { id });
@@ -235,12 +233,12 @@ namespace SIPKK.Controllers
 
                 var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == id);
 
-                if(proyek == null)
+                if (proyek == null)
                 {
                     return NotFound();
                 }
 
-                if(proyek.Kuota <= 0)
+                if (proyek.Kuota <= 0)
                 {
                     TempData["ErrorMessage"] = "Kuota proyek sudah penuh";
                     return RedirectToAction(nameof(Details), new { id });
@@ -248,7 +246,7 @@ namespace SIPKK.Controllers
 
                 var persyaratan = await _unitOfWork.Persyaratan.GetAsync(p => p.IdMahasiswa == mahasiswa.Id);
 
-                if(!persyaratan.KetPembayaran || !persyaratan.KetKelakuanBaik || !persyaratan.KetOrangTua || !persyaratan.KetSehat)
+                if (!persyaratan.KetPembayaran || !persyaratan.KetKelakuanBaik || !persyaratan.KetOrangTua || !persyaratan.KetSehat)
                 {
                     TempData["ErrorMessage"] = "Syarat belum lengkap! Silahkan hubungi dosen terkait";
                     return RedirectToAction(nameof(Details), new { id });
@@ -279,14 +277,14 @@ namespace SIPKK.Controllers
                     TempData["SuccessMessage"] = "Pendaftaran berhasil silahkan melakukan pembayaran";
                     return RedirectToAction(nameof(Details), new { id });
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     // Log the full exception including inner exception
                     _logger.LogError(ex, "Error occurred while registering mahasiswa to proyek.");
 
                     // Output the exception details to the debug console
                     Debug.WriteLine($"Exception: {ex.Message}");
-                    if(ex.InnerException != null)
+                    if (ex.InnerException != null)
                     {
                         Debug.WriteLine($"Inner Exception: {ex.InnerException.Message}");
                         TempData["ErrorMessage"] = $"Inner Exception: {ex.InnerException.Message}";
@@ -304,7 +302,7 @@ namespace SIPKK.Controllers
         {
             var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == id);
 
-            if(string.IsNullOrEmpty(id) || proyek == null)
+            if (string.IsNullOrEmpty(id) || proyek == null)
             {
                 return NotFound();
             }
@@ -322,14 +320,14 @@ namespace SIPKK.Controllers
                 TempData["SuccessMessage"] = "Berhasil menjadi pembimbing proyek";
                 return RedirectToAction(nameof(Details), new { id });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // Log the full exception including inner exception
                 _logger.LogError(ex, "Error intinya");
 
                 // Output the exception details to the debug console
                 Debug.WriteLine($"Exception: {ex.Message}");
-                if(ex.InnerException != null)
+                if (ex.InnerException != null)
                 {
                     Debug.WriteLine($"Inner Exception: {ex.InnerException.Message}");
                     TempData["ErrorMessage"] = $"Inner Exception: {ex.InnerException.Message}";
