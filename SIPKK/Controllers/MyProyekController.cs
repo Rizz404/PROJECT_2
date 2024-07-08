@@ -70,6 +70,7 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
+            var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == mahasiswa.IdProyek, p => p.Mahasiswa);
             var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(p => p.IdMahasiswa == mahasiswa.Id);
             var laporan = await _unitOfWork.Laporan.GetAsync(l => l.IdMahasiswa == mahasiswa.Id);
             var biayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(b => b.IdMahasiswa == mahasiswa.Id);
@@ -77,7 +78,7 @@ namespace SIPKK.Controllers
             var myProyekVM = new MyProyekVM()
             {
                 Mahasiswa = mahasiswa,
-                Proyek = mahasiswa.Proyek,
+                Proyek = proyek,
                 Laporan = laporan,
                 Pendaftaran = pendaftaran,
                 BiayaOperasional = biayaOperasional
