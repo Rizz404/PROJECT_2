@@ -639,3 +639,9 @@ footer {
 .hidden {
     display: none;
 }
+
+.landing-page-foto {
+    object-fit: cover;
+    width: 100%;
+    height: 288px;
+}
