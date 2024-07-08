@@ -4,9 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Web;
 using Visus.Cuid;
 
 namespace SIPKK.Controllers
@@ -34,12 +31,12 @@ namespace SIPKK.Controllers
         private async Task<UserRole> GetUserRole()
         {
             var user = await _userManager.GetUserAsync(User);
-            if(user == null)
+            if (user == null)
                 throw new InvalidOperationException("User not found");
 
-            if(await _userManager.IsInRoleAsync(user, "Mahasiswa"))
+            if (await _userManager.IsInRoleAsync(user, "Mahasiswa"))
                 return UserRole.Mahasiswa;
-            if(await _userManager.IsInRoleAsync(user, "Dosen"))
+            if (await _userManager.IsInRoleAsync(user, "Dosen"))
                 return UserRole.Dosen;
 
             throw new InvalidOperationException("User role not recognized");
@@ -49,14 +46,14 @@ namespace SIPKK.Controllers
         {
             var userRole = await GetUserRole();
 
-            switch(userRole)
+            switch (userRole)
             {
                 case UserRole.Mahasiswa:
-                return await HandleMahasiswaIndex();
+                    return await HandleMahasiswaIndex();
                 case UserRole.Dosen:
-                return await HandleDosenIndex();
+                    return await HandleDosenIndex();
                 default:
-                return NotFound();
+                    return NotFound();
             }
         }
 
@@ -65,7 +62,7 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Proyek);
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 return NotFound();
             }
@@ -74,6 +71,7 @@ namespace SIPKK.Controllers
             var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(p => p.IdMahasiswa == mahasiswa.Id);
             var laporan = await _unitOfWork.Laporan.GetAsync(l => l.IdMahasiswa == mahasiswa.Id);
             var biayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(b => b.IdMahasiswa == mahasiswa.Id);
+            var dosen = await _unitOfWork.Dosen.GetAsync(b => b.IdProyek ==proyek.Id);
 
             var myProyekVM = new MyProyekVM()
             {
@@ -81,7 +79,8 @@ namespace SIPKK.Controllers
                 Proyek = proyek,
                 Laporan = laporan,
                 Pendaftaran = pendaftaran,
-                BiayaOperasional = biayaOperasional
+                BiayaOperasional = biayaOperasional,
+                Dosen = dosen,
             };
 
             return View(myProyekVM);
@@ -92,7 +91,7 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId, d => d.Proyek);
 
-            if(dosen == null)
+            if (dosen == null)
             {
                 return NotFound();
             }
@@ -110,14 +109,14 @@ namespace SIPKK.Controllers
         {
             var userRole = await GetUserRole();
 
-            switch(userRole)
+            switch (userRole)
             {
                 case UserRole.Mahasiswa:
-                return await HandleMahasiswaLaporan();
+                    return await HandleMahasiswaLaporan();
                 case UserRole.Dosen:
-                return await HandleDosenLaporan();
+                    return await HandleDosenLaporan();
                 default:
-                return NotFound();
+                    return NotFound();
             }
         }
 
@@ -126,7 +125,7 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
 
-            if(mahasiswa == null || mahasiswa.IdProyek == null)
+            if (mahasiswa == null || mahasiswa.IdProyek == null)
             {
                 TempData["ErrorMessage"] = "Daftar proyek aja belum";
                 return Redirect(Request.Headers["Referer"].ToString());
@@ -148,7 +147,7 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId);
 
-            if(dosen == null || dosen.IdProyek == null)
+            if (dosen == null || dosen.IdProyek == null)
             {
                 TempData["ErrorMessage"] = "Daftar proyek aja belum";
                 return Redirect(Request.Headers["Referer"].ToString());
@@ -171,7 +170,7 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 return NotFound();
             }
@@ -193,7 +192,7 @@ namespace SIPKK.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateBiayaOperasional(BiayaOperasionalVM biayaOperasionalVM)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 BiayaOperasional biayaOperasional = new()
                 {
@@ -214,5 +213,82 @@ namespace SIPKK.Controllers
 
             return View(biayaOperasionalVM);
         }
+        // GET: CreateLaporan
+        public async Task<IActionResult> CreateLaporan()
+        {
+            string userId = _userManager.GetUserId(User);
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
+
+            if (mahasiswa == null)
+            {
+                return NotFound();
+            }
+
+            LaporanVM laporanVM = new LaporanVM
+            {
+                Laporan = new Laporan
+                {
+                    IdProyek = mahasiswa.IdProyek,
+                    IdMahasiswa = mahasiswa.Id
+                }
+            };
+
+            return View(laporanVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateLaporan(LaporanVM laporanVM, IFormFile? fotoLaporan, IFormFile? file)
+        {
+            if (ModelState.IsValid)
+            {
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+
+                if (fotoLaporan != null)
+                {
+                    string filename = new Cuid2().ToString() + Path.GetExtension(fotoLaporan.FileName);
+                    string laporanPath = Path.Combine(wwwRootPath, @"images\laporan");
+
+                    using (var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
+                    {
+                        fotoLaporan.CopyTo(fileStream);
+                    }
+
+                    laporanVM.Laporan.FotoLaporan = @"\images\laporan\" + filename;
+                }
+
+                if (file != null)
+                {
+                    string filename = new Cuid2().ToString() + Path.GetExtension(file.FileName);
+                    string laporanPath = Path.Combine(wwwRootPath, @"images\laporan");
+
+                    using (var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    laporanVM.Laporan.FileLaporan = @"\images\laporan\" + filename;
+                }
+
+
+                Laporan laporan = new()
+                {
+                    Keterangan = laporanVM.Laporan.Keterangan,
+                    IdProyek = laporanVM.Laporan.IdProyek,
+                    FotoLaporan = laporanVM.Laporan.FotoLaporan,
+                    FileLaporan = laporanVM.Laporan.FileLaporan,
+                    IdMahasiswa = laporanVM.Laporan.IdMahasiswa,
+                };
+
+                await _unitOfWork.Laporan.CreateAsync(laporan);
+                await _unitOfWork.SaveAsync();
+                TempData["SuccessMessage"] = "Laporan created successfully";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(laporanVM);
+        }
+
+
     }
 }
