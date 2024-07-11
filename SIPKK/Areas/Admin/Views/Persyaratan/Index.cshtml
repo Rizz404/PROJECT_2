@@ -30,10 +30,55 @@
                 <tr>
                     <td>@counter</td>
                     <td>@item.Mahasiswa.FirstName</td>
-                    <td>@item.KetSehat</td>
-                    <td>@item.KetPembayaran</td>
-                    <td>@item.KetOrangTua</td>
-                    <td>@item.KetKelakuanBaik</td>
+                    <td>
+                        @if (item.KetSehat)
+                        {
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span> Sudah</span>
+                       }
+                        else
+                        {
+                            <i class="fas fa-times-circle text-danger"></i>
+                            <span>Belum</span>
+                    }
+                    </td>
+                    <td>
+                        @if (item.KetPembayaran)
+                        {
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span> Sudah</span>
+                       }
+                        else
+                        {
+                            <i class="fas fa-times-circle text-danger"></i>
+                            <span>Belum</span>
+                    }
+                    </td>
+                    <td>
+                        @if (item.KetOrangTua)
+                        {
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span> Sudah</span>
+                       }
+                        else
+                        {
+                            <i class="fas fa-times-circle text-danger"></i>
+                            <span>Belum</span>
+                    }
+                    </td>
+                    <td>
+                        @if (item.KetKelakuanBaik)
+                        {
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span> Sudah</span>
+                       }
+                        else
+                        {
+                            <i class="fas fa-times-circle text-danger"></i>
+                            <span>Belum</span>
+                    }
+                    </td>
+
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                         <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
