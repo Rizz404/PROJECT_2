@@ -231,10 +231,40 @@ namespace SIPKK.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            await _unitOfWork.Admin.DeleteAsync(admin);
-            await _unitOfWork.SaveAsync();
-            TempData["SuccessMessage"] = "Admin deleted successfully";
-            return RedirectToAction(nameof(Index));
+
+            string userId = admin.IdUser;
+            ApplicationUser? user = await _userManager.FindByIdAsync(userId);
+
+            using(var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    await _unitOfWork.Admin.DeleteAsync(admin);
+                    await _unitOfWork.SaveAsync();
+
+                    if(user != null)
+                    {
+                        var result = await _userManager.DeleteAsync(user);
+
+                        if(!result.Succeeded)
+                        {
+                            TempData["ErrorMessage"] = "Error deleting user";
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+
+                    // Commit transaction
+                    transaction.Complete();
+
+                    TempData["SuccessMessage"] = "Admin deleted successfully";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch(Exception)
+                {
+                    TempData["ErrorMessage"] = "An error occurred while deleting Admin";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
         }
     }
 }
