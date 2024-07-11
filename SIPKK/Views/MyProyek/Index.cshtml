@@ -140,7 +140,7 @@
         </div>
     }
 
-    @if (Model.Proyek != null && roles.Contains("Mahasiswa"))
+    @if (Model.Proyek != null && roles.Contains("Mahasiswa") && Model.Proyek.Verified)
     {
         @if (Model.Laporan != null)
         {

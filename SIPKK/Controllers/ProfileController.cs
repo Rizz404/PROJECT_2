@@ -23,30 +23,57 @@ public class ProfileController : Controller
     {
         string userId = _userManager.GetUserId(User);
         var user = await _userManager.FindByIdAsync(userId);
-        var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Proyek);
 
-        if (user == null || mahasiswa == null)
+        if(user == null)
         {
             return NotFound();
         }
 
+        var roles = await _userManager.GetRolesAsync(user);
+
         ProfileVM profileVM = new ProfileVM()
         {
-            IdUser = user.Id, // Update here
+            IdUser = user.Id,
             UserName = user.UserName,
             Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
-            Id = mahasiswa.Id,
-            NIM = mahasiswa.NIM,
-            FirstName = mahasiswa.FirstName,
-            LastName = mahasiswa.LastName,
-            TanggalLahir = mahasiswa.TanggalLahir,
-            Semester = mahasiswa.Semester,
-            FotoProfil = mahasiswa.FotoProfil,
-            ProgramStudi = mahasiswa.ProgramStudi.Nama,
-            Konsentrasi = mahasiswa.Konsentrasi.Nama,
-            Proyek = mahasiswa.Proyek != null ? mahasiswa.Proyek.NamaProyek : "Belum mendaftar",
+            PhoneNumber = user.PhoneNumber
         };
+
+        if(roles.Contains("Mahasiswa"))
+        {
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == user.Id, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Proyek);
+            if(mahasiswa != null)
+            {
+                profileVM.Id = mahasiswa.Id;
+                profileVM.NIM = mahasiswa.NIM;
+                profileVM.FirstName = mahasiswa.FirstName;
+                profileVM.LastName = mahasiswa.LastName;
+                profileVM.TanggalLahir = mahasiswa.TanggalLahir;
+                profileVM.Semester = mahasiswa.Semester;
+                profileVM.FotoProfil = mahasiswa.FotoProfil;
+                profileVM.ProgramStudi = mahasiswa.ProgramStudi.Nama;
+                profileVM.Konsentrasi = mahasiswa.Konsentrasi.Nama;
+                profileVM.Proyek = mahasiswa.Proyek?.NamaProyek ?? "Belum mendaftar";
+            }
+        }
+        else if(roles.Contains("Dosen"))
+        {
+            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == user.Id, d => d.Proyek);
+            if(dosen != null)
+            {
+                profileVM.Id = dosen.Id;
+                profileVM.NIDN = dosen.NIDN;
+                profileVM.NamaDosen = dosen.NamaDosen;
+                profileVM.TanggalLahir = dosen.TanggalLahir;
+                profileVM.FotoProfil = dosen.FotoProfil;
+                profileVM.Proyek = dosen.Proyek?.NamaProyek ?? "Belum ada proyek";
+            }
+        }
+        else
+        {
+            return NotFound("User role tidak ditemukan atau tidak valid.");
+        }
+
         return View(profileVM);
     }
 
@@ -56,39 +83,35 @@ public class ProfileController : Controller
     public async Task<IActionResult> Index(ProfileVM profileVM, IFormFile? file)
     {
         // parameter file itu sesuaikan sama name file input ya
-        if (ModelState.IsValid)
+        if(ModelState.IsValid)
         {
-            string wwwRootPath = _webHostEnvironment.WebRootPath;
-
-            if (file != null)
+            var user = await _userManager.FindByIdAsync(profileVM.IdUser);
+            if(user == null)
             {
+                return NotFound();
+            }
+
+            if(file != null)
+            {
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
                 string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                string mahasiswaPath = Path.Combine(wwwRootPath, @"images\mahasiswa");
+                string userPath = Path.Combine(wwwRootPath, @"images\users");
 
-                if (!string.IsNullOrEmpty(profileVM.FotoProfil))
+                if(!string.IsNullOrEmpty(profileVM.FotoProfil))
                 {
-                    // hapus image old
                     var oldImagePath = Path.Combine(wwwRootPath, profileVM.FotoProfil.TrimStart('\\'));
-
-                    if (System.IO.File.Exists(oldImagePath))
+                    if(System.IO.File.Exists(oldImagePath))
                     {
                         System.IO.File.Delete(oldImagePath);
                     }
                 }
 
-                using (var fileStream = new FileStream(Path.Combine(mahasiswaPath, filename), FileMode.Create))
+                using(var fileStream = new FileStream(Path.Combine(userPath, filename), FileMode.Create))
                 {
                     file.CopyTo(fileStream);
                 }
 
-                profileVM.FotoProfil = @"\images\mahasiswa\" + filename;
-            }
-            var user = await _userManager.FindByIdAsync(profileVM.IdUser);
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == profileVM.IdUser);
-
-            if (user == null || mahasiswa == null)
-            {
-                return NotFound();
+                profileVM.FotoProfil = @"\images\users\" + filename;
             }
 
             // Update ApplicationUser fields
@@ -97,22 +120,39 @@ public class ProfileController : Controller
             user.PhoneNumber = profileVM.PhoneNumber;
 
             var userUpdateResult = await _userManager.UpdateAsync(user);
-            if (!userUpdateResult.Succeeded)
+            if(!userUpdateResult.Succeeded)
             {
                 ModelState.AddModelError(string.Empty, "Gagal memperbarui pengguna");
                 return View(profileVM);
             }
 
-            // Update Mahasiswa fields
-            mahasiswa.FirstName = profileVM.FirstName;
-            mahasiswa.LastName = profileVM.LastName;
-            mahasiswa.TanggalLahir = profileVM.TanggalLahir;
-            mahasiswa.FotoProfil = profileVM.FotoProfil;
-            mahasiswa.Semester = profileVM.Semester;
+            var roles = await _userManager.GetRolesAsync(user);
+            if(roles.Contains("Mahasiswa"))
+            {
+                var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == profileVM.IdUser);
+                if(mahasiswa != null)
+                {
+                    mahasiswa.FirstName = profileVM.FirstName;
+                    mahasiswa.LastName = profileVM.LastName;
+                    mahasiswa.TanggalLahir = profileVM.TanggalLahir;
+                    mahasiswa.FotoProfil = profileVM.FotoProfil;
+                    mahasiswa.Semester = profileVM.Semester.Value;
+                    await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
+                }
+            }
+            else if(roles.Contains("Dosen"))
+            {
+                var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == profileVM.IdUser);
+                if(dosen != null)
+                {
+                    dosen.NamaDosen = profileVM.NamaDosen;
+                    dosen.TanggalLahir = profileVM.TanggalLahir;
+                    dosen.FotoProfil = profileVM.FotoProfil;
+                    await _unitOfWork.Dosen.UpdateAsync(dosen);
+                }
+            }
 
-            await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
             await _unitOfWork.SaveAsync();
-
             return RedirectToAction(nameof(Index));
         }
 
