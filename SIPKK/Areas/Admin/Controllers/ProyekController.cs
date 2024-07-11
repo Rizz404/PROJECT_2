@@ -34,7 +34,7 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Proyek
         public async Task<IActionResult> Index()
         {
-            List<Proyek> proyekList = (await _unitOfWork.Proyek.GetAllAsync()).ToList();
+            List<Proyek> proyekList = (await _unitOfWork.Proyek.GetAllAsync(includedProperties: [p => p.Mahasiswa])).ToList();
             return View(proyekList);
         }
 
