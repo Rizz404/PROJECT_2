@@ -3,13 +3,13 @@
 @{
     ViewData["Title"] = "Delete";
     var keyMappings = new Dictionary<string, Func<Persyaratan, object>>
-{
-    { "KetSehat", item => item.KetSehat },
-    { "KetPembayaran", item => item.KetPembayaran },
-    { "KetOrangTua", item => item.KetOrangTua },
-    { "KetKelakuanBaik", item => item.KetKelakuanBaik },
-    { "NamaMahasiswa", item => item.IdMahasiswa },
-};
+    {
+        { "KetSehat", item => item.KetSehat },
+        { "KetPembayaran", item => item.KetPembayaran },
+        { "KetOrangTua", item => item.KetOrangTua },
+        { "KetKelakuanBaik", item => item.KetKelakuanBaik },
+        { "NamaMahasiswa", item => item.IdMahasiswa },
+    };
 }
 
 <h1>Delete</h1>
@@ -19,13 +19,13 @@
     <h4>Persyaratan</h4>
     <hr />
     <dl class="row">
-        @foreach(var map in keyMappings)
+        @foreach (var map in keyMappings)
         {
             <dt class="col-sm-2">@map.Key</dt>
-            <dd class="col-sm-10">@map.Value</dd>
+            <dd class="col-sm-10">@map.Value(Model)</dd>
         }
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
