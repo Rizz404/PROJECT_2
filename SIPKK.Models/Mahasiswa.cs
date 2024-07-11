@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SIPKK.Ultilities.Abstractions;
-using SIPKK.Ultilities.Interface;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -52,7 +51,7 @@ namespace SIPKK.Models
         public string IdKonsentrasi { get; set; }
 
         [MaxLength(36)]
-        [Display(Name = "Id Proyek")]
+        [Display(Name = "Nama Proyek")]
         public string? IdProyek { get; set; }
 
         [Range(1, 12, ErrorMessage = "Semester harus di antara 1 sampai 12")]
@@ -83,7 +82,7 @@ namespace SIPKK.Models
         // Custom validation method for Tanggal Lahir
         public static ValidationResult? ValidateTanggalLahir(DateTime tanggalLahir, ValidationContext context)
         {
-            if(tanggalLahir > DateTime.Now)
+            if (tanggalLahir > DateTime.Now)
             {
                 return new ValidationResult("Tanggal Lahir tidak boleh di masa depan.");
             }
