@@ -1,8 +1,11 @@
 ﻿@model ProfileVM
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "Update Profile";
 }
+
 <style>
     .form-container {
         background-color: white;
@@ -24,100 +27,7 @@
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-
 </style>
-
-<div class="hidden">
-
-
-<h2>Update Profile</h2>
-
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Index" method="post" enctype="multipart/form-data" class="row">
-            <div class="col-md-6">
-                <input asp-for="Id" type="hidden" />
-                <input asp-for="IdUser" type="hidden" />
-                <input asp-for="FotoProfil" type="hidden" />
-                <div asp-validation-summary="All" class="text-danger"></div>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="mb-4">
-                    <h4>Update User Information</h4>
-                    <div class="form-group">
-                        <label asp-for="UserName" class="control-label"></label>
-                        <input asp-for="UserName" class="form-control" />
-                        <span asp-validation-for="UserName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Email" class="control-label"></label>
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="PhoneNumber" class="control-label"></label>
-                        <input asp-for="PhoneNumber" class="form-control" />
-                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div>
-                    <h4>Update Mahasiswa Information</h4>
-                    <div class="form-group">
-                        <label asp-for="NIM" class="control-label"></label>
-                        <input asp-for="NIM" class="form-control" readonly />
-                        <span asp-validation-for="NIM" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="FirstName" class="control-label"></label>
-                        <input asp-for="FirstName" class="form-control" />
-                        <span asp-validation-for="FirstName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="LastName" class="control-label"></label>
-                        <input asp-for="LastName" class="form-control" />
-                        <span asp-validation-for="LastName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="TanggalLahir" class="control-label"></label>
-                        <input asp-for="TanggalLahir" class="form-control" type="date" />
-                        <span asp-validation-for="TanggalLahir" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="FotoProfil" class="control-label"></label>
-                        <input asp-for="FotoProfil" type="file" name="file" class="form-control" />
-                        <span asp-validation-for="FotoProfil" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="ProgramStudi" class="control-label"></label>
-                        <input asp-for="ProgramStudi" class="form-control" readonly />
-                        <span asp-validation-for="ProgramStudi" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="ProgramStudi" class="control-label"></label>
-                        <input asp-for="ProgramStudi" class="form-control" readonly />
-                        <span asp-validation-for="ProgramStudi" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Semester" class="control-label"></label>
-                        <input asp-for="Semester" class="form-control" readonly />
-                        <span asp-validation-for="Semester" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </div>
-            </div>
-            @if(!string.IsNullOrEmpty(Model.FotoProfil))
-            {
-                <div class="col-md-6">
-                    <img src="@Model.FotoProfil" alt="Alternate Text" class="img-fluid img-thumbnail" />
-                </div>
-            }
-        </form>
-    </div>
-</div>
-</div>
 
 <div class="container">
     <div class="form-container">
@@ -149,22 +59,55 @@
                         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>
 
-                    <h4 class="section-title mt-4"><i class="fas fa-graduation-cap"></i> Update Mahasiswa Information</h4>
-                    <div class="mb-3">
-                        <label asp-for="NIM" class="form-label"></label>
-                        <input asp-for="NIM" class="form-control" readonly />
-                        <span asp-validation-for="NIM" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="FirstName" class="form-label"></label>
-                        <input asp-for="FirstName" class="form-control" />
-                        <span asp-validation-for="FirstName" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="LastName" class="form-label"></label>
-                        <input asp-for="LastName" class="form-control" />
-                        <span asp-validation-for="LastName" class="text-danger"></span>
-                    </div>
+                    @if(User.IsInRole("Mahasiswa"))
+                    {
+                        <h4 class="section-title mt-4"><i class="fas fa-graduation-cap"></i> Update Mahasiswa Information</h4>
+                        <div class="mb-3">
+                            <label asp-for="NIM" class="form-label"></label>
+                            <input asp-for="NIM" class="form-control" readonly />
+                            <span asp-validation-for="NIM" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="FirstName" class="form-label"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="LastName" class="form-label"></label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ProgramStudi" class="form-label"></label>
+                            <input asp-for="ProgramStudi" class="form-control" readonly />
+                            <span asp-validation-for="ProgramStudi" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Konsentrasi" class="form-label"></label>
+                            <input asp-for="Konsentrasi" class="form-control" readonly />
+                            <span asp-validation-for="Konsentrasi" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Semester" class="form-label"></label>
+                            <input asp-for="Semester" class="form-control" readonly />
+                            <span asp-validation-for="Semester" class="text-danger"></span>
+                        </div>
+                    }
+                    else if(User.IsInRole("Dosen"))
+                    {
+                        <h4 class="section-title mt-4"><i class="fas fa-chalkboard-teacher"></i> Update Dosen Information</h4>
+                        <div class="mb-3">
+                            <label asp-for="NIDN" class="form-label"></label>
+                            <input asp-for="NIDN" class="form-control" readonly />
+                            <span asp-validation-for="NIDN" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NamaDosen" class="form-label"></label>
+                            <input asp-for="NamaDosen" class="form-control" />
+                            <span asp-validation-for="NamaDosen" class="text-danger"></span>
+                        </div>
+                    }
+
                     <div class="mb-3">
                         <label asp-for="TanggalLahir" class="form-label"></label>
                         <input asp-for="TanggalLahir" class="form-control" type="date" />
@@ -175,16 +118,6 @@
                         <input asp-for="FotoProfil" type="file" name="file" class="form-control" />
                         <span asp-validation-for="FotoProfil" class="text-danger"></span>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="ProgramStudi" class="form-label"></label>
-                        <input asp-for="ProgramStudi" class="form-control" readonly />
-                        <span asp-validation-for="ProgramStudi" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Semester" class="form-label"></label>
-                        <input asp-for="Semester" class="form-control" readonly />
-                        <span asp-validation-for="Semester" class="text-danger"></span>
-                    </div>
 
                     <div class="mb-3">
                         <button type="submit" class="btn btn-primary w-100">
@@ -194,18 +127,23 @@
                 </div>
 
                 <div class="col-md-6">
-                    @if (!string.IsNullOrEmpty(Model.FotoProfil))
+                    @if(!string.IsNullOrEmpty(Model.FotoProfil))
                     {
                         <div class="text-center">
                             <img src="@Model.FotoProfil" alt="Profile Picture" class="profile-image img-fluid mb-3" />
                         </div>
                     }
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title">@(User.IsInRole("Mahasiswa") ? "Informasi Proyek" : "Informasi Proyek yang Diampu")</h5>
+                            <p class="card-text">@Model.Proyek</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
     </div>
 </div>
-
 
 @section Scripts {
     @{

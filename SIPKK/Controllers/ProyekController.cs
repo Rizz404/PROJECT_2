@@ -33,38 +33,38 @@ namespace SIPKK.Controllers
         {
             var IdUser = _userManager.GetUserId(User);
 
-            switch (role)
+            switch(role)
             {
                 case UserRole.Mahasiswa:
-                    var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.IdUser == IdUser, includedProperties: [
-                        m => m.Proyek,
+                var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.IdUser == IdUser, includedProperties: [
+                    m => m.Proyek,
                 ]);
-                    if (mahasiswa != null)
-                    {
-                        return new UserRoleData { Id = mahasiswa.Id, Proyek = mahasiswa.Proyek };
-                    }
-                    break;
+                if(mahasiswa != null)
+                {
+                    return new UserRoleData { Id = mahasiswa.Id, Proyek = mahasiswa.Proyek };
+                }
+                break;
 
                 case UserRole.Dosen:
-                    var dosen = await _unitOfWork.Dosen.GetAsync(filter: d => d.IdUser == IdUser, includedProperties: [
-                        d => d.Proyek
-                    ]);
-                    if (dosen != null)
-                    {
-                        return new UserRoleData { Id = dosen.Id, Proyek = dosen.Proyek };
-                    }
-                    break;
+                var dosen = await _unitOfWork.Dosen.GetAsync(filter: d => d.IdUser == IdUser, includedProperties: [
+                    d => d.Proyek
+                ]);
+                if(dosen != null)
+                {
+                    return new UserRoleData { Id = dosen.Id, Proyek = dosen.Proyek };
+                }
+                break;
 
                 case UserRole.Admin:
-                    var admin = await _unitOfWork.Admin.GetAsync(filter: a => a.IdUser == IdUser);
-                    if (admin != null)
-                    {
-                        return new UserRoleData { Id = admin.Id };
-                    }
-                    break;
+                var admin = await _unitOfWork.Admin.GetAsync(filter: a => a.IdUser == IdUser);
+                if(admin != null)
+                {
+                    return new UserRoleData { Id = admin.Id };
+                }
+                break;
 
                 default:
-                    throw new ArgumentException("Role tidak dikenali", nameof(role));
+                throw new ArgumentException("Role tidak dikenali", nameof(role));
             }
 
             throw new InvalidOperationException($"Tidak ditemukan entitas yang cocok untuk user dengan Id {IdUser} dan role {role}.");
@@ -74,25 +74,25 @@ namespace SIPKK.Controllers
         {
             var userRole = await GetUserRole();
 
-            switch (userRole)
+            switch(userRole)
             {
                 case UserRole.Mahasiswa:
-                    return await HandleMahasiswaView();
+                return await HandleMahasiswaView();
                 case UserRole.Dosen:
-                    return await HandleDosenView();
+                return await HandleDosenView();
                 default:
-                    return await HandleUnauthenticatedView();
+                return await HandleUnauthenticatedView();
             }
         }
 
         private async Task<UserRole> GetUserRole()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user != null)
+            if(user != null)
             {
-                if (await _userManager.IsInRoleAsync(user, "Mahasiswa"))
+                if(await _userManager.IsInRoleAsync(user, "Mahasiswa"))
                     return UserRole.Mahasiswa;
-                if (await _userManager.IsInRoleAsync(user, "Dosen"))
+                if(await _userManager.IsInRoleAsync(user, "Dosen"))
                     return UserRole.Dosen;
                 return UserRole.Admin; // Atau role default lainnya
             }
@@ -111,7 +111,7 @@ namespace SIPKK.Controllers
         p => p.Laporan
             ]);
 
-            if (proyekList == null || !proyekList.Any())
+            if(proyekList == null || !proyekList.Any())
             {
                 TempData["ErrorMessage"] = "Tidak ada proyek";
                 return View();
@@ -129,15 +129,15 @@ namespace SIPKK.Controllers
                 string? proyekTerdaftarNameForCurrentMahasiswa = null;
                 ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-                if (pendaftaran != null && pendaftaran.StatusPembayaran == false)
+                if(pendaftaran != null && pendaftaran.StatusPembayaran == false)
                 {
                     status = ProyekVM.Status.PENDING;
                     proyekTerdaftarNameForCurrentMahasiswa = pendaftaran.Proyek.NamaProyek;
                 }
 
-                if (!string.IsNullOrEmpty(mahasiswa.IdProyek) && mahasiswa.Proyek != null)
+                if(!string.IsNullOrEmpty(mahasiswa.IdProyek) && mahasiswa.Proyek != null)
                 {
-                    if (mahasiswa.IdProyek == proyek.Id)
+                    if(mahasiswa.IdProyek == proyek.Id)
                     {
                         status = ProyekVM.Status.TERDAFTAR;
                     }
@@ -152,7 +152,8 @@ namespace SIPKK.Controllers
                 {
                     Proyek = proyek,
                     ProyekTerdaftarNameForCurrentMahasiswa = proyekTerdaftarNameForCurrentMahasiswa,
-                    StatusMahasiswa = status
+                    StatusMahasiswa = status,
+                    MahasiswaTerdaftar = proyek.Mahasiswa.Count()
                 };
             }).ToList();
 
@@ -171,7 +172,7 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             ]);
 
-            if (proyekList == null || !proyekList.Any())
+            if(proyekList == null || !proyekList.Any())
             {
                 TempData["ErrorMessage"] = "Tidak ada proyek";
                 return View();
@@ -186,9 +187,9 @@ namespace SIPKK.Controllers
                 string? proyekTerdaftarNameForCurrentDosen = null;
                 ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-                if (!string.IsNullOrEmpty(dosen.IdProyek) && dosen.Proyek != null)
+                if(!string.IsNullOrEmpty(dosen.IdProyek) && dosen.Proyek != null)
                 {
-                    if (dosen.IdProyek == proyek.Id)
+                    if(dosen.IdProyek == proyek.Id)
                     {
                         status = ProyekVM.Status.TERDAFTAR;
                     }
@@ -203,7 +204,8 @@ namespace SIPKK.Controllers
                 {
                     Proyek = proyek,
                     ProyekTerdaftarNameForCurrentMahasiswa = proyekTerdaftarNameForCurrentDosen,
-                    StatusMahasiswa = status
+                    StatusMahasiswa = status,
+                    MahasiswaTerdaftar = proyek.Mahasiswa.Count()
                 };
             }).ToList();
 
@@ -225,7 +227,7 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             );
 
-            if (proyek == null)
+            if(proyek == null)
             {
                 return NotFound();
             }
@@ -242,15 +244,15 @@ namespace SIPKK.Controllers
             string? proyekTerdaftarNameForCurrentMahasiswa = null;
             ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-            if (pendaftaran != null && pendaftaran.StatusPembayaran == false)
+            if(pendaftaran != null && pendaftaran.StatusPembayaran == false)
             {
                 status = ProyekVM.Status.PENDING;
                 proyekTerdaftarNameForCurrentMahasiswa = pendaftaran.Proyek.NamaProyek;
             }
 
-            if (!string.IsNullOrEmpty(mahasiswa.IdProyek) && mahasiswa.Proyek != null)
+            if(!string.IsNullOrEmpty(mahasiswa.IdProyek) && mahasiswa.Proyek != null)
             {
-                if (mahasiswa.IdProyek == proyek.Id)
+                if(mahasiswa.IdProyek == proyek.Id)
                 {
                     status = ProyekVM.Status.TERDAFTAR;
                 }
@@ -265,7 +267,8 @@ namespace SIPKK.Controllers
             {
                 Proyek = proyek,
                 ProyekTerdaftarNameForCurrentMahasiswa = proyekTerdaftarNameForCurrentMahasiswa,
-                StatusMahasiswa = status
+                StatusMahasiswa = status,
+                MahasiswaTerdaftar = proyek.Mahasiswa.Count()
             };
 
             return View(proyekVM);
@@ -280,7 +283,7 @@ namespace SIPKK.Controllers
                 p => p.Laporan
             );
 
-            if (proyek == null)
+            if(proyek == null)
             {
                 return NotFound();
             }
@@ -294,9 +297,9 @@ namespace SIPKK.Controllers
             string? proyekTerdaftarNameForCurrentMahasiswa = null;
             ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-            if (!string.IsNullOrEmpty(dosen.IdProyek) && dosen.Proyek != null)
+            if(!string.IsNullOrEmpty(dosen.IdProyek) && dosen.Proyek != null)
             {
-                if (dosen.IdProyek == proyek.Id)
+                if(dosen.IdProyek == proyek.Id)
                 {
                     status = ProyekVM.Status.TERDAFTAR;
                 }
@@ -311,7 +314,8 @@ namespace SIPKK.Controllers
             {
                 Proyek = proyek,
                 ProyekTerdaftarNameForCurrentMahasiswa = proyekTerdaftarNameForCurrentMahasiswa,
-                StatusMahasiswa = status
+                StatusMahasiswa = status,
+                MahasiswaTerdaftar = proyek.Mahasiswa.Count()
             };
 
             return View(proyekVM);
@@ -331,14 +335,14 @@ namespace SIPKK.Controllers
         {
             var userRole = await GetUserRole();
 
-            switch (userRole)
+            switch(userRole)
             {
                 case UserRole.Mahasiswa:
-                    return await HandleMahasiswaViewDetails(id);
+                return await HandleMahasiswaViewDetails(id);
                 case UserRole.Dosen:
-                    return await HandleDosenViewDetails(id);
+                return await HandleDosenViewDetails(id);
                 default:
-                    return await HandleUnauthenticatedViewDetails(id);
+                return await HandleUnauthenticatedViewDetails(id);
             }
         }
 
@@ -349,7 +353,7 @@ namespace SIPKK.Controllers
         {
             var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == id);
 
-            if (string.IsNullOrEmpty(id) || proyek == null)
+            if(string.IsNullOrEmpty(id) || proyek == null)
             {
                 return NotFound();
             }
@@ -367,14 +371,14 @@ namespace SIPKK.Controllers
                 TempData["SuccessMessage"] = "Berhasil menjadi pembimbing proyek";
                 return RedirectToAction(nameof(Details), new { id });
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 // Log the full exception including inner exception
                 _logger.LogError(ex, "Error intinya");
 
                 // Output the exception details to the debug console
                 Debug.WriteLine($"Exception: {ex.Message}");
-                if (ex.InnerException != null)
+                if(ex.InnerException != null)
                 {
                     Debug.WriteLine($"Inner Exception: {ex.InnerException.Message}");
                     TempData["ErrorMessage"] = $"Inner Exception: {ex.InnerException.Message}";

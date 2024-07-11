@@ -31,12 +31,12 @@ namespace SIPKK.Controllers
         private async Task<UserRole> GetUserRole()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            if(user == null)
                 throw new InvalidOperationException("User not found");
 
-            if (await _userManager.IsInRoleAsync(user, "Mahasiswa"))
+            if(await _userManager.IsInRoleAsync(user, "Mahasiswa"))
                 return UserRole.Mahasiswa;
-            if (await _userManager.IsInRoleAsync(user, "Dosen"))
+            if(await _userManager.IsInRoleAsync(user, "Dosen"))
                 return UserRole.Dosen;
 
             throw new InvalidOperationException("User role not recognized");
@@ -46,14 +46,14 @@ namespace SIPKK.Controllers
         {
             var userRole = await GetUserRole();
 
-            switch (userRole)
+            switch(userRole)
             {
                 case UserRole.Mahasiswa:
-                    return await HandleMahasiswaIndex();
+                return await HandleMahasiswaIndex();
                 case UserRole.Dosen:
-                    return await HandleDosenIndex();
+                return await HandleDosenIndex();
                 default:
-                    return NotFound();
+                return NotFound();
             }
         }
 
@@ -62,8 +62,9 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
                 includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Proyek]);
+            var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == mahasiswa.IdProyek, includedProperties: [d => d.Mahasiswa]);
 
-            if (mahasiswa == null)
+            if(mahasiswa == null)
             {
                 return NotFound();
             }
@@ -71,7 +72,7 @@ namespace SIPKK.Controllers
             var myProyekVM = new MyProyekVM()
             {
                 Mahasiswa = mahasiswa,
-                Proyek = mahasiswa.Proyek,
+                Proyek = proyek,
                 Laporan = await _unitOfWork.Laporan.GetAsync(l => l.IdMahasiswa == mahasiswa.Id),
                 Pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(p => p.IdMahasiswa == mahasiswa.Id),
                 BiayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(b => b.IdMahasiswa == mahasiswa.Id),
@@ -87,7 +88,7 @@ namespace SIPKK.Controllers
             var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId, includedProperties: [d => d.Proyek]);
             var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == dosen.IdProyek, includedProperties: [d => d.Mahasiswa]);
 
-            if (dosen == null)
+            if(dosen == null)
             {
                 return NotFound();
             }
@@ -106,14 +107,14 @@ namespace SIPKK.Controllers
         {
             var userRole = await GetUserRole();
 
-            switch (userRole)
+            switch(userRole)
             {
                 case UserRole.Mahasiswa:
-                    return await HandleMahasiswaLaporan();
+                return await HandleMahasiswaLaporan();
                 case UserRole.Dosen:
-                    return await HandleDosenLaporan();
+                return await HandleDosenLaporan();
                 default:
-                    return NotFound();
+                return NotFound();
             }
         }
 
@@ -122,7 +123,7 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
 
-            if (mahasiswa == null || mahasiswa.IdProyek == null)
+            if(mahasiswa == null || mahasiswa.IdProyek == null)
             {
                 TempData["ErrorMessage"] = "Maaf tapi anda belum daftar proyek";
                 return Redirect(Request.Headers["Referer"].ToString());
@@ -144,7 +145,7 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId);
 
-            if (dosen == null || dosen.IdProyek == null)
+            if(dosen == null || dosen.IdProyek == null)
             {
                 TempData["ErrorMessage"] = "Maaf tapi anda belum daftar proyek";
                 return Redirect(Request.Headers["Referer"].ToString());
@@ -167,7 +168,7 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
 
-            if (mahasiswa == null)
+            if(mahasiswa == null)
             {
                 return NotFound();
             }
@@ -189,7 +190,7 @@ namespace SIPKK.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateBiayaOperasional(BiayaOperasionalVM biayaOperasionalVM)
         {
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
                 BiayaOperasional biayaOperasional = new()
                 {
@@ -216,7 +217,7 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
 
-            if (mahasiswa == null)
+            if(mahasiswa == null)
             {
                 return NotFound();
             }
@@ -237,16 +238,16 @@ namespace SIPKK.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateLaporan(LaporanVM laporanVM, IFormFile? fotoLaporan, IFormFile? file)
         {
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
 
-                if (fotoLaporan != null)
+                if(fotoLaporan != null)
                 {
                     string filename = new Cuid2().ToString() + Path.GetExtension(fotoLaporan.FileName);
                     string laporanPath = Path.Combine(wwwRootPath, @"images\laporan");
 
-                    using (var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
+                    using(var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
                     {
                         fotoLaporan.CopyTo(fileStream);
                     }
@@ -254,12 +255,12 @@ namespace SIPKK.Controllers
                     laporanVM.Laporan.FotoLaporan = @"\images\laporan\" + filename;
                 }
 
-                if (file != null)
+                if(file != null)
                 {
                     string filename = new Cuid2().ToString() + Path.GetExtension(file.FileName);
                     string laporanPath = Path.Combine(wwwRootPath, @"images\laporan");
 
-                    using (var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
+                    using(var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                     }

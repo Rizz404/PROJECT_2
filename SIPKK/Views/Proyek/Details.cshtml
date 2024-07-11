@@ -25,7 +25,7 @@
 <div class="base-container">
     <partial name="_Notification" />
 
-    </div>
+</div>
 <div class="hidden">
     <div class="">
         <div ">
@@ -167,31 +167,47 @@
                                 </span>
                             </div>
                             <div>
-                                <p>
-                                    Kuota:
-                                </p>
-                                <span>
-                            @Model.Proyek.Kuota / @Model.Proyek.Kuota
-                                </span>
+                        @if(Model.MahasiswaTerdaftar == Model.Proyek.Kuota)
+                        {
+                                    <p>
+                                        Penuh
+                                    </p>
+                        }
+                        else
+                        {
+                            @if(Model.MahasiswaTerdaftar == Model.Proyek.Kuota)
+                            {
+                                        <p>
+                                            Penuh
+                                        </p>
+                            }
+                            else
+                            {
+                                        <p>Kuota: </p>
+                                        <span>
+                                    @Model.MahasiswaTerdaftar / @Model.Proyek.Kuota
+                                        </span>
+                            }
+                        }
                             </div>
                         </div>
                     </div>
                 </div>
-        @if (SignInManager.IsSignedIn(User))
+        @if(SignInManager.IsSignedIn(User))
         {
-            @if (roles.Contains("Mahasiswa"))
+            @if(roles.Contains("Mahasiswa"))
             {
-                @if (Model.StatusMahasiswa == ProyekVM.Status.PENDING)
+                @if(Model.StatusMahasiswa == ProyekVM.Status.PENDING)
                 {
-                    <span class="btn btn-success badge">
-                        Menunggu Konfirmasi Pembayaran
-                    </span>
+                            <span class="btn btn-success badge">
+                                Menunggu Konfirmasi Pembayaran
+                            </span>
                 }
-                else if (Model.StatusMahasiswa == ProyekVM.Status.TERDAFTAR)
+                else if(Model.StatusMahasiswa == ProyekVM.Status.TERDAFTAR)
                 {
                             <span class="btn btn-success badge">Terdaftar</span>
                 }
-                else if (Model.StatusMahasiswa == ProyekVM.Status.TERDAFTAR_PROYEK_LAIN)
+                else if(Model.StatusMahasiswa == ProyekVM.Status.TERDAFTAR_PROYEK_LAIN)
                 {
                             <span class="btn btn-secondary badge">Terdaftar Proyek Lain</span>
                 }
@@ -200,25 +216,25 @@
                             <a href="@routeUploadBiayaPendaftaran" class="orange-btn">Daftar</a>
                 }
             }
-            else if (roles.Contains("Dosen"))
+            else if(roles.Contains("Dosen"))
             {
-                @switch (Model.StatusMahasiswa) // Perhatikan: kita menggunakan StatusMahasiswa untuk dosen juga
+                @switch(Model.StatusMahasiswa) // Perhatikan: kita menggunakan StatusMahasiswa untuk dosen juga
                 {
                     case ProyekVM.Status.TERDAFTAR:
-                                <span class="btn btn-success badge">Proyek Anda</span>
-                        break;
+                            <span class="btn btn-success badge">Proyek Anda</span>
+                    break;
                     case ProyekVM.Status.TERDAFTAR_PROYEK_LAIN:
-                                <span>Anda terdaftar di proyek lain: <span class="btn btn-info badge">@Model.ProyekTerdaftarNameForCurrentMahasiswa</span></span>
-                        break;
+                            <span>Anda terdaftar di proyek lain: <span class="btn btn-info badge">@Model.ProyekTerdaftarNameForCurrentMahasiswa</span></span>
+                    break;
                     default:
-                                <form asp-action="DaftarJadiPembimbing" method="post">
-                                    <input type="hidden" name="id" value="@Model.Proyek.Id" />
-                                    <button type="submit" class="btn btn-primary">Jadi pembimbing</button>
-                                </form>
-                        break;
+                            <form asp-action="DaftarJadiPembimbing" method="post">
+                                <input type="hidden" name="id" value="@Model.Proyek.Id" />
+                                <button type="submit" class="btn btn-primary">Jadi pembimbing</button>
+                            </form>
+                    break;
                 }
             }
-            else if (roles.Contains("Admin"))
+            else if(roles.Contains("Admin"))
             {
                         <button type="button" class="btn btn-success" disabled>Youre gay</button>
             }
@@ -233,28 +249,28 @@
                 </p>
             </div>
             <div>
-        @if (Model.Proyek.Verified == true && Model.Proyek.SudahSelesai == false)
+        @if(Model.Proyek.Verified == true && Model.Proyek.SudahSelesai == false)
         {
                     <button>Berjalan</button>
         }
-        else if (Model.Proyek.SudahSelesai == true)
+        else if(Model.Proyek.SudahSelesai == true)
         {
                     <button>Selesai</button>
         }
             </div>
-    </div>
-            <div class="proyek-rules">
-                <h2 class="proyek-subtitle">
-                    Rules
-                </h2>
-                <ol>
-            @foreach(var rule in rules)
-            {
-                        <li>@rule</li>
-            }
-                </ol>
-            </div>
+        </div>
+        <div class="proyek-rules">
+            <h2 class="proyek-subtitle">
+                Rules
+            </h2>
+            <ol>
+        @foreach(var rule in rules)
+        {
+                    <li>@rule</li>
+        }
+            </ol>
         </div>
     </div>
+</div>
 </div>
 
