@@ -39,7 +39,7 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(includedProperties:
             [
-                m => m.Proyek,
+                m => m.Kelompok,
                 m => m.ProgramStudi,
                 m => m.Konsentrasi,
                 m => m.Persyaratan,
@@ -56,7 +56,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(d => d.Id == id, m => m.Proyek, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Persyaratan, m => m.Pendaftaran);
+            Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(d => d.Id == id, m => m.Kelompok, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Persyaratan, m => m.Pendaftaran);
 
             if(mahasiswa == null)
             {
@@ -81,11 +81,11 @@ namespace SIPKK.Areas.Admin.Controllers
                     Text = p.Nama,
                     Value = p.Id
                 }),
-                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.NamaProyek,
-                    Value = p.Id
-                }),
+                //KelompokList = (await _unitOfWork.Kelompok.GetAllAsync()).Select(p => new SelectListItem
+                //{
+                //    Text = p.NamaKelompok,
+                //    Value = p.Id
+                //}),
             };
 
             return View(mahasiswaVM);
@@ -137,7 +137,7 @@ namespace SIPKK.Areas.Admin.Controllers
                                     NIM = mahasiswaVM.Mahasiswa.NIM,
                                     FirstName = mahasiswaVM.Mahasiswa.FirstName,
                                     LastName = mahasiswaVM.Mahasiswa.LastName,
-                                    IdProyek = mahasiswaVM.Mahasiswa.IdProyek,
+                                    IdKelompok = mahasiswaVM.Mahasiswa.IdKelompok,
                                     IdProgramStudi = mahasiswaVM.Mahasiswa.IdProgramStudi,
                                     IdKonsentrasi = mahasiswaVM.Mahasiswa.IdKonsentrasi,
                                     TanggalLahir = mahasiswaVM.Mahasiswa.TanggalLahir,
@@ -182,11 +182,11 @@ namespace SIPKK.Areas.Admin.Controllers
                         Text = p.Nama,
                         Value = p.Id
                     });
-                    mahasiswaVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
-                    {
-                        Text = p.NamaProyek,
-                        Value = p.Id
-                    });
+                    //mahasiswaVM.KelompokList = (await _unitOfWork.Kelompok.GetAllAsync()).Select(p => new SelectListItem
+                    //{
+                    //    Text = p.NamaKelompok,
+                    //    Value = p.Id
+                    //});
                     return View(mahasiswaVM);
                 }
                 catch(Exception)
@@ -201,11 +201,11 @@ namespace SIPKK.Areas.Admin.Controllers
                         Text = p.Nama,
                         Value = p.Id
                     });
-                    mahasiswaVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
-                    {
-                        Text = p.NamaProyek,
-                        Value = p.Id
-                    });
+                    //mahasiswaVM.KelompokList = (await _unitOfWork.Kelompok.GetAllAsync()).Select(p => new SelectListItem
+                    //{
+                    //    Text = p.NamaKelompok,
+                    //    Value = p.Id
+                    //});
                     return View(mahasiswaVM);
                 }
             }
@@ -239,11 +239,11 @@ namespace SIPKK.Areas.Admin.Controllers
                     Text = p.Nama,
                     Value = p.Id
                 }),
-                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.NamaProyek,
-                    Value = p.Id
-                }),
+                //KelompokList = (await _unitOfWork.Kelompok.GetAllAsync()).Select(p => new SelectListItem
+                //{
+                //    Text = p.NamaKelompok,
+                //    Value = p.Id
+                //}),
             };
 
             return View(mahasiswaVM);
@@ -262,7 +262,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 }
 
                 if(await TryUpdateModelAsync(mahasiswaFromDb, "Mahasiswa",
-                   m => m.NIM, m => m.FirstName, m => m.LastName, m => m.TanggalLahir, m => m.IdProgramStudi, m => m.IdKonsentrasi, m => m.IdProyek, m => m.Semester))
+                   m => m.NIM, m => m.FirstName, m => m.LastName, m => m.TanggalLahir, m => m.IdProgramStudi, m => m.IdKonsentrasi, m => m.IdKelompok, m => m.Semester))
                 {
                     await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswaFromDb);
                     await _unitOfWork.SaveAsync();
@@ -281,7 +281,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.Id == id, m => m.Proyek, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Persyaratan, m => m.Pendaftaran);
+            Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.Id == id, m => m.Kelompok, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Persyaratan, m => m.Pendaftaran);
 
             if(mahasiswa == null)
             {

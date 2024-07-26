@@ -7,6 +7,11 @@ namespace SIPKK.Models
 {
     public class Mahasiswa : CuidTimestampedEntity
     {
+        public enum Role
+        {
+            KETUA, ANGGOTA
+        }
+
         [ValidateNever]
         public string IdUser { get; set; }
 
@@ -51,12 +56,29 @@ namespace SIPKK.Models
         public string IdKonsentrasi { get; set; }
 
         [MaxLength(36)]
-        [Display(Name = "Nama Proyek")]
-        public string? IdProyek { get; set; }
+        [Required(ErrorMessage = "{0} harus diisi")]
+        [Display(Name = "Kelas")]
+        public string IdKelas { get; set; }
+
+        [MaxLength(36)]
+        [Required(ErrorMessage = "{0} harus diisi")]
+        [Display(Name = "Angkatan")]
+        public string IdAngkatan { get; set; }
+
+        [MaxLength(36)]
+        [Display(Name = "Nama Kelompok")]
+        public string? IdKelompok { get; set; }
+
+        [MaxLength(36)]
+        [Display(Name = "Nama Proyek KKP")]
+        public string? IdProyekKKP { get; set; }
 
         [Range(1, 12, ErrorMessage = "Semester harus di antara 1 sampai 12")]
         [Required(ErrorMessage = "Semester harus diisi")]
         public short Semester { get; set; }
+
+        [Display(Name = "Role Mahasiswa")]
+        public Role? RoleMahasiswa { get; set; }
 
         [ForeignKey(nameof(IdUser))]
         [ValidateNever]
@@ -66,13 +88,25 @@ namespace SIPKK.Models
         [ValidateNever]
         public ProgramStudi ProgramStudi { get; set; }
 
+        [ForeignKey(nameof(IdProyekKKP))]
+        [ValidateNever]
+        public Proyek Proyek { get; set; }
+
         [ForeignKey(nameof(IdKonsentrasi))]
         [ValidateNever]
         public Konsentrasi Konsentrasi { get; set; }
 
-        [ForeignKey(nameof(IdProyek))]
+        [ForeignKey(nameof(IdKelas))]
         [ValidateNever]
-        public Proyek? Proyek { get; set; }
+        public Kelas Kelas { get; set; }
+
+        [ForeignKey(nameof(IdAngkatan))]
+        [ValidateNever]
+        public Angkatan Angkatan { get; set; }
+
+        [ForeignKey(nameof(IdKelompok))]
+        [ValidateNever]
+        public Kelompok? Kelompok { get; set; }
 
         public Pendaftaran? Pendaftaran { get; set; }
         public Laporan? Laporan { get; set; }
@@ -82,7 +116,7 @@ namespace SIPKK.Models
         // Custom validation method for Tanggal Lahir
         public static ValidationResult? ValidateTanggalLahir(DateTime tanggalLahir, ValidationContext context)
         {
-            if (tanggalLahir > DateTime.Now)
+            if(tanggalLahir > DateTime.Now)
             {
                 return new ValidationResult("Tanggal Lahir tidak boleh di masa depan.");
             }

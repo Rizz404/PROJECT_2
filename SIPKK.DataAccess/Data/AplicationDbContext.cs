@@ -36,7 +36,6 @@ namespace SIPKK.DataAccess.Data
         public DbSet<Pendaftaran> Pendaftaran { get; set; }
         public DbSet<BiayaOperasional> BiayaOperasional { get; set; }
         public DbSet<Laporan> Laporan { get; set; }
-        public DbSet<Test> Test { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

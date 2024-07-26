@@ -19,7 +19,6 @@ namespace SIPKK.DataAccess.Repository.IRepository
         IPersyaratanRepository Persyaratan { get; }
         IProgramStudiRepository ProgramStudi { get; }
         IProyekRepository Proyek { get; }
-        ITestRepository Test { get; }
         // ya intinya buat async pakai task
         Task SaveAsync();
     }

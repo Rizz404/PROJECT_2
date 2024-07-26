@@ -22,7 +22,6 @@ namespace SIPKK.DataAccess.Repository
         public IPersyaratanRepository Persyaratan { get; private set; }
         public IProgramStudiRepository ProgramStudi { get; private set; }
         public IProyekRepository Proyek { get; private set; }
-        public ITestRepository Test { get; private set; }
 
         public UnitOfWork(ApplicationDbContext db)
         {
@@ -37,7 +36,6 @@ namespace SIPKK.DataAccess.Repository
             Persyaratan = new PersyaratanRepository(_db);
             ProgramStudi = new ProgramStudiRepository(_db);
             Proyek = new ProyekRepository(_db);
-            Test = new TestRepository(_db);
         }
 
         public async Task SaveAsync()

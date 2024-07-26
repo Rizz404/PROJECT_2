@@ -61,8 +61,8 @@ namespace SIPKK.Controllers
         {
             string userId = _userManager.GetUserId(User);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
-                includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Proyek]);
-            var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == mahasiswa.IdProyek, includedProperties: [d => d.Mahasiswa]);
+                includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Kelompok]);
+            var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == mahasiswa.IdProyekKKP, includedProperties: [d => d.Mahasiswa]);
 
             if(mahasiswa == null)
             {
@@ -123,13 +123,13 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
 
-            if(mahasiswa == null || mahasiswa.IdProyek == null)
+            if(mahasiswa == null || mahasiswa.IdProyekKKP == null)
             {
                 TempData["ErrorMessage"] = "Maaf tapi anda belum daftar proyek";
                 return Redirect(Request.Headers["Referer"].ToString());
             }
 
-            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdProyek == mahasiswa.IdProyek, includedProperties: [
+            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdProyekKKP == mahasiswa.IdProyekKKP, includedProperties: [
                 m => m.ProgramStudi,
                 m => m.Konsentrasi,
                 m => m.Proyek,
@@ -151,7 +151,7 @@ namespace SIPKK.Controllers
                 return Redirect(Request.Headers["Referer"].ToString());
             }
 
-            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdProyek == dosen.IdProyek, includedProperties: [
+            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdProyekKKP == dosen.IdProyek, includedProperties: [
                  m => m.ProgramStudi,
                 m => m.Konsentrasi,
                 m => m.Proyek,
@@ -177,7 +177,7 @@ namespace SIPKK.Controllers
             {
                 BiayaOperasional = new BiayaOperasional
                 {
-                    IdProyek = mahasiswa.IdProyek,
+                    IdProyek = mahasiswa.IdProyekKKP,
                     IdMahasiswa = mahasiswa.Id,
                     TanggalBiaya = DateTime.UtcNow
                 }
@@ -226,7 +226,7 @@ namespace SIPKK.Controllers
             {
                 Laporan = new Laporan
                 {
-                    IdProyek = mahasiswa.IdProyek,
+                    IdProyek = mahasiswa.IdProyekKKP,
                     IdMahasiswa = mahasiswa.Id
                 }
             };

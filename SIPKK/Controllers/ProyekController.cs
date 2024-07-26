@@ -135,9 +135,9 @@ namespace SIPKK.Controllers
                     proyekTerdaftarNameForCurrentMahasiswa = pendaftaran.Proyek.NamaProyek;
                 }
 
-                if(!string.IsNullOrEmpty(mahasiswa.IdProyek) && mahasiswa.Proyek != null)
+                if(!string.IsNullOrEmpty(mahasiswa.IdProyekKKP) && mahasiswa.Proyek != null)
                 {
-                    if(mahasiswa.IdProyek == proyek.Id)
+                    if(mahasiswa.IdProyekKKP == proyek.Id)
                     {
                         status = ProyekVM.Status.TERDAFTAR;
                     }
@@ -250,9 +250,9 @@ namespace SIPKK.Controllers
                 proyekTerdaftarNameForCurrentMahasiswa = pendaftaran.Proyek.NamaProyek;
             }
 
-            if(!string.IsNullOrEmpty(mahasiswa.IdProyek) && mahasiswa.Proyek != null)
+            if(!string.IsNullOrEmpty(mahasiswa.IdProyekKKP) && mahasiswa.Proyek != null)
             {
-                if(mahasiswa.IdProyek == proyek.Id)
+                if(mahasiswa.IdProyekKKP == proyek.Id)
                 {
                     status = ProyekVM.Status.TERDAFTAR;
                 }

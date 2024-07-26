@@ -44,7 +44,7 @@ namespace SIPKK.Controllers
                     {
                         var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == user.Id);
 
-                        if(mahasiswa.IdProyek != null)
+                        if(mahasiswa.IdProyekKKP != null)
                         {
                             hasProyek = true;
                             return View(new HelperVM

@@ -28,6 +28,9 @@ namespace SIPKK.Models
         [RegularExpression(@"^(?!.{5}$).*", ErrorMessage = "Deskripsi tidak boleh hanya berisi 5 karakter.")]
         public string Keterangan { get; set; }
 
+        [Required(ErrorMessage = "{0} harus diisi")]
+        public bool Status { get; set; }
+
         [ForeignKey(nameof(IdProyek))]
         [ValidateNever]
         public Proyek Proyek { get; set; }

@@ -12,11 +12,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Ultilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -34,6 +36,7 @@ namespace SIPKK.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
@@ -41,7 +44,7 @@ namespace SIPKK.Areas.Identity.Pages.Account
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender, IUnitOfWork unitOfWork)
         {
             _roleManager = roleManager;
             _userManager = userManager;
@@ -50,62 +53,66 @@ namespace SIPKK.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _unitOfWork = unitOfWork;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public string ReturnUrl { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            [Required]
+            [EmailAddress]
+            [Display(Name = "Username")]
+            public string Username { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            [Required]
+            [EmailAddress]
+            [Display(Name = "NomerInduk")]
+            public string NomerInduk { get; set; }
+
+            [Required]
+            [EmailAddress]
+            [Display(Name = "FirstName")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [EmailAddress]
+            [Display(Name = "LastName")]
+            public string LastName { get; set; }
+
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            public string? Role { get; set; }
+            [NotMapped]
+            private DateTime _tanggalLahir;
+            [DataType(DataType.Date, ErrorMessage = "Tanggal Lahir tidak valid.")]
+            [Required(ErrorMessage = "{0} harus diisi")]
+            [Display(Name = "Tanggal Lahir")]
+            public DateTime TanggalLahir
+            {
+                get => _tanggalLahir;
+                set => _tanggalLahir = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+            }
+
+            public string Role { get; set; }
             [ValidateNever]
             public IEnumerable<SelectListItem> RoleList { get; set; }
         }
@@ -140,23 +147,38 @@ namespace SIPKK.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                user.UserName = Input.Username;
+                user.Email = Input.Email;
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if(result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    if(!string.IsNullOrEmpty(Input.Role))
+                    if(Input.Role == SD.Role_Dosen)
                     {
-                        await _userManager.AddToRoleAsync(user, Input.Role);
+                        await _unitOfWork.Dosen.CreateAsync(new Dosen
+                        {
+                            IdUser = user.Id,
+                            NamaDosen = Input.FirstName + " " + Input.LastName,
+                            NIDN = Input.NomerInduk,
+                            TanggalLahir = Input.TanggalLahir,
+                        });
                     }
-                    else
+                    else if(Input.Role == SD.Role_Mahasiswa)
                     {
-                        await _userManager.AddToRoleAsync(user, SD.Role_Mahasiswa);
+                        await _unitOfWork.Mahasiswa.CreateAsync(new Mahasiswa
+                        {
+                            IdUser = user.Id,
+                            NIM = Input.NomerInduk,
+                            FirstName = Input.FirstName,
+                            LastName = Input.LastName,
+                            TanggalLahir = Input.TanggalLahir,
+                        });
                     }
 
+                    _unitOfWork.SaveAsync();
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

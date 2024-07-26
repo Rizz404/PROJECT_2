@@ -6,6 +6,11 @@ namespace SIPKK.Models
 {
     public class Proyek : CuidTimestampedEntity
     {
+        public enum Tipe
+        {
+            KKN, KKP
+        }
+
         [MaxLength(100)]
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Nama Proyek")]
@@ -47,6 +52,9 @@ namespace SIPKK.Models
 
         [Display(Name = "Sudah Selesai")]
         public bool SudahSelesai { get; set; } = false;
+
+        [Display(Name = "Tipe Proyek")]
+        public Tipe TipeProyek { get; set; }
 
         public ICollection<Mahasiswa>? Mahasiswa { get; set; }
         public ICollection<Dosen>? Dosen { get; set; }

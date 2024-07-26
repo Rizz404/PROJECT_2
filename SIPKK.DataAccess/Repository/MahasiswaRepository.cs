@@ -34,7 +34,7 @@ namespace SIPKK.DataAccess.Repository
                 objFromDb.TanggalLahir = obj.TanggalLahir;
                 objFromDb.IdProgramStudi = obj.IdProgramStudi;
                 objFromDb.IdKonsentrasi = obj.IdKonsentrasi;
-                objFromDb.IdProyek = obj.IdProyek;
+                objFromDb.IdKelompok = obj.IdKelompok;
                 objFromDb.IdUser = obj.IdUser;
                 objFromDb.Semester = obj.Semester;
 
