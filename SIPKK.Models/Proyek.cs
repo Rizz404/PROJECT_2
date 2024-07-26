@@ -57,6 +57,7 @@ namespace SIPKK.Models
         public Tipe TipeProyek { get; set; }
 
         public ICollection<Mahasiswa>? Mahasiswa { get; set; }
+        public ICollection<Kelompok>? Kelompok { get; set; }
         public ICollection<Dosen>? Dosen { get; set; }
         public ICollection<Pendaftaran>? Pendaftaran { get; set; }
         public ICollection<Laporan>? Laporan { get; set; }

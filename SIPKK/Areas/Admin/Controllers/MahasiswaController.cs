@@ -81,11 +81,21 @@ namespace SIPKK.Areas.Admin.Controllers
                     Text = p.Nama,
                     Value = p.Id
                 }),
-                //KelompokList = (await _unitOfWork.Kelompok.GetAllAsync()).Select(p => new SelectListItem
-                //{
-                //    Text = p.NamaKelompok,
-                //    Value = p.Id
-                //}),
+                KelompokList = (await _unitOfWork.Kelompok.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaKelompok,
+                    Value = p.Id
+                }),
+                KelasList = (await _unitOfWork.Kelas.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.Nama,
+                    Value = p.Id
+                }),
+                AngkatanList = (await _unitOfWork.Angkatan.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.Tahun,
+                    Value = p.Id
+                }),
             };
 
             return View(mahasiswaVM);
@@ -182,11 +192,21 @@ namespace SIPKK.Areas.Admin.Controllers
                         Text = p.Nama,
                         Value = p.Id
                     });
-                    //mahasiswaVM.KelompokList = (await _unitOfWork.Kelompok.GetAllAsync()).Select(p => new SelectListItem
-                    //{
-                    //    Text = p.NamaKelompok,
-                    //    Value = p.Id
-                    //});
+                    mahasiswaVM.KelompokList = (await _unitOfWork.Kelompok.GetAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.NamaKelompok,
+                        Value = p.Id
+                    });
+                    mahasiswaVM.KelasList = (await _unitOfWork.Kelas.GetAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.Nama,
+                        Value = p.Id
+                    });
+                    mahasiswaVM.AngkatanList = (await _unitOfWork.Angkatan.GetAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.Tahun,
+                        Value = p.Id
+                    });
                     return View(mahasiswaVM);
                 }
                 catch(Exception)
@@ -201,11 +221,21 @@ namespace SIPKK.Areas.Admin.Controllers
                         Text = p.Nama,
                         Value = p.Id
                     });
-                    //mahasiswaVM.KelompokList = (await _unitOfWork.Kelompok.GetAllAsync()).Select(p => new SelectListItem
-                    //{
-                    //    Text = p.NamaKelompok,
-                    //    Value = p.Id
-                    //});
+                    mahasiswaVM.KelompokList = (await _unitOfWork.Kelompok.GetAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.NamaKelompok,
+                        Value = p.Id
+                    });
+                    mahasiswaVM.KelasList = (await _unitOfWork.Kelas.GetAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.Nama,
+                        Value = p.Id
+                    });
+                    mahasiswaVM.AngkatanList = (await _unitOfWork.Angkatan.GetAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.Tahun,
+                        Value = p.Id
+                    });
                     return View(mahasiswaVM);
                 }
             }
@@ -239,11 +269,21 @@ namespace SIPKK.Areas.Admin.Controllers
                     Text = p.Nama,
                     Value = p.Id
                 }),
-                //KelompokList = (await _unitOfWork.Kelompok.GetAllAsync()).Select(p => new SelectListItem
-                //{
-                //    Text = p.NamaKelompok,
-                //    Value = p.Id
-                //}),
+                KelompokList = (await _unitOfWork.Kelompok.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.NamaKelompok,
+                    Value = p.Id
+                }),
+                KelasList = (await _unitOfWork.Kelas.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.Nama,
+                    Value = p.Id
+                }),
+                AngkatanList = (await _unitOfWork.Angkatan.GetAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.Tahun,
+                    Value = p.Id
+                }),
             };
 
             return View(mahasiswaVM);

@@ -20,7 +20,6 @@ namespace SIPKK.Models.ViewModels
         [ValidateNever]
         public Status StatusMahasiswa { get; set; }
 
-
         [ValidateNever]
         public string? ProyekTerdaftarNameForCurrentMahasiswa { get; set; }
 

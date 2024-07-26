@@ -41,7 +41,7 @@ public class ProfileController : Controller
 
         if(roles.Contains("Mahasiswa"))
         {
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == user.Id, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Kelompok);
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == user.Id, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Angkatan, m => m.Kelas, m => m.Kelompok, m => m.Proyek);
             if(mahasiswa != null)
             {
                 profileVM.Id = mahasiswa.Id;
@@ -53,7 +53,11 @@ public class ProfileController : Controller
                 profileVM.FotoProfil = mahasiswa.FotoProfil;
                 profileVM.ProgramStudi = mahasiswa.ProgramStudi.Nama;
                 profileVM.Konsentrasi = mahasiswa.Konsentrasi.Nama;
-                //profileVM.Kelompok = mahasiswa.Kelompok?.NamaKelompok ?? "Belum mendaftar";
+                profileVM.Angkatan = mahasiswa.Angkatan.Tahun;
+                profileVM.Kelas = mahasiswa.Kelas.Nama;
+                profileVM.Kelompok = mahasiswa.Kelompok?.NamaKelompok;
+                profileVM.ProyekKKP = mahasiswa.Proyek?.NamaProyek;
+                profileVM.RoleMahasiswa = mahasiswa.RoleMahasiswa;
             }
         }
         else if(roles.Contains("Dosen"))
@@ -136,7 +140,7 @@ public class ProfileController : Controller
                     mahasiswa.LastName = profileVM.LastName;
                     mahasiswa.TanggalLahir = profileVM.TanggalLahir;
                     mahasiswa.FotoProfil = profileVM.FotoProfil;
-                    mahasiswa.Semester = profileVM.Semester.Value;
+                    mahasiswa.RoleMahasiswa = profileVM.RoleMahasiswa;
                     await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
                 }
             }

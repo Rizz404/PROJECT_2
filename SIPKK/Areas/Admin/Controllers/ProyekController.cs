@@ -132,7 +132,7 @@ namespace SIPKK.Areas.Admin.Controllers
 
                 // Update the Proyek fields
                 if(await TryUpdateModelAsync(proyekFromDb, "Proyek",
-                    p => p.NamaProyek, p => p.Deskripsi, p => p.TanggalMulai, p => p.TanggalSelesai, p => p.Lokasi, p => p.Kuota, p => p.Verified, p => p.SudahSelesai))
+                    p => p.NamaProyek, p => p.Deskripsi, p => p.TanggalMulai, p => p.TanggalSelesai, p => p.Lokasi, p => p.Kuota, p => p.TipeProyek, p => p.Verified, p => p.SudahSelesai))
                 {
                     // If a new file is uploaded, update the FotoProyek field
                     if(file != null)

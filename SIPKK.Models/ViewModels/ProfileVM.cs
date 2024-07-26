@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SIPKK.Models.Mahasiswa;
 
 namespace SIPKK.Models.ViewModels
 {
@@ -64,16 +65,34 @@ namespace SIPKK.Models.ViewModels
         public string? Konsentrasi { get; set; }
 
         [ValidateNever]
-        [Display(Name = "Id Proyek")]
-        public string? Proyek { get; set; }
+        public string? Angkatan { get; set; }
+
+        [ValidateNever]
+        [Display(Name = "Kelas")]
+        public string? Kelas { get; set; }
+
+        [ValidateNever]
+        [Display(Name = "Id Proyek KKP")]
+        public string? ProyekKKP { get; set; }
+
+        [ValidateNever]
+        [Display(Name = "Id Kelompok")]
+        public string? Kelompok { get; set; }
 
         [ValidateNever]
         public short? Semester { get; set; }
+
+        [Display(Name = "Role Mahasiswa")]
+        public Role? RoleMahasiswa { get; set; }
 
         [ValidateNever]
         public string? NIDN { get; set; }
 
         [StringLength(50, ErrorMessage = "{0} harus diantara {2} sampai {1}.", MinimumLength = 3)]
         public string? NamaDosen { get; set; }
+
+        [ValidateNever]
+        [Display(Name = "Id Proyek")]
+        public string? Proyek { get; set; }
     }
 }

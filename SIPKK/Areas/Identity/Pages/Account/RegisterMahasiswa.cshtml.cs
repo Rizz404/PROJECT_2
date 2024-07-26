@@ -115,6 +115,10 @@ namespace SIPKK.Areas.Identity.Pages.Account
             [Display(Name = "Konsentrasi")]
             public string IdKonsentrasi { get; set; }
 
+            [Range(1, 12, ErrorMessage = "Semester harus di antara 1 sampai 12")]
+            [Required(ErrorMessage = "Semester harus diisi")]
+            public short Semester { get; set; }
+
             [MaxLength(36)]
             [Required(ErrorMessage = "{0} harus diisi")]
             [Display(Name = "Kelas")]
@@ -216,6 +220,7 @@ namespace SIPKK.Areas.Identity.Pages.Account
                             IdKonsentrasi = Input.IdKonsentrasi,
                             IdKelas = Input.IdKelas,
                             IdAngkatan = Input.IdAngkatan,
+                            Semester = Input.Semester
                         };
                         Persyaratan persyaratan = new()
                         {

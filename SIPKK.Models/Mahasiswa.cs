@@ -106,7 +106,7 @@ namespace SIPKK.Models
 
         [ForeignKey(nameof(IdKelompok))]
         [ValidateNever]
-        public Kelompok? Kelompok { get; set; }
+        public Kelompok Kelompok { get; set; }
 
         public Pendaftaran? Pendaftaran { get; set; }
         public Laporan? Laporan { get; set; }

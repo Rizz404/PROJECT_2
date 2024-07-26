@@ -19,6 +19,7 @@
     };
 
     var routeUploadBiayaPendaftaran = $"/Pendaftaran/UploadBiayaPendaftaran/{Model.Proyek.Id}";
+    var routeCreateKelompok = $"/Kelompok/Create/{Model.Proyek.Id}";
 
 }
 
@@ -71,6 +72,7 @@
                 else
                 {
                             <a href="@routeUploadBiayaPendaftaran" class="btn btn-primary">Daftar</a>
+                            <a href="@routeCreateKelompok" class="btn btn-primary">Buat Kelompok</a>
                 }
             }
             else if(roles.Contains("Dosen"))
@@ -214,6 +216,7 @@
                 else
                 {
                             <a href="@routeUploadBiayaPendaftaran" class="orange-btn">Daftar</a>
+                            <a href="@routeCreateKelompok" class="btn btn-primary">Buat Kelompok</a>
                 }
             }
             else if(roles.Contains("Dosen"))

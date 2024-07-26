@@ -15,17 +15,25 @@ namespace SIPKK.Models
         public string IdProyek { get; set; }
 
         [MaxLength(100)]
+        [Display(Name = "Nama Ketua")]
+        [Required(ErrorMessage = "{0} harus diisi")]
+        [StringLength(100, ErrorMessage = "{0} harus diantara {2} sampai {1}.", MinimumLength = 3)]
+        public string NamaKetua { get; set; }
+
+        [MaxLength(100)]
         [Display(Name = "Nama Kelompok")]
         [Required(ErrorMessage = "{0} harus diisi")]
         [StringLength(100, ErrorMessage = "{0} harus diantara {2} sampai {1}.", MinimumLength = 3)]
-        public required string NamaKelompok { get; set; }
+        public string NamaKelompok { get; set; }
 
         [Required(ErrorMessage = "{0} harus diisi")]
-        [Display(Name = "Biaya Transportasi")]
         public int Nilai { get; set; }
 
+        [ForeignKey(nameof(IdProyek))]
+        [ValidateNever]
+        public Proyek Proyek { get; set; }
 
-        public ICollection<Mahasiswa> Mahasiswa { get; set; }
-        public ICollection<Feedback> Feedback { get; set; }
+        public ICollection<Mahasiswa>? Mahasiswa { get; set; }
+        public ICollection<Feedback>? Feedback { get; set; }
     }
 }
