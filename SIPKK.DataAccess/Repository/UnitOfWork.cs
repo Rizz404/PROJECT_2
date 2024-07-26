@@ -13,7 +13,11 @@ namespace SIPKK.DataAccess.Repository
     {
         private ApplicationDbContext _db;
         public IAdminRepository Admin { get; private set; }
+        public IAngkatanRepository Angkatan { get; private set; }
         public IDosenRepository Dosen { get; private set; }
+        public IFeedbackRepository Feedback { get; private set; }
+        public IKelasRepository Kelas { get; private set; }
+        public IKelompokRepository Kelompok { get; private set; }
         public IBiayaOperasionalRepository BiayaOperasional { get; private set; }
         public IKonsentrasiRepository Konsentrasi { get; private set; }
         public ILaporanRepository Laporan { get; private set; }
@@ -26,8 +30,12 @@ namespace SIPKK.DataAccess.Repository
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
+            Angkatan = new AngkatanRepository(_db);
             Admin = new AdminRepository(_db);
             Dosen = new DosenRepository(_db);
+            Feedback = new FeedbackRepository(_db);
+            Kelas = new KelasRepository(_db);
+            Kelompok = new KelompokRepository(_db);
             BiayaOperasional = new BiayaOperasionalRepository(_db);
             Konsentrasi = new KonsentrasiRepository(_db);
             Laporan = new LaporanRepository(_db);

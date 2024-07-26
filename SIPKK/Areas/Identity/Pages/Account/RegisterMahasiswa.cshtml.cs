@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
+using SIPKK.Models.ViewModels;
 using SIPKK.Ultilities;
 using System;
 using System.Collections.Generic;
@@ -66,7 +67,6 @@ namespace SIPKK.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress]
             [Display(Name = "Username")]
             public string Username { get; set; }
 
@@ -75,19 +75,18 @@ namespace SIPKK.Areas.Identity.Pages.Account
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Required]
-            [EmailAddress]
-            [Display(Name = "NIM")]
+            [MaxLength(10)]
+            [Required(ErrorMessage = "{0} harus diisi")]
+            [StringLength(10, ErrorMessage = "harus 10 karakter", MinimumLength = 10)]
+            [RegularExpression(@"^\d+$", ErrorMessage = "Hanya boleh diisi dengan angka.")]
             public string NIM { get; set; }
 
             [Required]
-            [EmailAddress]
-            [Display(Name = "FirstName")]
+            [Display(Name = "First Name")]
             public string FirstName { get; set; }
 
             [Required]
-            [EmailAddress]
-            [Display(Name = "LastName")]
+            [Display(Name = "Last Name")]
             public string LastName { get; set; }
 
             [Required]
@@ -101,16 +100,10 @@ namespace SIPKK.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            [NotMapped]
-            private DateTime _tanggalLahir;
-            [DataType(DataType.Date, ErrorMessage = "Tanggal Lahir tidak valid.")]
+            [DataType(DataType.Date)]
             [Required(ErrorMessage = "{0} harus diisi")]
             [Display(Name = "Tanggal Lahir")]
-            public DateTime TanggalLahir
-            {
-                get => _tanggalLahir;
-                set => _tanggalLahir = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-            }
+            public DateTime TanggalLahir { get; set; }
 
             [MaxLength(36)]
             [Required(ErrorMessage = "{0} harus diisi")]
@@ -139,45 +132,53 @@ namespace SIPKK.Areas.Identity.Pages.Account
             public IEnumerable<SelectListItem> KonsentrasiList { get; set; }
 
             [ValidateNever]
-            public IEnumerable<SelectListItem> ProyekList { get; set; }
-
-            [ValidateNever]
             public IEnumerable<SelectListItem> KelasList { get; set; }
 
             [ValidateNever]
             public IEnumerable<SelectListItem> AngkatanList { get; set; }
         }
 
-
         public async Task OnGetAsync(string returnUrl = null)
         {
-            Input = new()
+            if(_unitOfWork == null)
             {
-                ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
+                _logger.LogError("UnitOfWork is not initialized.");
+                return;
+            }
+
+            var programStudi = await _unitOfWork.ProgramStudi.GetAllAsync();
+            var konsentrasi = await _unitOfWork.Konsentrasi.GetAllAsync();
+            var kelas = await _unitOfWork.Kelas.GetAllAsync();
+            var angkatan = await _unitOfWork.Angkatan.GetAllAsync();
+
+            if(programStudi == null || konsentrasi == null || kelas == null || angkatan == null)
+            {
+                _logger.LogError("One or more lists are null.");
+                return;
+            }
+
+            Input = new InputModel
+            {
+                ProgramStudiList = programStudi.Select(p => new SelectListItem
                 {
                     Text = p.Nama,
                     Value = p.Id
                 }),
-                KonsentrasiList = (await _unitOfWork.Konsentrasi.GetAllAsync()).Select(p => new SelectListItem
+                KonsentrasiList = konsentrasi.Select(p => new SelectListItem
                 {
                     Text = p.Nama,
                     Value = p.Id
                 }),
-                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                KelasList = kelas.Select(p => new SelectListItem
                 {
-                    Text = p.NamaProyek,
+                    Text = p.Nama,
                     Value = p.Id
                 }),
-                KelasList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                AngkatanList = angkatan.Select(p => new SelectListItem
                 {
-                    Text = p.NamaProyek,
+                    Text = p.Tahun,
                     Value = p.Id
-                }),
-                AngkatanList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
-                {
-                    Text = p.NamaProyek,
-                    Value = p.Id
-                }),
+                })
             };
 
             ReturnUrl = returnUrl;
@@ -200,16 +201,38 @@ namespace SIPKK.Areas.Identity.Pages.Account
                 if(result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    var addRoleToUser = await _userManager.AddToRoleAsync(user, SD.Role_Mahasiswa);
 
-                    await _unitOfWork.Mahasiswa.CreateAsync(new Mahasiswa
+                    if(addRoleToUser.Succeeded)
                     {
-                        IdUser = user.Id,
-                        NIM = Input.NIM,
-                        FirstName = Input.FirstName,
-                        LastName = Input.LastName,
-                        TanggalLahir = Input.TanggalLahir,
-                    });
+                        Mahasiswa mahasiswa = new()
+                        {
+                            IdUser = user.Id,
+                            NIM = Input.NIM,
+                            FirstName = Input.FirstName,
+                            LastName = Input.LastName,
+                            TanggalLahir = Input.TanggalLahir,
+                            IdProgramStudi = Input.IdProgramStudi,
+                            IdKonsentrasi = Input.IdKonsentrasi,
+                            IdKelas = Input.IdKelas,
+                            IdAngkatan = Input.IdAngkatan,
+                        };
+                        Persyaratan persyaratan = new()
+                        {
+                            KetKelakuanBaik = false,
+                            KetOrangTua = false,
+                            KetPembayaran = false,
+                            KetSehat = false,
+                            IdMahasiswa = mahasiswa.Id
+                        };
 
+                        await _unitOfWork.Mahasiswa.CreateAsync(mahasiswa);
+                        await _unitOfWork.Persyaratan.CreateAsync(persyaratan);
+                    }
+                    foreach(var error in addRoleToUser.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                     await _unitOfWork.SaveAsync();
 
                     var userId = await _userManager.GetUserIdAsync(user);
@@ -244,7 +267,6 @@ namespace SIPKK.Areas.Identity.Pages.Account
             return Page();
         }
 
-        // ubah jadi application user
         private ApplicationUser CreateUser()
         {
             try

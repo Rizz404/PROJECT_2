@@ -66,7 +66,6 @@ namespace SIPKK.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress]
             [Display(Name = "Username")]
             public string Username { get; set; }
 
@@ -75,19 +74,18 @@ namespace SIPKK.Areas.Identity.Pages.Account
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Required]
-            [EmailAddress]
-            [Display(Name = "NIDN")]
+            [MaxLength(10)]
+            [Required(ErrorMessage = "{0} harus diisi")]
+            [StringLength(10, ErrorMessage = "harus 10 karakter", MinimumLength = 10)]
+            [RegularExpression(@"^\d+$", ErrorMessage = "Hanya boleh diisi dengan angka.")]
             public string NIDN { get; set; }
 
             [Required]
-            [EmailAddress]
-            [Display(Name = "FirstName")]
+            [Display(Name = "First Name")]
             public string FirstName { get; set; }
 
             [Required]
-            [EmailAddress]
-            [Display(Name = "LastName")]
+            [Display(Name = "Last Name")]
             public string LastName { get; set; }
 
             [Required]
@@ -97,22 +95,15 @@ namespace SIPKK.Areas.Identity.Pages.Account
             public string Password { get; set; }
 
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
+            [Display(Name = "Confirm Password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            [NotMapped]
-            private DateTime _tanggalLahir;
             [DataType(DataType.Date, ErrorMessage = "Tanggal Lahir tidak valid.")]
             [Required(ErrorMessage = "{0} harus diisi")]
             [Display(Name = "Tanggal Lahir")]
-            public DateTime TanggalLahir
-            {
-                get => _tanggalLahir;
-                set => _tanggalLahir = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-            }
+            public DateTime TanggalLahir { get; set; }
         }
-
 
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -137,15 +128,24 @@ namespace SIPKK.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    await _unitOfWork.Dosen.CreateAsync(new Dosen
-                    {
-                        IdUser = user.Id,
-                        NamaDosen = Input.FirstName + " " + Input.LastName,
-                        NIDN = Input.NIDN,
-                        TanggalLahir = Input.TanggalLahir,
-                    });
+                    var addRoleToUser = await _userManager.AddToRoleAsync(user, SD.Role_Dosen);
 
-                    await _unitOfWork.SaveAsync();
+                    if(addRoleToUser.Succeeded)
+                    {
+                        await _unitOfWork.Dosen.CreateAsync(new Dosen
+                        {
+                            IdUser = user.Id,
+                            NamaDosen = Input.FirstName + " " + Input.LastName,
+                            NIDN = Input.NIDN,
+                            TanggalLahir = DateTime.SpecifyKind(Input.TanggalLahir, DateTimeKind.Utc)
+                        });
+
+                        await _unitOfWork.SaveAsync();
+                    }
+                    foreach(var error in addRoleToUser.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -179,7 +179,6 @@ namespace SIPKK.Areas.Identity.Pages.Account
             return Page();
         }
 
-        // ubah jadi application user
         private ApplicationUser CreateUser()
         {
             try
@@ -203,4 +202,5 @@ namespace SIPKK.Areas.Identity.Pages.Account
             return (IUserEmailStore<ApplicationUser>)_userStore;
         }
     }
+
 }

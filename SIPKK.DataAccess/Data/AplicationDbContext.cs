@@ -26,11 +26,15 @@ namespace SIPKK.DataAccess.Data
         //! Defaultnya bakal plural hati-hati penamaannya
         //jangan lupa nambahin kalo ada db baru
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Angkatan> Angkatan { get; set; }
         public DbSet<Admin> Admin { get; set; }
         public DbSet<Persyaratan> Persyaratan { get; set; }
         public DbSet<Proyek> Proyek { get; set; }
         public DbSet<Mahasiswa> Mahasiswa { get; set; }
         public DbSet<Dosen> Dosen { get; set; }
+        public DbSet<Feedback> Feedback { get; set; }
+        public DbSet<Kelas> Kelas { get; set; }
+        public DbSet<Kelompok> Kelompok { get; set; }
         public DbSet<ProgramStudi> ProgramStudi { get; set; }
         public DbSet<Konsentrasi> Konsentrasi { get; set; }
         public DbSet<Pendaftaran> Pendaftaran { get; set; }

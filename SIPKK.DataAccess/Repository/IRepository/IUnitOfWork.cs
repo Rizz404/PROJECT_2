@@ -9,8 +9,12 @@ namespace SIPKK.DataAccess.Repository.IRepository
     public interface IUnitOfWork
     {
         // tambahin interface repo lagi kalo buat lagi
+        IAngkatanRepository Angkatan { get; }
         IAdminRepository Admin { get; }
         IDosenRepository Dosen { get; }
+        IFeedbackRepository Feedback { get; }
+        IKelasRepository Kelas { get; }
+        IKelompokRepository Kelompok { get; }
         IBiayaOperasionalRepository BiayaOperasional { get; }
         IKonsentrasiRepository Konsentrasi { get; }
         ILaporanRepository Laporan { get; }
