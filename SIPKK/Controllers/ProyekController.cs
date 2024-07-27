@@ -78,8 +78,10 @@ namespace SIPKK.Controllers
             {
                 case UserRole.Mahasiswa:
                 return await HandleMahasiswaView();
+
                 case UserRole.Dosen:
                 return await HandleDosenView();
+
                 default:
                 return await HandleUnauthenticatedView();
             }
@@ -224,7 +226,8 @@ namespace SIPKK.Controllers
                 p => p.Mahasiswa,
                 p => p.Dosen,
                 p => p.BiayaOperasional,
-                p => p.Laporan
+                p => p.Laporan,
+                p => p.Kelompok
             );
 
             if(proyek == null)
@@ -232,23 +235,18 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
+            var kelompok = await _unitOfWork.Kelompok.GetAllAsync(filter: k => k.IdProyek == id, includedProperties: [
+                k=> k.Mahasiswa
+            ]);
+
             var currentMahasiswa = await GetAssociatedRoleId(UserRole.Mahasiswa);
 
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.Id == currentMahasiswa.Id, includedProperties: [
-                m=> m.Proyek
-            ]);
-            var pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(filter: p => p.IdMahasiswa == currentMahasiswa.Id, includedProperties: [
-                p=> p.Proyek
+                m=> m.Proyek, m=> m.Kelompok
             ]);
 
             string? proyekTerdaftarNameForCurrentMahasiswa = null;
             ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
-
-            if(pendaftaran != null && pendaftaran.StatusPembayaran == false)
-            {
-                status = ProyekVM.Status.PENDING;
-                proyekTerdaftarNameForCurrentMahasiswa = pendaftaran.Proyek.NamaProyek;
-            }
 
             if(!string.IsNullOrEmpty(mahasiswa.IdProyekKKP) && mahasiswa.Proyek != null)
             {
@@ -262,13 +260,27 @@ namespace SIPKK.Controllers
                 }
                 proyekTerdaftarNameForCurrentMahasiswa = mahasiswa.Proyek.NamaProyek;
             }
+            else if(!string.IsNullOrEmpty(mahasiswa.IdKelompok) && mahasiswa.Kelompok != null)
+            {
+                if(mahasiswa.Kelompok.IdProyek == proyek.Id)
+                {
+                    status = ProyekVM.Status.TERDAFTAR;
+                }
+                else
+                {
+                    status = ProyekVM.Status.TERDAFTAR_PROYEK_LAIN;
+                }
+                proyekTerdaftarNameForCurrentMahasiswa = "hehe";
+            }
 
             var proyekVM = new ProyekVM()
             {
                 Proyek = proyek,
                 ProyekTerdaftarNameForCurrentMahasiswa = proyekTerdaftarNameForCurrentMahasiswa,
                 StatusMahasiswa = status,
-                MahasiswaTerdaftar = proyek.Mahasiswa.Count()
+                MahasiswaTerdaftar = proyek.Mahasiswa.Count(),
+                KelompokList = (ICollection<Kelompok>)kelompok,
+                RoleMahasiswa = mahasiswa.RoleMahasiswa
             };
 
             return View(proyekVM);
@@ -339,8 +351,10 @@ namespace SIPKK.Controllers
             {
                 case UserRole.Mahasiswa:
                 return await HandleMahasiswaViewDetails(id);
+
                 case UserRole.Dosen:
                 return await HandleDosenViewDetails(id);
+
                 default:
                 return await HandleUnauthenticatedViewDetails(id);
             }
@@ -386,7 +400,56 @@ namespace SIPKK.Controllers
 
                 return RedirectToAction(nameof(Details), new { id });
             }
+        }
 
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> JoinKelompok(string id)
+        {
+            try
+            {
+                var currentMahasiswa = await GetAssociatedRoleId(UserRole.Mahasiswa);
+                var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.Id == currentMahasiswa.Id, includedProperties: [
+                    m => m.Kelompok
+                    ]);
+
+                if(mahasiswa == null)
+                {
+                    TempData["ErrorMessage"] = "Mahasiswa tidak ditemukan.";
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
+
+                if(mahasiswa.RoleMahasiswa == Mahasiswa.Role.KETUA)
+                {
+                    TempData["ErrorMessage"] = "Ketua tidak bisa gabung kelompok lains";
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
+
+                mahasiswa.IdKelompok = id;
+
+                await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
+                await _unitOfWork.SaveAsync();
+
+                TempData["SuccessMessage"] = $"Berhasil menjadi anggota kelompok {mahasiswa.Kelompok?.NamaKelompok ?? "kelompok yang dipilih"}."; // Use null-coalescing operator to prevent null reference exception
+                return Redirect(Request.Headers["Referer"].ToString());
+
+            }
+            catch(Exception ex)
+            {
+                // Log the full exception including inner exception
+                _logger.LogError(ex, "Error intinya");
+
+                // Output the exception details to the debug console
+                Debug.WriteLine($"Exception: {ex.Message}");
+                if(ex.InnerException != null)
+                {
+                    Debug.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                    TempData["ErrorMessage"] = $"Inner Exception: {ex.InnerException.Message}";
+                }
+
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
         }
     }
 }

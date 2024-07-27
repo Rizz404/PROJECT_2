@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SIPKK.Models.Mahasiswa;
 
 namespace SIPKK.Models.ViewModels
 {
@@ -17,6 +18,8 @@ namespace SIPKK.Models.ViewModels
 
         public Proyek Proyek { get; set; }
 
+        public ICollection<Kelompok>? KelompokList { get; set; }
+
         [ValidateNever]
         public Status StatusMahasiswa { get; set; }
 
@@ -25,5 +28,8 @@ namespace SIPKK.Models.ViewModels
 
         [ValidateNever]
         public int MahasiswaTerdaftar { get; set; }
+
+        [ValidateNever]
+        public Role? RoleMahasiswa { get; set; }
     }
 }
