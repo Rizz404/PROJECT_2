@@ -34,6 +34,9 @@
                 @Html.DisplayNameFor(model => model.Kuota)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.TipeProyek)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Verified)
             </th>
             <th>
@@ -80,6 +83,9 @@
                 </td>
                 <td>
                   @item.Mahasiswa.Count /  @item.Kuota
+                </td> 
+                <td>
+                  @item.TipeProyek
                 </td>
                 <td>
                     @item.Verified

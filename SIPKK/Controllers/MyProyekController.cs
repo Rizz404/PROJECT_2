@@ -62,16 +62,28 @@ namespace SIPKK.Controllers
             string userId = _userManager.GetUserId(User);
             var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
                 includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Kelompok]);
-            var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == mahasiswa.IdProyekKKP, includedProperties: [d => d.Mahasiswa]);
 
             if(mahasiswa == null)
             {
                 return NotFound();
             }
 
+            string idProyek = null;
+            if(!string.IsNullOrEmpty(mahasiswa.IdProyekKKP))
+            {
+                idProyek = mahasiswa.IdProyekKKP;
+            }
+            else
+            {
+                idProyek = mahasiswa.Kelompok.IdProyek;
+            }
+
+            var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == idProyek, includedProperties: [d => d.Mahasiswa]);
+            var myKelompok = await _unitOfWork.Kelompok.GetAsync(k => k.Id == mahasiswa.IdKelompok, includedProperties: [k => k.Mahasiswa]);
+
             var myProyekVM = new MyProyekVM()
             {
-                Mahasiswa = mahasiswa,
+                MyKelompok = myKelompok,
                 Proyek = proyek,
                 Laporan = await _unitOfWork.Laporan.GetAsync(l => l.IdMahasiswa == mahasiswa.Id),
                 Pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(p => p.IdMahasiswa == mahasiswa.Id),
@@ -86,17 +98,26 @@ namespace SIPKK.Controllers
         {
             string userId = _userManager.GetUserId(User);
             var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId, includedProperties: [d => d.Proyek]);
-            var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == dosen.IdProyek, includedProperties: [d => d.Mahasiswa]);
 
             if(dosen == null)
             {
                 return NotFound();
             }
 
+            var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == dosen.IdProyek, includedProperties: [d => d.Mahasiswa]);
+
+            List<Kelompok> kelompokList;
+            if(proyek.TipeProyek == Proyek.Tipe.KKN)
+            {
+                kelompokList = (List<Kelompok>)await _unitOfWork.Kelompok.GetAllAsync(k => k.IdProyek == proyek.Id);
+            }
+
+
             var myProyekDosenVM = new MyProyekVM()
             {
                 Dosen = dosen,
-                Proyek = proyek
+                Proyek = proyek,
+                KelompokList = kelompokList
             };
 
             return View(myProyekDosenVM);
@@ -152,7 +173,7 @@ namespace SIPKK.Controllers
             }
 
             List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdProyekKKP == dosen.IdProyek, includedProperties: [
-                 m => m.ProgramStudi,
+                m => m.ProgramStudi,
                 m => m.Konsentrasi,
                 m => m.Proyek,
                 m => m.BiayaOperasional,

@@ -61,6 +61,9 @@
                                 <p>Until:</p><span>@Model.Proyek.TanggalSelesai</span>
                             </div>
                             <div>
+                                <p>Tipe Proyek:</p><span>@Model.Proyek.TipeProyek</span>
+                            </div>
+                            <div>
                                 @if(Model.MahasiswaTerdaftar == Model.Proyek.Kuota)
                                 {
                                     <p>Penuh</p>
@@ -102,8 +105,21 @@
                         }
                         else
                         {
-                            <a href="@routeUploadBiayaPendaftaran" class="orange-btn">Daftar</a>
-                            <a href="@routeCreateKelompok" class="btn btn-primary">Buat Kelompok</a>
+                            if(Model.Proyek.TipeProyek == Proyek.Tipe.KKN && Model.RoleMahasiswa == Mahasiswa.Role.KETUA)
+                            {
+                                <a href="@routeCreateKelompok" class="btn btn-primary">Buat Kelompok</a>
+                            }
+                            else if(Model.Proyek.TipeProyek == Proyek.Tipe.KKP)
+                            {
+                                <form asp-action="DaftarKKP" method="post">
+                                    <input type="hidden" name="id" value="@Model.Proyek.Id" />
+                                    <button type="submit" class="btn btn-primary">Daftar KKP</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <a href="https://bromo.com" class="btn btn-primary">Lupa add tipe proyek kan</a>
+                            }
                         }
                     }
                     else if(roles.Contains("Dosen"))

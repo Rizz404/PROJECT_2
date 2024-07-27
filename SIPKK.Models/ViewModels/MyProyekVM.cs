@@ -9,8 +9,9 @@ namespace SIPKK.Models.ViewModels
 {
     public class MyProyekVM
     {
-        [ValidateNever]
-        public Mahasiswa Mahasiswa { get; set; }
+        public Kelompok MyKelompok { get; set; }
+
+        public ICollection<Kelompok>? KelompokList { get; set; }
 
         [ValidateNever]
         public Dosen Dosen { get; set; }
