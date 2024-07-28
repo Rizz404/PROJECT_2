@@ -292,7 +292,8 @@ namespace SIPKK.Controllers
                 p => p.Mahasiswa,
                 p => p.Dosen,
                 p => p.BiayaOperasional,
-                p => p.Laporan
+                p => p.Laporan,
+                p => p.Kelompok
             );
 
             if(proyek == null)

@@ -9,17 +9,20 @@ namespace SIPKK.Models
 {
     public class Feedback : CuidTimestampedEntity
     {
-        //public string Id { get; set; }
-
         [MaxLength(36)]
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Dosen")]
-        public required string IdDosen { get; set; }
+        public string IdDosen { get; set; }
+
+        [MaxLength(36)]
+        [Required(ErrorMessage = "{0} harus diisi")]
+        [Display(Name = "Mahasiswa")]
+        public string? IdMahasiswa { get; set; }
 
         [MaxLength(36)]
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Kelompok")]
-        public required string IdKelompok { get; set; }
+        public string? IdKelompok { get; set; }
 
         [RegularExpression(@"^(?!.{5}$).*", ErrorMessage = "Deskripsi tidak boleh hanya berisi 5 karakter.")]
         public string Comment { get; set; }
@@ -28,10 +31,12 @@ namespace SIPKK.Models
         [ValidateNever]
         public Dosen Dosen { get; set; }
 
+        [ForeignKey(nameof(IdMahasiswa))]
+        [ValidateNever]
+        public Mahasiswa Mahasiswa { get; set; }
+
         [ForeignKey(nameof(IdKelompok))]
         [ValidateNever]
         public Kelompok Kelompok { get; set; }
-
-        public ICollection<Mahasiswa>? Mahasiswa { get; set; }
     }
 }

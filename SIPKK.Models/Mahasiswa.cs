@@ -109,9 +109,10 @@ namespace SIPKK.Models
         public Kelompok Kelompok { get; set; }
 
         public Pendaftaran? Pendaftaran { get; set; }
-        public Laporan? Laporan { get; set; }
         public Persyaratan? Persyaratan { get; set; }
-        public BiayaOperasional? BiayaOperasional { get; set; }
+        public ICollection<Laporan>? Laporan { get; set; }
+        public ICollection<BiayaOperasional>? BiayaOperasional { get; set; }
+        public ICollection<Feedback>? Feedback { get; set; }
 
         // Custom validation method for Tanggal Lahir
         public static ValidationResult? ValidateTanggalLahir(DateTime tanggalLahir, ValidationContext context)

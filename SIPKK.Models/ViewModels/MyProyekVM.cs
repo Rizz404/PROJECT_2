@@ -13,9 +13,11 @@ namespace SIPKK.Models.ViewModels
         public Kelompok MyKelompok { get; set; }
 
         public ICollection<Kelompok>? KelompokList { get; set; }
+        public ICollection<BiayaOperasional>? BiayaOperasionalList { get; set; }
+        public ICollection<Laporan>? LaporanList { get; set; }
 
         [ValidateNever]
-        public Dosen Dosen { get; set; }
+        public Dosen? Dosen { get; set; }
 
         [ValidateNever]
         public Proyek? Proyek { get; set; }
@@ -32,8 +34,8 @@ namespace SIPKK.Models.ViewModels
         [ValidateNever]
         public Mahasiswa? Mahasiswa { get; set; }
 
-        // Add these properties
-        public string IdMahasiswa { get; set; }
-        public string IdProyek { get; set; }
+        //// Add these properties
+        //public string IdMahasiswa { get; set; }
+        //public string IdProyek { get; set; }
     }
 }

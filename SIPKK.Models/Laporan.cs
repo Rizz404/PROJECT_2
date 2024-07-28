@@ -23,9 +23,8 @@ namespace SIPKK.Models
         [Display(Name = "Id Mahasiswa")]
         public string? IdKelompok { get; set; }
 
-        [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "File Laporan")]
-        public string FileLaporan { get; set; }
+        public string? FileLaporan { get; set; }
 
         [Required(ErrorMessage = "{0} harus diisi")]
         [RegularExpression(@"^(?!.{5}$).*", ErrorMessage = "Deskripsi tidak boleh hanya berisi 5 karakter.")]

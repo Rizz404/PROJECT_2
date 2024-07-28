@@ -104,10 +104,14 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == dosen.IdProyek, includedProperties: [d => d.Mahasiswa]);
+            Proyek proyek = null;
+            if(!string.IsNullOrEmpty(dosen.IdProyek))
+            {
+                await _unitOfWork.Proyek.GetAsync(d => d.Id == dosen.IdProyek, includedProperties: [d => d.Mahasiswa]);
+            }
 
-            List<Kelompok> kelompokList = new List<Kelompok>();
-            if(proyek.TipeProyek == Proyek.Tipe.KKN)
+            List<Kelompok> kelompokList = null;
+            if(proyek != null && proyek.TipeProyek == Proyek.Tipe.KKN)
             {
                 kelompokList = (List<Kelompok>)await _unitOfWork.Kelompok.GetAllAsync(k => k.IdProyek == proyek.Id);
             }
@@ -142,45 +146,138 @@ namespace SIPKK.Controllers
         private async Task<IActionResult> HandleMahasiswaLaporan()
         {
             string userId = _userManager.GetUserId(User);
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
+                includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Kelompok]);
 
-            if(mahasiswa == null || mahasiswa.IdProyekKKP == null)
+            if(mahasiswa == null)
             {
-                TempData["ErrorMessage"] = "Maaf tapi anda belum daftar proyek";
-                return Redirect(Request.Headers["Referer"].ToString());
+                return NotFound();
             }
 
-            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdProyekKKP == mahasiswa.IdProyekKKP, includedProperties: [
-                m => m.ProgramStudi,
-                m => m.Konsentrasi,
-                m => m.Proyek,
-                m => m.BiayaOperasional,
-                m => m.Laporan
-            ])).ToList();
+            List<Laporan>? myLaporan = null;
+            if(!string.IsNullOrEmpty(mahasiswa.IdProyekKKP) && mahasiswa.Kelompok == null)
+            {
+                myLaporan = (List<Laporan>?)await _unitOfWork.Laporan.GetAllAsync(filter: b => b.IdMahasiswa == mahasiswa.Id);
+            }
+            else if(mahasiswa.Kelompok != null && string.IsNullOrEmpty(mahasiswa.IdProyekKKP))
+            {
+                myLaporan = (List<Laporan>?)await _unitOfWork.Laporan.GetAllAsync(filter: b => b.IdKelompok == mahasiswa.IdKelompok);
+            }
 
-            return View(mahasiswaList);
+            MyProyekVM myProyekVM = new()
+            {
+                LaporanList = myLaporan,
+                Mahasiswa = mahasiswa,
+                MyKelompok = mahasiswa.Kelompok
+            };
+
+            return View(myProyekVM);
         }
 
         private async Task<IActionResult> HandleDosenLaporan()
         {
             string userId = _userManager.GetUserId(User);
-            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId);
+            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId, includedProperties: [
+                d => d.Proyek
+            ]);
 
-            if(dosen == null || dosen.IdProyek == null)
+            if(dosen == null)
             {
-                TempData["ErrorMessage"] = "Maaf tapi anda belum daftar proyek";
-                return Redirect(Request.Headers["Referer"].ToString());
+                return NotFound();
             }
 
-            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdProyekKKP == dosen.IdProyek, includedProperties: [
-                m => m.ProgramStudi,
-                m => m.Konsentrasi,
-                m => m.Proyek,
-                m => m.BiayaOperasional,
-                m => m.Laporan
-             ])).ToList();
+            List<Laporan>? myLaporan = null;
+            if(!string.IsNullOrEmpty(dosen.IdProyek))
+            {
+                myLaporan = (List<Laporan>?)await _unitOfWork.Laporan.GetAllAsync(filter: b => b.IdMahasiswa == dosen.Id, includedProperties: [
+                    b => b.Mahasiswa,
+                    b => b.Kelompok
+                ]);
+            }
 
-            return View(mahasiswaList);
+            MyProyekVM myProyekVM = new()
+            {
+                LaporanList = myLaporan,
+                Dosen = dosen,
+            };
+
+            return View(myProyekVM);
+        }
+
+        public async Task<IActionResult> BiayaOperasional()
+        {
+            var userRole = await GetUserRole();
+
+            switch(userRole)
+            {
+                case UserRole.Mahasiswa:
+                return await HandleMahasiswaBiayaOperasional();
+                case UserRole.Dosen:
+                return await HandleDosenBiayaOperasional();
+                default:
+                return NotFound();
+            }
+        }
+
+        private async Task<IActionResult> HandleMahasiswaBiayaOperasional()
+        {
+            string userId = _userManager.GetUserId(User);
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
+                includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Kelompok]);
+
+            if(mahasiswa == null)
+            {
+                return NotFound();
+            }
+
+            List<BiayaOperasional>? myBiayaOperasional = null;
+            if(!string.IsNullOrEmpty(mahasiswa.IdProyekKKP) && mahasiswa.Kelompok == null)
+            {
+                myBiayaOperasional = (List<BiayaOperasional>?)await _unitOfWork.BiayaOperasional.GetAllAsync(filter: b => b.IdMahasiswa == mahasiswa.Id);
+            }
+            else if(mahasiswa.Kelompok != null && string.IsNullOrEmpty(mahasiswa.IdProyekKKP))
+            {
+                myBiayaOperasional = (List<BiayaOperasional>?)await _unitOfWork.BiayaOperasional.GetAllAsync(filter: b => b.IdKelompok == mahasiswa.IdKelompok);
+            }
+
+            MyProyekVM myProyekVM = new()
+            {
+                BiayaOperasionalList = myBiayaOperasional,
+                Mahasiswa = mahasiswa,
+                MyKelompok = mahasiswa.Kelompok
+            };
+
+            return View(myProyekVM);
+        }
+
+        private async Task<IActionResult> HandleDosenBiayaOperasional()
+        {
+            string userId = _userManager.GetUserId(User);
+            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId, includedProperties: [
+                d => d.Proyek
+            ]);
+
+            if(dosen == null)
+            {
+                return NotFound();
+            }
+
+            List<BiayaOperasional>? myBiayaOperasional = null;
+            if(!string.IsNullOrEmpty(dosen.IdProyek))
+            {
+                myBiayaOperasional = (List<BiayaOperasional>?)await _unitOfWork.BiayaOperasional.GetAllAsync(filter: b => b.IdMahasiswa == dosen.Id, includedProperties: [
+                    b => b.Mahasiswa,
+                    b => b.Kelompok
+                ]);
+            }
+
+            MyProyekVM myProyekVM = new()
+            {
+                BiayaOperasionalList = myBiayaOperasional,
+                Dosen = dosen,
+            };
+
+            return View(myProyekVM);
         }
 
         // GET: CreateBiayaOperasional
@@ -257,23 +354,27 @@ namespace SIPKK.Controllers
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
 
-                if(file != null)
+                if(file == null || file.Length == 0)
                 {
-                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string laporanPath = Path.Combine(wwwRootPath, @"file\laporan");
-
-                    if(!Directory.Exists(laporanPath))
-                    {
-                        Directory.CreateDirectory(laporanPath);
-                    }
-
-                    using(var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
-                    }
-
-                    laporanVM.Laporan.FileLaporan = @"\file\laporan\" + filename;
+                    ModelState.AddModelError("Laporan.FileLaporan", "File Laporan harus diisi");
+                    return View(laporanVM);
                 }
+
+
+                string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                string laporanPath = Path.Combine(wwwRootPath, @"files\laporan");
+
+                if(!Directory.Exists(laporanPath))
+                {
+                    Directory.CreateDirectory(laporanPath);
+                }
+
+                using(var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                laporanVM.Laporan.FileLaporan = @"\files\laporan\" + filename;
 
                 await _unitOfWork.Laporan.CreateAsync(laporanVM.Laporan);
                 await _unitOfWork.SaveAsync();

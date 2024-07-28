@@ -1,0 +1,58 @@
+﻿@using System.Web
+@model MyProyekVM
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Biaya Operasional";
+    int counter = 1;
+    var user = await UserManager.GetUserAsync(User);
+    var roles = await UserManager.GetRolesAsync(user);
+    string titleName = Model.Mahasiswa != null && Model.Mahasiswa.IdKelompok != null ? $"Kelompok {Model.MyKelompok.NamaKelompok}" : "Kamu";
+}
+<div class="container-fluid py-4">
+    <h1 class="mb-4">Biaya Operasional @titleName</h1>
+    @if(Model.BiayaOperasionalList != null && Model.BiayaOperasionalList.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>No</th>
+                        @if(roles.Contains("Dosen") && Model.Dosen != null && Model.Dosen.Proyek.TipeProyek == Proyek.Tipe.KKN)
+                        {
+                            <th>Nama Kelompok</th>
+                        }
+                        <th>@Html.DisplayNameFor(model => model.BiayaOperasional.BiayaDll)</th>
+                        <th>@Html.DisplayNameFor(model => model.BiayaOperasional.BiayaProyek)</th>
+                        <th>@Html.DisplayNameFor(model => model.BiayaOperasional.BiayaTransportasi)</th>
+                        <th>@Html.DisplayNameFor(model => model.BiayaOperasional.TanggalBiaya)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model.BiayaOperasionalList)
+                    {
+                        <tr>
+                            <td>@counter</td>
+                            @if(roles.Contains("Dosen") && Model.Dosen != null && Model.Dosen.Proyek.TipeProyek == Proyek.Tipe.KKN)
+                            {
+                                <td>@item.Kelompok.NamaKelompok</td>
+                            }
+                            <td>@item.BiayaDll</td>
+                            <td>@item.BiayaProyek</td>
+                            <td>@item.BiayaTransportasi</td>
+                            <td>@item.TanggalBiaya</td>
+                        </tr>
+                        counter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <h1>Brother eww</h1>
+    }
+</div>

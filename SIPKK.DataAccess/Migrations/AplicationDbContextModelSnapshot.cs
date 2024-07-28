@@ -410,7 +410,6 @@ namespace SIPKK.DataAccess.Migrations
                         .HasDatabaseName("ix_biaya_operasional_id_kelompok");
 
                     b.HasIndex("IdMahasiswa")
-                        .IsUnique()
                         .HasDatabaseName("ix_biaya_operasional_id_mahasiswa");
 
                     b.HasIndex("IdProyek")
@@ -505,6 +504,12 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnType("character varying(36)")
                         .HasColumnName("id_kelompok");
 
+                    b.Property<string>("IdMahasiswa")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
+                        .HasColumnName("id_mahasiswa");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -517,6 +522,9 @@ namespace SIPKK.DataAccess.Migrations
 
                     b.HasIndex("IdKelompok")
                         .HasDatabaseName("ix_feedback_id_kelompok");
+
+                    b.HasIndex("IdMahasiswa")
+                        .HasDatabaseName("ix_feedback_id_mahasiswa");
 
                     b.ToTable("feedback", (string)null);
                 });
@@ -692,7 +700,6 @@ namespace SIPKK.DataAccess.Migrations
                         .HasDatabaseName("ix_laporan_id_kelompok");
 
                     b.HasIndex("IdMahasiswa")
-                        .IsUnique()
                         .HasDatabaseName("ix_laporan_id_mahasiswa");
 
                     b.HasIndex("IdProyek")
@@ -711,10 +718,6 @@ namespace SIPKK.DataAccess.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
-
-                    b.Property<string>("FeedbackId")
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("feedback_id");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -795,9 +798,6 @@ namespace SIPKK.DataAccess.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_mahasiswa");
-
-                    b.HasIndex("FeedbackId")
-                        .HasDatabaseName("ix_mahasiswa_feedback_id");
 
                     b.HasIndex("IdAngkatan")
                         .HasDatabaseName("ix_mahasiswa_id_angkatan");
@@ -1077,8 +1077,8 @@ namespace SIPKK.DataAccess.Migrations
                         .HasConstraintName("fk_biaya_operasional_kelompok_id_kelompok");
 
                     b.HasOne("SIPKK.Models.Mahasiswa", "Mahasiswa")
-                        .WithOne("BiayaOperasional")
-                        .HasForeignKey("SIPKK.Models.BiayaOperasional", "IdMahasiswa")
+                        .WithMany("BiayaOperasional")
+                        .HasForeignKey("IdMahasiswa")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_biaya_operasional_mahasiswa_id_mahasiswa");
@@ -1132,9 +1132,18 @@ namespace SIPKK.DataAccess.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_feedback_kelompok_id_kelompok");
 
+                    b.HasOne("SIPKK.Models.Mahasiswa", "Mahasiswa")
+                        .WithMany("Feedback")
+                        .HasForeignKey("IdMahasiswa")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_feedback_mahasiswa_id_mahasiswa");
+
                     b.Navigation("Dosen");
 
                     b.Navigation("Kelompok");
+
+                    b.Navigation("Mahasiswa");
                 });
 
             modelBuilder.Entity("SIPKK.Models.Kelompok", b =>
@@ -1171,8 +1180,8 @@ namespace SIPKK.DataAccess.Migrations
                         .HasConstraintName("fk_laporan_kelompok_id_kelompok");
 
                     b.HasOne("SIPKK.Models.Mahasiswa", "Mahasiswa")
-                        .WithOne("Laporan")
-                        .HasForeignKey("SIPKK.Models.Laporan", "IdMahasiswa")
+                        .WithMany("Laporan")
+                        .HasForeignKey("IdMahasiswa")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_laporan_mahasiswa_id_mahasiswa");
@@ -1193,11 +1202,6 @@ namespace SIPKK.DataAccess.Migrations
 
             modelBuilder.Entity("SIPKK.Models.Mahasiswa", b =>
                 {
-                    b.HasOne("SIPKK.Models.Feedback", null)
-                        .WithMany("Mahasiswa")
-                        .HasForeignKey("FeedbackId")
-                        .HasConstraintName("fk_mahasiswa_feedback_feedback_id");
-
                     b.HasOne("SIPKK.Models.Angkatan", "Angkatan")
                         .WithMany("Mahasiswa")
                         .HasForeignKey("IdAngkatan")
@@ -1296,11 +1300,6 @@ namespace SIPKK.DataAccess.Migrations
                     b.Navigation("Mahasiswa");
                 });
 
-            modelBuilder.Entity("SIPKK.Models.Feedback", b =>
-                {
-                    b.Navigation("Mahasiswa");
-                });
-
             modelBuilder.Entity("SIPKK.Models.Kelas", b =>
                 {
                     b.Navigation("Mahasiswa");
@@ -1325,6 +1324,8 @@ namespace SIPKK.DataAccess.Migrations
             modelBuilder.Entity("SIPKK.Models.Mahasiswa", b =>
                 {
                     b.Navigation("BiayaOperasional");
+
+                    b.Navigation("Feedback");
 
                     b.Navigation("Laporan");
 

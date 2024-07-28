@@ -89,65 +89,43 @@
                 {
                     @if(roles.Contains("Mahasiswa"))
                     {
-                        @if(Model.StatusMahasiswa == ProyekVM.Status.PENDING)
+                        if(Model.Proyek.TipeProyek == Proyek.Tipe.KKN && Model.RoleMahasiswa == Mahasiswa.Role.KETUA)
                         {
-                            <span class="btn btn-success badge">
-                                Menunggu Konfirmasi Pembayaran
-                            </span>
+                            <a href="@routeCreateKelompok" class="btn btn-primary">Buat Kelompok</a>
                         }
-                        else if(Model.StatusMahasiswa == ProyekVM.Status.TERDAFTAR)
+                        else if(Model.Proyek.TipeProyek == Proyek.Tipe.KKP)
                         {
-                            <span class="btn btn-success badge">Terdaftar</span>
+                            <form asp-action="DaftarKKP" method="post">
+                                <input type="hidden" name="id" value="@Model.Proyek.Id" />
+                                <button type="submit" class="btn btn-primary">Daftar KKP</button>
+                            </form>
                         }
-                        else if(Model.StatusMahasiswa == ProyekVM.Status.TERDAFTAR_PROYEK_LAIN)
+                        else if(Model.RoleMahasiswa == null)
                         {
-                            <span class="btn btn-secondary badge">Terdaftar Proyek Lain</span>
+                            <a asp-controller="Profile" asp-action="Index" class="btn btn-primary">Ubah Role kamu dulu agar bisa join kkn</a>
+                        }
+                        else if(Model.RoleMahasiswa == Mahasiswa.Role.ANGGOTA)
+                        {
+                            <span class="btn btn-success badge">Silahkan join kelompok yang tersedia</span>
                         }
                         else
                         {
-                            if(Model.Proyek.TipeProyek == Proyek.Tipe.KKN && Model.RoleMahasiswa == Mahasiswa.Role.KETUA)
-                            {
-                                <a href="@routeCreateKelompok" class="btn btn-primary">Buat Kelompok</a>
-                            }
-                            else if(Model.Proyek.TipeProyek == Proyek.Tipe.KKP)
-                            {
-                                <form asp-action="DaftarKKP" method="post">
-                                    <input type="hidden" name="id" value="@Model.Proyek.Id" />
-                                    <button type="submit" class="btn btn-primary">Daftar KKP</button>
-                                </form>
-                            }
-                            else if(Model.RoleMahasiswa == null)
-                            {
-                                <a asp-controller="Profile" asp-action="Index" class="btn btn-primary">Ubah Role kamu dulu agar bisa join kkn</a>
-                            }
-                            else
-                            {
-                                <a href="https://bromo.com" class="btn btn-primary">Lupa add tipe proyek kan</a>
-                            }
+                            <a href="https://bromo.com" class="btn btn-primary">Lupa add tipe proyek kan</a>
                         }
                     }
                     else if(roles.Contains("Dosen"))
                     {
-                        @switch(Model.StatusMahasiswa) // Perhatikan: kita menggunakan StatusMahasiswa untuk dosen juga
-                        {
-                            case ProyekVM.Status.TERDAFTAR:
-                            <span class="btn btn-success badge">Proyek Anda</span>
-                            break;
-                            case ProyekVM.Status.TERDAFTAR_PROYEK_LAIN:
-                            <span>Anda terdaftar di proyek lain: <span class="btn btn-info badge">@Model.ProyekTerdaftarNameForCurrentMahasiswa</span></span>
-                            break;
-                            default:
-                            <form asp-action="DaftarJadiPembimbing" method="post">
-                                <input type="hidden" name="id" value="@Model.Proyek.Id" />
-                                <button type="submit" class="btn btn-primary">Jadi pembimbing</button>
-                            </form>
-                            break;
-                        }
+
+                        <form asp-action="DaftarJadiPembimbing" method="post">
+                            <input type="hidden" name="id" value="@Model.Proyek.Id" />
+                            <button type="submit" class="btn btn-primary">Jadi pembimbing</button>
+                        </form>
+
                     }
-                    else if(roles.Contains("Admin"))
-                    {
-                        <button type="button" class="btn btn-success" disabled>Youre gay</button>
-                    }
+                }
+                else if(roles.Contains("Admin"))
+                {
+                    <button type="button" class="btn btn-success" disabled>Youre gay</button>
                 }
             </div>
             <div class="proyek-deskripsi">
@@ -179,10 +157,13 @@
                         </div>
                         @if(Model.RoleMahasiswa != Mahasiswa.Role.KETUA)
                         {
-                            <form asp-action="JoinKelompok" method="post">
-                                <input type="hidden" name="id" value="@kelompok.Id" />
-                                <button type="submit" class="btn btn-primary">Join</button>
-                            </form>
+                            @if(Model.StatusMahasiswa == ProyekVM.Status.TIDAK_TERDAFTAR)
+                            {
+                                <form asp-action="JoinKelompok" method="post">
+                                    <input type="hidden" name="id" value="@kelompok.Id" />
+                                    <button type="submit" class="btn btn-primary">Join</button>
+                                </form>
+                            }
                         }
                     </div>
                 }
