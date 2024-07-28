@@ -68,27 +68,27 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            string idProyek = null;
+            Proyek? myProyek = null;
             if(!string.IsNullOrEmpty(mahasiswa.IdProyekKKP))
             {
-                idProyek = mahasiswa.IdProyekKKP;
+                myProyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == mahasiswa.IdProyekKKP, includedProperties: [d => d.Mahasiswa]);
             }
-            else
+            else if(mahasiswa.Kelompok != null)
             {
-                idProyek = mahasiswa.Kelompok.IdProyek;
+                myProyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == mahasiswa.Kelompok.IdProyek, includedProperties: [d => d.Mahasiswa]);
             }
 
-            var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == idProyek, includedProperties: [d => d.Mahasiswa]);
             var myKelompok = await _unitOfWork.Kelompok.GetAsync(k => k.Id == mahasiswa.IdKelompok, includedProperties: [k => k.Mahasiswa]);
 
             var myProyekVM = new MyProyekVM()
             {
                 MyKelompok = myKelompok,
-                Proyek = proyek,
+                Proyek = myProyek,
                 Laporan = await _unitOfWork.Laporan.GetAsync(l => l.IdMahasiswa == mahasiswa.Id),
                 Pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(p => p.IdMahasiswa == mahasiswa.Id),
                 BiayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(b => b.IdMahasiswa == mahasiswa.Id),
-                Dosen = mahasiswa.Proyek != null ? await _unitOfWork.Dosen.GetAsync(d => d.IdProyek == mahasiswa.Proyek.Id) : null
+                Dosen = mahasiswa.Proyek != null ? await _unitOfWork.Dosen.GetAsync(d => d.IdProyek == mahasiswa.Proyek.Id) : null,
+                Mahasiswa = mahasiswa
             };
 
             return View(myProyekVM);
@@ -187,7 +187,8 @@ namespace SIPKK.Controllers
         public async Task<IActionResult> CreateBiayaOperasional()
         {
             string userId = _userManager.GetUserId(User);
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
+                includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Kelompok]);
 
             if(mahasiswa == null)
             {
@@ -198,8 +199,9 @@ namespace SIPKK.Controllers
             {
                 BiayaOperasional = new BiayaOperasional
                 {
-                    IdProyek = mahasiswa.IdProyekKKP,
+                    IdProyek = !string.IsNullOrEmpty(mahasiswa.IdProyekKKP) ? mahasiswa.IdProyekKKP : mahasiswa.Kelompok.IdProyek,
                     IdMahasiswa = mahasiswa.Id,
+                    IdKelompok = mahasiswa.IdKelompok,
                     TanggalBiaya = DateTime.UtcNow
                 }
             };
@@ -213,18 +215,7 @@ namespace SIPKK.Controllers
         {
             if(ModelState.IsValid)
             {
-                BiayaOperasional biayaOperasional = new()
-                {
-                    IdProyek = biayaOperasionalVM.BiayaOperasional.IdProyek,
-                    IdMahasiswa = biayaOperasionalVM.BiayaOperasional.IdMahasiswa,
-                    Keterangan = biayaOperasionalVM.BiayaOperasional.Keterangan,
-                    BiayaDll = biayaOperasionalVM.BiayaOperasional.BiayaDll,
-                    BiayaProyek = biayaOperasionalVM.BiayaOperasional.BiayaProyek,
-                    BiayaTransportasi = biayaOperasionalVM.BiayaOperasional.BiayaTransportasi,
-                    TanggalBiaya = biayaOperasionalVM.BiayaOperasional.TanggalBiaya,
-                };
-
-                await _unitOfWork.BiayaOperasional.CreateAsync(biayaOperasional);
+                await _unitOfWork.BiayaOperasional.CreateAsync(biayaOperasionalVM.BiayaOperasional);
                 await _unitOfWork.SaveAsync();
                 TempData["SuccessMessage"] = "Biaya Operasional created successfully";
                 return RedirectToAction(nameof(Index));
@@ -232,11 +223,13 @@ namespace SIPKK.Controllers
 
             return View(biayaOperasionalVM);
         }
+
         // GET: CreateLaporan
         public async Task<IActionResult> CreateLaporan()
         {
             string userId = _userManager.GetUserId(User);
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId);
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
+                includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Kelompok]);
 
             if(mahasiswa == null)
             {
@@ -247,8 +240,9 @@ namespace SIPKK.Controllers
             {
                 Laporan = new Laporan
                 {
-                    IdProyek = mahasiswa.IdProyekKKP,
-                    IdMahasiswa = mahasiswa.Id
+                    IdProyek = !string.IsNullOrEmpty(mahasiswa.IdProyekKKP) ? mahasiswa.IdProyekKKP : mahasiswa.Kelompok.IdProyek,
+                    IdMahasiswa = mahasiswa.Id,
+                    IdKelompok = mahasiswa.IdKelompok
                 }
             };
 
@@ -265,27 +259,23 @@ namespace SIPKK.Controllers
 
                 if(file != null)
                 {
-                    string filename = new Cuid2().ToString() + Path.GetExtension(file.FileName);
-                    string laporanPath = Path.Combine(wwwRootPath, @"images\laporan");
+                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string laporanPath = Path.Combine(wwwRootPath, @"file\laporan");
+
+                    if(!Directory.Exists(laporanPath))
+                    {
+                        Directory.CreateDirectory(laporanPath);
+                    }
 
                     using(var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
                     {
-                        file.CopyTo(fileStream);
+                        await file.CopyToAsync(fileStream);
                     }
 
-                    laporanVM.Laporan.FileLaporan = @"\images\laporan\" + filename;
+                    laporanVM.Laporan.FileLaporan = @"\file\laporan\" + filename;
                 }
 
-
-                Laporan laporan = new()
-                {
-                    Keterangan = laporanVM.Laporan.Keterangan,
-                    IdProyek = laporanVM.Laporan.IdProyek,
-                    FileLaporan = laporanVM.Laporan.FileLaporan,
-                    IdMahasiswa = laporanVM.Laporan.IdMahasiswa,
-                };
-
-                await _unitOfWork.Laporan.CreateAsync(laporan);
+                await _unitOfWork.Laporan.CreateAsync(laporanVM.Laporan);
                 await _unitOfWork.SaveAsync();
                 TempData["SuccessMessage"] = "Laporan created successfully";
                 return RedirectToAction(nameof(Index));
@@ -293,7 +283,5 @@ namespace SIPKK.Controllers
 
             return View(laporanVM);
         }
-
-
     }
 }

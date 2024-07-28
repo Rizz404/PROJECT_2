@@ -74,9 +74,14 @@ namespace SIPKK.Areas.Admin.Controllers
                 if(file != null)
                 {
                     string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string mahasiswaPath = Path.Combine(wwwRootPath, @"images\proyek");
+                    string proyekPath = Path.Combine(wwwRootPath, @"images\proyek");
 
-                    using(var fileStream = new FileStream(Path.Combine(mahasiswaPath, filename), FileMode.Create))
+                    if(!Directory.Exists(proyekPath))
+                    {
+                        Directory.CreateDirectory(proyekPath);
+                    }
+
+                    using(var fileStream = new FileStream(Path.Combine(proyekPath, filename), FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                     }
@@ -139,6 +144,11 @@ namespace SIPKK.Areas.Admin.Controllers
                     {
                         string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                         string proyekPath = Path.Combine(wwwRootPath, @"images\proyek");
+
+                        if(!Directory.Exists(proyekPath))
+                        {
+                            Directory.CreateDirectory(proyekPath);
+                        }
 
                         using(var fileStream = new FileStream(Path.Combine(proyekPath, filename), FileMode.Create))
                         {

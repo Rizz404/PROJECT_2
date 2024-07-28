@@ -101,6 +101,11 @@ public class ProfileController : Controller
                 string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                 string userPath = Path.Combine(wwwRootPath, @"images\users");
 
+                if(!Directory.Exists(userPath))
+                {
+                    Directory.CreateDirectory(userPath);
+                }
+
                 if(!string.IsNullOrEmpty(profileVM.FotoProfil))
                 {
                     var oldImagePath = Path.Combine(wwwRootPath, profileVM.FotoProfil.TrimStart('\\'));

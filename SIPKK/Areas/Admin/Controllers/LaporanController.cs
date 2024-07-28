@@ -79,7 +79,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 if(file != null)
                 {
                     string filename2 = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string filePath = Path.Combine(wwwRootPath, @"images\laporan");
+                    string filePath = Path.Combine(wwwRootPath, @"file\laporan");
 
                     if(!Directory.Exists(filePath))
                     {
@@ -91,7 +91,7 @@ namespace SIPKK.Areas.Admin.Controllers
                         file.CopyTo(fileStream);
                     }
 
-                    laporanVM.Laporan.FileLaporan = @"\images\laporan\" + filename2;
+                    laporanVM.Laporan.FileLaporan = @"\file\laporan\" + filename2;
                 }
                 await _unitOfWork.Laporan.CreateAsync(laporanVM.Laporan);
                 await _unitOfWork.SaveAsync();
@@ -154,7 +154,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 if(file != null)
                 {
                     string filename2 = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string filePath = Path.Combine(wwwRootPath, @"images\laporan");
+                    string filePath = Path.Combine(wwwRootPath, @"file\laporan");
 
                     if(!Directory.Exists(filePath))
                     {
@@ -166,7 +166,7 @@ namespace SIPKK.Areas.Admin.Controllers
                         file.CopyTo(fileStream);
                     }
 
-                    laporanVM.Laporan.FileLaporan = @"\images\laporan\" + filename2;
+                    laporanVM.Laporan.FileLaporan = @"\file\laporan\" + filename2;
                 }
                 await _unitOfWork.Laporan.UpdateAsync(laporanVM.Laporan);
                 await _unitOfWork.SaveAsync();

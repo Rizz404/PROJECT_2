@@ -15,7 +15,7 @@
 <div class="container mt-4">
     <h2 class="mb-4">Proyek Kamu</h2>
 
-    @if(Model.Proyek != null)
+    @if(Model.Proyek != null && Model.Mahasiswa != null)
     {
         <div class="card mb-4 shadow">
             @if(!string.IsNullOrEmpty(Model.Proyek.FotoProyek))
@@ -225,52 +225,22 @@
                 </div>
             </div>
         </div>
+
+        @if(roles.Contains("Mahasiswa") && Model.Proyek.Verified)
+        {
+            @if(Model.Mahasiswa.RoleMahasiswa == Mahasiswa.Role.KETUA || !string.IsNullOrEmpty(Model.Mahasiswa.IdProyekKKP))
+            {
+                <a asp-action="CreateLaporan" class="btn btn-primary mb-4">Buat Laporan</a>
+                <a asp-action="CreateBiayaOperasional" class="btn btn-primary mb-4">Buat Laporan Biaya Operasional</a>
+            }
+            <a asp-action="DetailLaporan" class="btn btn-warning mb-4">Detail Laporan</a>
+            <a asp-action="DetailBiayaOprasional" class="btn btn-warning mb-4">Detail Biaya Operasional</a>
+        }
     }
     else
     {
         <div class="alert alert-info" role="alert">
             Kamu belum mendaftar ke proyek manapun
         </div>
-    }
-
-    @if(Model.Proyek != null && roles.Contains("Mahasiswa") && Model.Proyek.Verified)
-    {
-        @if(Model.Laporan != null)
-        {
-            <div class="card mb-4 shadow">
-                <div class="card-header">
-                    <h2 class="mb-0">Detail Laporan</h2>
-                </div>
-                <div class="card-body">
-                    <h3>@Model.Laporan.Keterangan</h3>
-                </div>
-            </div>
-        }
-        else
-        {
-            <a asp-action="CreateLaporan" class="btn btn-primary mb-4">Buat Laporan</a>
-        }
-
-        @if(Model.BiayaOperasional != null)
-        {
-            <div class="card mb-4 shadow">
-                <div class="card-header">
-                    <h2 class="mb-0">Detail Biaya Operasional</h2>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong>Keterangan:</strong> @Model.BiayaOperasional.Keterangan</li>
-                        <li class="list-group-item"><strong>Biaya Lain-lain:</strong> @Model.BiayaOperasional.BiayaDll</li>
-                        <li class="list-group-item"><strong>Biaya Proyek:</strong> @Model.BiayaOperasional.BiayaProyek</li>
-                        <li class="list-group-item"><strong>Biaya Transportasi:</strong> @Model.BiayaOperasional.BiayaTransportasi</li>
-                        <li class="list-group-item"><strong>Tanggal Biaya:</strong> @Model.BiayaOperasional.TanggalBiaya.ToString("dd-MM-yyyy")</li>
-                    </ul>
-                </div>
-            </div>
-        }
-        else
-        {
-            <a asp-action="CreateBiayaOperasional" class="btn btn-warning mb-4">Buat Laporan Biaya Pendaftaran</a>
-        }
     }
 </div>
