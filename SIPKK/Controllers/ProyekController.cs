@@ -422,7 +422,13 @@ namespace SIPKK.Controllers
 
                 if(mahasiswa.RoleMahasiswa == Mahasiswa.Role.KETUA)
                 {
-                    TempData["ErrorMessage"] = "Ketua tidak bisa gabung kelompok lains";
+                    TempData["ErrorMessage"] = "Ketua tidak bisa gabung kelompok lain";
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
+
+                if(mahasiswa.RoleMahasiswa == null)
+                {
+                    TempData["ErrorMessage"] = "Silahkan ubah role ke anggota untuk join kelompok";
                     return Redirect(Request.Headers["Referer"].ToString());
                 }
 

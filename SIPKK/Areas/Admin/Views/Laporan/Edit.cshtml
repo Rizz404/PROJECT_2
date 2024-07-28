@@ -33,22 +33,10 @@
                 <span asp-validation-for="Laporan.Keterangan" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Laporan.FotoLaporan" class="control-label"></label>
-                <input asp-for="Laporan.FotoLaporan" type="file" name="img" class="form-control" />
-                <span asp-validation-for="Laporan.FotoLaporan" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Laporan.FileLaporan" class="control-label"></label>
                 <input asp-for="Laporan.FileLaporan" type="file" name="file" class="form-control" />
                 <span asp-validation-for="Laporan.FileLaporan" class="text-danger"></span>
             </div>
-            @if (!string.IsNullOrEmpty(Model.Laporan.FotoLaporan))
-            {
-                <div class="col-md-6">
-                    <img src="@Model.Laporan.FotoLaporan" alt="Alternate Text" class="img-fluid img-thumbnail" />
-                </div>
-            }
-
 
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Edit</button>

@@ -178,7 +178,7 @@ namespace SIPKK.Areas.Identity.Pages.Account
                         });
                     }
 
-                    _unitOfWork.SaveAsync();
+                    await _unitOfWork.SaveAsync();
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

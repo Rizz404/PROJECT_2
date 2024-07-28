@@ -32,11 +32,6 @@ namespace SIPKK.DataAccess.Repository
                 objFromDb.IdMahasiswa = obj.IdMahasiswa;
                 objFromDb.Keterangan = obj.Keterangan;
 
-                if(obj.FotoLaporan != null)
-                {
-                    objFromDb.FotoLaporan = obj.FotoLaporan;
-                }
-
                 if(obj.FileLaporan != null)
                 {
                     objFromDb.FileLaporan = obj.FileLaporan;

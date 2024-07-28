@@ -106,7 +106,7 @@ namespace SIPKK.Controllers
 
             var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == dosen.IdProyek, includedProperties: [d => d.Mahasiswa]);
 
-            List<Kelompok> kelompokList;
+            List<Kelompok> kelompokList = new List<Kelompok>();
             if(proyek.TipeProyek == Proyek.Tipe.KKN)
             {
                 kelompokList = (List<Kelompok>)await _unitOfWork.Kelompok.GetAllAsync(k => k.IdProyek == proyek.Id);
@@ -257,24 +257,11 @@ namespace SIPKK.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateLaporan(LaporanVM laporanVM, IFormFile? fotoLaporan, IFormFile? file)
+        public async Task<IActionResult> CreateLaporan(LaporanVM laporanVM, IFormFile? file)
         {
             if(ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
-
-                if(fotoLaporan != null)
-                {
-                    string filename = new Cuid2().ToString() + Path.GetExtension(fotoLaporan.FileName);
-                    string laporanPath = Path.Combine(wwwRootPath, @"images\laporan");
-
-                    using(var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
-                    {
-                        fotoLaporan.CopyTo(fileStream);
-                    }
-
-                    laporanVM.Laporan.FotoLaporan = @"\images\laporan\" + filename;
-                }
 
                 if(file != null)
                 {
@@ -294,7 +281,6 @@ namespace SIPKK.Controllers
                 {
                     Keterangan = laporanVM.Laporan.Keterangan,
                     IdProyek = laporanVM.Laporan.IdProyek,
-                    FotoLaporan = laporanVM.Laporan.FotoLaporan,
                     FileLaporan = laporanVM.Laporan.FileLaporan,
                     IdMahasiswa = laporanVM.Laporan.IdMahasiswa,
                 };

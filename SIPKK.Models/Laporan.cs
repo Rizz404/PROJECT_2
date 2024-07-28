@@ -18,11 +18,13 @@ namespace SIPKK.Models
         [Display(Name = "Id Mahasiswa")]
         public string IdMahasiswa { get; set; }
 
-        [Display(Name = "Foto Laporan")]
-        public string? FotoLaporan { get; set; }
+        [MaxLength(36)]
+        [Required(ErrorMessage = "{0} harus diisi")]
+        [Display(Name = "Id Mahasiswa")]
+        public string? IdKelompok { get; set; }
 
         [Display(Name = "File Laporan")]
-        public string? FileLaporan { get; set; }
+        public string FileLaporan { get; set; }
 
         [Required(ErrorMessage = "{0} harus diisi")]
         [RegularExpression(@"^(?!.{5}$).*", ErrorMessage = "Deskripsi tidak boleh hanya berisi 5 karakter.")]
@@ -34,6 +36,10 @@ namespace SIPKK.Models
         [ForeignKey(nameof(IdProyek))]
         [ValidateNever]
         public Proyek Proyek { get; set; }
+
+        [ForeignKey(nameof(IdKelompok))]
+        [ValidateNever]
+        public Kelompok Kelompok { get; set; }
 
         [ForeignKey(nameof(IdMahasiswa))]
         [ValidateNever]

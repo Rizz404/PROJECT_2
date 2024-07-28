@@ -9,8 +9,6 @@ namespace SIPKK.Models
 {
     public class Konsentrasi : CuidTimestampedEntity
     {
-        //public string Id { get; set; }
-
         [MaxLength(36)]
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Program Studi")]

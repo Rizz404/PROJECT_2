@@ -31,14 +31,14 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Laporan/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            if (id == null || id == string.Empty)
+            if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
             Laporan laporan = await _unitOfWork.Laporan.GetAsync(d => d.Id == id);
 
-            if (laporan == null)
+            if(laporan == null)
             {
                 return NotFound();
             }
@@ -70,41 +70,23 @@ namespace SIPKK.Areas.Admin.Controllers
         // POST: Laporan/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(LaporanVM laporanVM, IFormFile? img, IFormFile? file)
+        public async Task<IActionResult> Create(LaporanVM laporanVM, IFormFile? file)
         {
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
 
-                if (img != null)
-                {
-                    string filename1 = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
-                    string imgPath = Path.Combine(wwwRootPath, @"images\laporan");
-
-                    if (!Directory.Exists(imgPath))
-                    {
-                        Directory.CreateDirectory(imgPath);
-                    }
-
-                    using (var fileStream = new FileStream(Path.Combine(imgPath, filename1), FileMode.Create))
-                    {
-                        img.CopyTo(fileStream);
-                    }
-
-                    laporanVM.Laporan.FotoLaporan = @"\images\laporan\" + filename1;
-                }
-
-                if (file != null)
+                if(file != null)
                 {
                     string filename2 = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string filePath = Path.Combine(wwwRootPath, @"images\laporan");
 
-                    if (!Directory.Exists(filePath))
+                    if(!Directory.Exists(filePath))
                     {
                         Directory.CreateDirectory(filePath);
                     }
 
-                    using (var fileStream = new FileStream(Path.Combine(filePath, filename2), FileMode.Create))
+                    using(var fileStream = new FileStream(Path.Combine(filePath, filename2), FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                     }
@@ -130,14 +112,14 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Laporan/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null || id == string.Empty)
+            if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
             Laporan? Laporan = await _unitOfWork.Laporan.GetAsync(d => d.Id == id);
 
-            if (Laporan == null)
+            if(Laporan == null)
             {
                 return NotFound();
             }
@@ -163,41 +145,23 @@ namespace SIPKK.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(LaporanVM laporanVM, IFormFile? img, IFormFile? file)
+        public async Task<IActionResult> Edit(LaporanVM laporanVM, IFormFile? file)
         {
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
 
-                if (img != null)
-                {
-                    string filename1 = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
-                    string imgPath = Path.Combine(wwwRootPath, @"images\laporan");
-
-                    if (!Directory.Exists(imgPath))
-                    {
-                        Directory.CreateDirectory(imgPath);
-                    }
-
-                    using (var fileStream = new FileStream(Path.Combine(imgPath, filename1), FileMode.Create))
-                    {
-                        img.CopyTo(fileStream);
-                    }
-
-                    laporanVM.Laporan.FotoLaporan = @"\images\laporan\" + filename1;
-                }
-
-                if (file != null)
+                if(file != null)
                 {
                     string filename2 = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string filePath = Path.Combine(wwwRootPath, @"images\laporan");
 
-                    if (!Directory.Exists(filePath))
+                    if(!Directory.Exists(filePath))
                     {
                         Directory.CreateDirectory(filePath);
                     }
 
-                    using (var fileStream = new FileStream(Path.Combine(filePath, filename2), FileMode.Create))
+                    using(var fileStream = new FileStream(Path.Combine(filePath, filename2), FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                     }
@@ -235,10 +199,10 @@ namespace SIPKK.Areas.Admin.Controllers
                 IsUpdate = false
             };
 
-            if (string.IsNullOrEmpty(id))
+            if(string.IsNullOrEmpty(id))
             {
                 laporanVM.Laporan = await _unitOfWork.Laporan.GetAsync(b => b.Id == id);
-                if (laporanVM.Laporan == null)
+                if(laporanVM.Laporan == null)
                 {
                     return NotFound();
                 }
@@ -253,9 +217,9 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upsert(string? id, LaporanVM laporanVM)
         {
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
-                if (string.IsNullOrEmpty(id))
+                if(string.IsNullOrEmpty(id))
                 {
                     await _unitOfWork.Laporan.CreateAsync(laporanVM.Laporan);
                 }
@@ -281,14 +245,14 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Laporan/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
-            if (id == null || id == string.Empty)
+            if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
             Laporan laporan = await _unitOfWork.Laporan.GetAsync(d => d.Id == id);
 
-            if (laporan == null)
+            if(laporan == null)
             {
                 return NotFound();
             }
@@ -303,7 +267,7 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             Laporan? laporan = await _unitOfWork.Laporan.GetAsync(d => d.Id == id);
 
-            if (laporan == null)
+            if(laporan == null)
             {
                 return NotFound();
             }

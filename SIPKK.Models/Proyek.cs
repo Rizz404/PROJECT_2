@@ -62,8 +62,5 @@ namespace SIPKK.Models
         public ICollection<Pendaftaran>? Pendaftaran { get; set; }
         public ICollection<Laporan>? Laporan { get; set; }
         public ICollection<BiayaOperasional>? BiayaOperasional { get; set; }
-
-        //public BiayaOperasional? BiayaOperasional { get; set; }
-        // public Laporan? Laporan { get; set; }
     }
 }

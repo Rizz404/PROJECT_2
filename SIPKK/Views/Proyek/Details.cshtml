@@ -116,6 +116,10 @@
                                     <button type="submit" class="btn btn-primary">Daftar KKP</button>
                                 </form>
                             }
+                            else if(Model.RoleMahasiswa == null)
+                            {
+                                <a asp-controller="Profile" asp-action="Index" class="btn btn-primary">Ubah Role kamu dulu agar bisa join kkn</a>
+                            }
                             else
                             {
                                 <a href="https://bromo.com" class="btn btn-primary">Lupa add tipe proyek kan</a>
