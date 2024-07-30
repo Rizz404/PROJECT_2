@@ -87,7 +87,7 @@ namespace SIPKK.Controllers
                 Laporan = await _unitOfWork.Laporan.GetAsync(l => l.IdMahasiswa == mahasiswa.Id),
                 Pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(p => p.IdMahasiswa == mahasiswa.Id),
                 BiayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(b => b.IdMahasiswa == mahasiswa.Id),
-                Dosen = mahasiswa.Proyek != null ? await _unitOfWork.Dosen.GetAsync(d => d.IdProyek == mahasiswa.Proyek.Id) : null,
+                Dosen = (mahasiswa.Proyek != null || mahasiswa.Kelompok != null) ? await _unitOfWork.Dosen.GetAsync(d => d.IdProyek == mahasiswa.Proyek.Id) : null,
                 Mahasiswa = mahasiswa
             };
 
@@ -314,7 +314,7 @@ namespace SIPKK.Controllers
                 await _unitOfWork.BiayaOperasional.CreateAsync(biayaOperasionalVM.BiayaOperasional);
                 await _unitOfWork.SaveAsync();
                 TempData["SuccessMessage"] = "Biaya Operasional created successfully";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(BiayaOperasional));
             }
 
             return View(biayaOperasionalVM);
@@ -378,7 +378,7 @@ namespace SIPKK.Controllers
                 await _unitOfWork.Laporan.CreateAsync(laporanVM.Laporan);
                 await _unitOfWork.SaveAsync();
                 TempData["SuccessMessage"] = "Laporan created successfully";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Laporan));
             }
 
             return View(laporanVM);

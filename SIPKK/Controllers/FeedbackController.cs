@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
@@ -28,51 +29,50 @@ namespace SIPKK.Controllers
 
         public async Task<IActionResult> Create(string id)
         {
-            var userId = GetUserId();
-
-            var dosen = await _unitOfWork.Dosen.GetAsync(filter: m => m.IdUser == userId, includedProperties: [
-                d => d.Proyek,
-            ]);
-
-            if(dosen == null)
+            if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
-            var Feedback = new Models.Feedback()
+            Laporan? laporan = await _unitOfWork.Laporan.FindAsync(filter: d => d.Id == id);
+
+            if(laporan == null)
             {
-                IdDosen = dosen.Id,
-                IdKelompok = dosen.Proyek.TipeProyek == Proyek.Tipe.KKN ? id : null,
-                IdMahasiswa = dosen.Proyek.TipeProyek == Proyek.Tipe.KKP ? id : null,
+                return NotFound();
+            }
+
+            LaporanVM laporanVM = new()
+            {
+                Laporan = laporan,
             };
 
-            var FeedbackVM = new FeedbackVM()
-            {
-                Feedback = Feedback
-            };
-
-            return View(FeedbackVM);
+            return View(laporanVM);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(FeedbackVM feedbackVM)
+        public async Task<IActionResult> Create(LaporanVM laporanVM)
         {
             if(ModelState.IsValid)
             {
-                await _unitOfWork.Feedback.CreateAsync(feedbackVM.Feedback);
+                var laporan = await _unitOfWork.Laporan.FindAsync(filter: d => d.Id == laporanVM.Laporan.Id);
+                if(laporan == null)
+                {
+                    return NotFound();
+                }
+
+                // Update only the Feedback field
+                laporan.Feedback = laporanVM.Laporan.Feedback;
+
+                // Save the changes
+                await _unitOfWork.Laporan.UpdateAsync(laporan);
                 await _unitOfWork.SaveAsync();
 
-                var userId = GetUserId();
-                var dosen = await _unitOfWork.Dosen.GetAsync(filter: m => m.IdUser == userId, includedProperties: [
-                   d => d.Proyek,
-                ]);
-
-                TempData["SuccessMessage"] = "Berhasil membuat feedback";
-                return Redirect($"/Proyek/Details/{dosen.IdProyek}");
+                TempData["SuccessMessage"] = "Feedback berhasil diperbarui";
+                return Redirect("/MyProyek/Laporan/");
             }
-            return View(feedbackVM);
+            return View(laporanVM);
         }
     }
 }

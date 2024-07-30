@@ -655,6 +655,11 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("Feedback")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("feedback");
+
                     b.Property<string>("FileLaporan")
                         .HasColumnType("text")
                         .HasColumnName("file_laporan");

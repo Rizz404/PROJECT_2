@@ -31,8 +31,8 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: ProgramStudi
         public async Task<IActionResult> Index()
         {
-            List<ProgramStudi> biayaOperasionalList = (await _unitOfWork.ProgramStudi.GetAllAsync()).ToList();
-            return View(biayaOperasionalList);
+            List<ProgramStudi> programStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).ToList();
+            return View(programStudiList);
         }
 
         // GET: ProgramStudi/Details/5
@@ -43,14 +43,14 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            ProgramStudi biayaOperasional = await _unitOfWork.ProgramStudi.GetAsync(d => d.Id == id);
+            ProgramStudi programStudi = await _unitOfWork.ProgramStudi.GetAsync(d => d.Id == id);
 
-            if(biayaOperasional == null)
+            if(programStudi == null)
             {
                 return NotFound();
             }
 
-            return View(biayaOperasional);
+            return View(programStudi);
         }
 
         // GET: ProgramStudi/Create
@@ -82,16 +82,16 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            ProgramStudi? biayaOperasional = await _unitOfWork.ProgramStudi.GetAsync(d => d.Id == id);
+            ProgramStudi? programStudi = await _unitOfWork.ProgramStudi.GetAsync(d => d.Id == id);
 
-            if(biayaOperasional == null)
+            if(programStudi == null)
             {
                 return NotFound();
             }
 
             ProgramStudiVM programStudiVM = new()
             {
-                ProgramStudi = biayaOperasional,
+                ProgramStudi = programStudi,
             };
 
             return View(programStudiVM);
@@ -119,14 +119,14 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            ProgramStudi biayaOperasional = await _unitOfWork.ProgramStudi.GetAsync(d => d.Id == id);
+            ProgramStudi programStudi = await _unitOfWork.ProgramStudi.GetAsync(d => d.Id == id);
 
-            if(biayaOperasional == null)
+            if(programStudi == null)
             {
                 return NotFound();
             }
 
-            return View(biayaOperasional);
+            return View(programStudi);
         }
 
         // POST: ProgramStudi/Delete/5
@@ -134,13 +134,13 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            ProgramStudi? biayaOperasional = await _unitOfWork.ProgramStudi.GetAsync(d => d.Id == id);
+            ProgramStudi? programStudi = await _unitOfWork.ProgramStudi.GetAsync(d => d.Id == id);
 
-            if(biayaOperasional == null)
+            if(programStudi == null)
             {
                 return NotFound();
             }
-            await _unitOfWork.ProgramStudi.DeleteAsync(biayaOperasional);
+            await _unitOfWork.ProgramStudi.DeleteAsync(programStudi);
             await _unitOfWork.SaveAsync();
             TempData["Success"] = "ProgramStudi deleted successfully";
             return RedirectToAction(nameof(Index));

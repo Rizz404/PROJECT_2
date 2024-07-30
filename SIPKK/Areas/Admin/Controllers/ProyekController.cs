@@ -34,7 +34,7 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Proyek
         public async Task<IActionResult> Index()
         {
-            List<Proyek> proyekList = (await _unitOfWork.Proyek.GetAllAsync(includedProperties: [p => p.Mahasiswa])).ToList();
+            List<Proyek> proyekList = (await _unitOfWork.Proyek.FindAllAsync(include: q => q.Include(p => p.Mahasiswa))).ToList();
             return View(proyekList);
         }
 
@@ -46,7 +46,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Proyek proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+            Proyek proyek = await _unitOfWork.Proyek.FindAsync(d => d.Id == id);
 
             if(proyek == null)
             {
@@ -106,7 +106,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Proyek? proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+            Proyek? proyek = await _unitOfWork.Proyek.FindAsync(d => d.Id == id);
 
             if(proyek == null)
             {
@@ -128,7 +128,7 @@ namespace SIPKK.Areas.Admin.Controllers
             if(ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
-                var proyekFromDb = await _unitOfWork.Proyek.GetAsync(d => d.Id == proyekVM.Proyek.Id);
+                var proyekFromDb = await _unitOfWork.Proyek.FindAsync(d => d.Id == proyekVM.Proyek.Id);
 
                 if(proyekFromDb == null)
                 {
@@ -189,7 +189,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Proyek proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+            Proyek proyek = await _unitOfWork.Proyek.FindAsync(d => d.Id == id);
 
             if(proyek == null)
             {
@@ -204,7 +204,7 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Proyek? proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+            Proyek? proyek = await _unitOfWork.Proyek.FindAsync(d => d.Id == id);
 
             if(proyek == null)
             {

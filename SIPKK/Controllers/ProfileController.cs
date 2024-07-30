@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
@@ -62,7 +63,7 @@ public class ProfileController : Controller
         }
         else if(roles.Contains("Dosen"))
         {
-            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == user.Id, d => d.Proyek);
+            var dosen = await _unitOfWork.Dosen.FindAsync(filter: d => d.IdUser == user.Id, include: q => q.Include(d => d.Proyek));
             if(dosen != null)
             {
                 profileVM.Id = dosen.Id;

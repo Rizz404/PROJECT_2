@@ -31,10 +31,7 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Persyaratan
         public async Task<IActionResult> Index()
         {
-            List<Persyaratan> persyaratanList = (await _unitOfWork.Persyaratan.GetAllAsync(includedProperties:
-            [
-                p => p.Mahasiswa,
-            ])).ToList();
+            List<Persyaratan> persyaratanList = (await _unitOfWork.Persyaratan.FindAllAsync(include: q => q.Include(p => p.Mahasiswa))).ToList();
             return View(persyaratanList);
         }
 
@@ -46,7 +43,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Persyaratan persyaratan = await _unitOfWork.Persyaratan.GetAsync(d => d.Id == id);
+            Persyaratan persyaratan = await _unitOfWork.Persyaratan.FindAsync(d => d.Id == id);
 
             if(persyaratan == null)
             {
@@ -61,7 +58,7 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             PersyaratanVM persyaratanVM = new()
             {
-                MahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync()).Select(p => new SelectListItem
+                MahasiswaList = (await _unitOfWork.Mahasiswa.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.FirstName,
                     Value = p.Id.ToString(),
@@ -85,7 +82,7 @@ namespace SIPKK.Areas.Admin.Controllers
             }
             else
             {
-                persyaratanVM.MahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync()).Select(p => new SelectListItem
+                persyaratanVM.MahasiswaList = (await _unitOfWork.Mahasiswa.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.FirstName,
                     Value = p.Id
@@ -102,7 +99,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Persyaratan? persyaratan = await _unitOfWork.Persyaratan.GetAsync(d => d.Id == id);
+            Persyaratan? persyaratan = await _unitOfWork.Persyaratan.FindAsync(d => d.Id == id);
 
             if(persyaratan == null)
             {
@@ -112,7 +109,7 @@ namespace SIPKK.Areas.Admin.Controllers
             PersyaratanVM persyaratanVM = new()
             {
                 Persyaratan = persyaratan,
-                MahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync()).Select(p => new SelectListItem
+                MahasiswaList = (await _unitOfWork.Mahasiswa.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.FirstName,
                     Value = p.Id
@@ -135,7 +132,7 @@ namespace SIPKK.Areas.Admin.Controllers
             }
             else
             {
-                persyaratanVM.MahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync()).Select(p => new SelectListItem
+                persyaratanVM.MahasiswaList = (await _unitOfWork.Mahasiswa.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.FirstName,
                     Value = p.Id
@@ -152,7 +149,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Persyaratan persyaratan = await _unitOfWork.Persyaratan.GetAsync(d => d.Id == id);
+            Persyaratan persyaratan = await _unitOfWork.Persyaratan.FindAsync(d => d.Id == id);
 
             if(persyaratan == null)
             {
@@ -167,7 +164,7 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Persyaratan? persyaratan = await _unitOfWork.Persyaratan.GetAsync(d => d.Id == id);
+            Persyaratan? persyaratan = await _unitOfWork.Persyaratan.FindAsync(d => d.Id == id);
 
             if(persyaratan == null)
             {

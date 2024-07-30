@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using SIPKK.DataAccess.Repository.IRepository;
@@ -34,9 +35,9 @@ namespace SIPKK.Controllers
         {
             var userId = GetUserId();
 
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.IdUser == userId, includedProperties: [
-                m => m.Persyaratan,
-                ]);
+            var mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(filter: m => m.IdUser == userId,
+                include: q => q.Include(m => m.Persyaratan)
+            );
 
             if(mahasiswa == null)
             {
@@ -100,7 +101,7 @@ namespace SIPKK.Controllers
                 await _unitOfWork.SaveAsync();
 
                 var userId = GetUserId();
-                var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(filter: m => m.IdUser == userId);
+                var mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(filter: m => m.IdUser == userId);
 
                 if(mahasiswa != null)
                 {

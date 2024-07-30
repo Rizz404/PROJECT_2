@@ -11,5 +11,8 @@ namespace SIPKK.Models.ViewModels
     public class KelompokVM
     {
         public Kelompok Kelompok { get; set; }
+        public string? SearchTerm { get; set; }
+        public List<Mahasiswa>? SearchResults { get; set; }
+        public List<Mahasiswa>? SelectedMahasiswa { get; set; }
     }
 }

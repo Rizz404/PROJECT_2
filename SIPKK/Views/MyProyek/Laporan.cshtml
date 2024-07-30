@@ -24,7 +24,7 @@
                         @if(roles.Contains("Dosen") && Model.Dosen != null && Model.Dosen.Proyek.TipeProyek == Proyek.Tipe.KKN)
                         {
                             <th>Nama Kelompok</th>
-                        } 
+                        }
                         <th>@Html.DisplayNameFor(model => model.Laporan.Keterangan)</th>
                         <th>@Html.DisplayNameFor(model => model.Laporan.FileLaporan)</th>
                         @if(roles.Contains("Dosen") && Model.Dosen != null)
@@ -55,9 +55,16 @@
                             </td>
                             @if(roles.Contains("Dosen") && Model.Dosen != null)
                             {
-                                <td><a asp-controller="Feedback" asp-action="Create" asp-route-id="@item.IdProyek">Beri Feedback</a></td>
+                                <td><a asp-controller="Feedback" asp-action="Create" asp-route-id="@item.Id">Beri Feedback</a></td>
                             }
                         </tr>
+                        @if(!string.IsNullOrEmpty(item.Feedback))
+                        {
+                            <tr>
+                                <td>Feedback</td>
+                                <td colspan="4">@item.Feedback</td>
+                            </tr>
+                        }
                         counter++;
                     }
                 </tbody>

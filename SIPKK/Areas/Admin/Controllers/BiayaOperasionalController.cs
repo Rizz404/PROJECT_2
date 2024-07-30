@@ -32,10 +32,8 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: BiayaOperasional
         public async Task<IActionResult> Index()
         {
-            List<BiayaOperasional> biayaOperasionalList = (await _unitOfWork.BiayaOperasional.GetAllAsync(includedProperties:
-            [
-                d => d.Proyek
-            ])).ToList();
+            List<BiayaOperasional> biayaOperasionalList = (await _unitOfWork.BiayaOperasional.FindAllAsync(
+                include: q => q.Include(b => b.Proyek))).ToList();
             return View(biayaOperasionalList);
         }
 
@@ -47,7 +45,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            BiayaOperasional biayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(d => d.Id == id);
+            BiayaOperasional biayaOperasional = await _unitOfWork.BiayaOperasional.FindAsync(d => d.Id == id);
 
             if(biayaOperasional == null)
             {
@@ -62,7 +60,7 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             BiayaOperasionalVM biayaOperasionalVM = new()
             {
-                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                ProyekList = (await _unitOfWork.Proyek.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.NamaProyek,
                     Value = p.Id
@@ -86,7 +84,7 @@ namespace SIPKK.Areas.Admin.Controllers
             }
             else
             {
-                biayaOperasionalVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                biayaOperasionalVM.ProyekList = (await _unitOfWork.Proyek.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.NamaProyek,
                     Value = p.Id
@@ -103,7 +101,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            BiayaOperasional? biayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(d => d.Id == id);
+            BiayaOperasional? biayaOperasional = await _unitOfWork.BiayaOperasional.FindAsync(d => d.Id == id);
 
             if(biayaOperasional == null)
             {
@@ -113,7 +111,7 @@ namespace SIPKK.Areas.Admin.Controllers
             BiayaOperasionalVM biayaOperasionalVM = new()
             {
                 BiayaOperasional = biayaOperasional,
-                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                ProyekList = (await _unitOfWork.Proyek.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.NamaProyek,
                     Value = p.Id
@@ -136,7 +134,7 @@ namespace SIPKK.Areas.Admin.Controllers
             }
             else
             {
-                biayaOperasionalVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                biayaOperasionalVM.ProyekList = (await _unitOfWork.Proyek.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.NamaProyek,
                     Value = p.Id
@@ -151,7 +149,7 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             BiayaOperasionalVM biayaOperasionalVM = new()
             {
-                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                ProyekList = (await _unitOfWork.Proyek.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.NamaProyek,
                     Value = p.Id
@@ -163,7 +161,7 @@ namespace SIPKK.Areas.Admin.Controllers
             if(!string.IsNullOrEmpty(id))
             {
                 // update
-                biayaOperasionalVM.BiayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(b => b.Id == id);
+                biayaOperasionalVM.BiayaOperasional = await _unitOfWork.BiayaOperasional.FindAsync(b => b.Id == id);
                 if(biayaOperasionalVM.BiayaOperasional == null)
                 {
                     return NotFound();
@@ -199,7 +197,7 @@ namespace SIPKK.Areas.Admin.Controllers
             }
             else
             {
-                biayaOperasionalVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                biayaOperasionalVM.ProyekList = (await _unitOfWork.Proyek.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.NamaProyek,
                     Value = p.Id
@@ -213,7 +211,7 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            BiayaOperasional? biayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(d => d.Id == id);
+            BiayaOperasional? biayaOperasional = await _unitOfWork.BiayaOperasional.FindAsync(d => d.Id == id);
 
             if(biayaOperasional == null)
             {
