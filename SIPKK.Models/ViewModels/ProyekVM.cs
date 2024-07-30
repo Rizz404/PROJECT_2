@@ -13,18 +13,16 @@ namespace SIPKK.Models.ViewModels
     {
         public enum Status
         {
-            TIDAK_TERDAFTAR, TERDAFTAR, PENDING, TERDAFTAR_PROYEK_LAIN
+            TIDAK_TERDAFTAR, TERDAFTAR, TERDAFTAR_PROYEK_LAIN
         }
 
         public Proyek Proyek { get; set; }
 
-        public ICollection<Kelompok>? KelompokList { get; set; }
+        [ValidateNever]
+        public Status StatusTerdaftar { get; set; }
 
         [ValidateNever]
-        public Status StatusMahasiswa { get; set; }
-
-        [ValidateNever]
-        public string? ProyekTerdaftarNameForCurrentMahasiswa { get; set; }
+        public string? ProyekTerdaftarNameForCurrentUser { get; set; }
 
         [ValidateNever]
         public int MahasiswaTerdaftar { get; set; }

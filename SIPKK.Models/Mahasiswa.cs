@@ -80,6 +80,8 @@ namespace SIPKK.Models
         [Display(Name = "Role Mahasiswa")]
         public Role? RoleMahasiswa { get; set; }
 
+        public int? Nilai { get; set; }
+
         [ForeignKey(nameof(IdUser))]
         [ValidateNever]
         public ApplicationUser User { get; set; }

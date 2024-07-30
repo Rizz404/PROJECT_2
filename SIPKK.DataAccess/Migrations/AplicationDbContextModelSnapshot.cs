@@ -575,6 +575,10 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnType("character varying(36)")
                         .HasColumnName("id_proyek");
 
+                    b.Property<int>("Kuota")
+                        .HasColumnType("integer")
+                        .HasColumnName("kuota");
+
                     b.Property<string>("NamaKelompok")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -587,7 +591,7 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("nama_ketua");
 
-                    b.Property<int>("Nilai")
+                    b.Property<int?>("Nilai")
                         .HasColumnType("integer")
                         .HasColumnName("nilai");
 
@@ -781,6 +785,10 @@ namespace SIPKK.DataAccess.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)")
                         .HasColumnName("nim");
+
+                    b.Property<int?>("Nilai")
+                        .HasColumnType("integer")
+                        .HasColumnName("nilai");
 
                     b.Property<int?>("RoleMahasiswa")
                         .HasColumnType("integer")

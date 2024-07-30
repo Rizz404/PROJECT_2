@@ -27,7 +27,9 @@ namespace SIPKK.Models
         public string NamaKelompok { get; set; }
 
         [Required(ErrorMessage = "{0} harus diisi")]
-        public int Nilai { get; set; }
+        public int Kuota { get; set; } = 5;
+
+        public int? Nilai { get; set; }
 
         [ForeignKey(nameof(IdProyek))]
         [ValidateNever]

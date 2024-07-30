@@ -89,7 +89,7 @@
                 {
                     @if(roles.Contains("Mahasiswa"))
                     {
-                        if(Model.Proyek.TipeProyek == Proyek.Tipe.KKN && Model.RoleMahasiswa == Mahasiswa.Role.KETUA)
+                        if(Model.Proyek.TipeProyek == Proyek.Tipe.KKN && Model.RoleMahasiswa == Mahasiswa.Role.KETUA && Model.StatusTerdaftar == ProyekVM.Status.TIDAK_TERDAFTAR)
                         {
                             <a href="@routeCreateKelompok" class="btn btn-primary">Buat Kelompok</a>
                         }
@@ -108,6 +108,10 @@
                         {
                             <span class="btn btn-success badge">Silahkan join kelompok yang tersedia</span>
                         }
+                        else if(Model.StatusTerdaftar == ProyekVM.Status.TERDAFTAR)
+                        {
+                            <button type="button" class="btn btn-primary">Terdaftar</button>
+                        }
                         else
                         {
                             <a href="https://bromo.com" class="btn btn-primary">Lupa add tipe proyek kan</a>
@@ -115,17 +119,23 @@
                     }
                     else if(roles.Contains("Dosen"))
                     {
-
-                        <form asp-action="DaftarJadiPembimbing" method="post">
-                            <input type="hidden" name="id" value="@Model.Proyek.Id" />
-                            <button type="submit" class="btn btn-primary">Jadi pembimbing</button>
-                        </form>
+                        if(Model.StatusTerdaftar == ProyekVM.Status.TIDAK_TERDAFTAR)
+                        {
+                            <form asp-action="DaftarJadiPembimbing" method="post">
+                                <input type="hidden" name="id" value="@Model.Proyek.Id" />
+                                <button type="submit" class="btn btn-primary">Jadi pembimbing</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-primary">Terdaftar</button>
+                        }
 
                     }
-                }
-                else if(roles.Contains("Admin"))
-                {
-                    <button type="button" class="btn btn-success" disabled>Youre gay</button>
+                    else if(roles.Contains("Admin"))
+                    {
+                        <button type="button" class="btn btn-success" disabled>Youre gay</button>
+                    }
                 }
             </div>
             <div class="proyek-deskripsi">
@@ -158,7 +168,7 @@
 
                         @if(roles.Contains("Mahasiswa") && Model.RoleMahasiswa != Mahasiswa.Role.KETUA)
                         {
-                            @if(Model.StatusMahasiswa == ProyekVM.Status.TIDAK_TERDAFTAR)
+                            @if(Model.StatusTerdaftar == ProyekVM.Status.TIDAK_TERDAFTAR)
                             {
                                 <form asp-action="JoinKelompok" method="post">
                                     <input type="hidden" name="id" value="@kelompok.Id" />
