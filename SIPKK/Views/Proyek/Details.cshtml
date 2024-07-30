@@ -155,7 +155,8 @@
                                 }
                             }
                         </div>
-                        @if(Model.RoleMahasiswa != Mahasiswa.Role.KETUA)
+
+                        @if(roles.Contains("Mahasiswa") && Model.RoleMahasiswa != Mahasiswa.Role.KETUA)
                         {
                             @if(Model.StatusMahasiswa == ProyekVM.Status.TIDAK_TERDAFTAR)
                             {

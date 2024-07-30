@@ -222,13 +222,14 @@ namespace SIPKK.Controllers
 
         private async Task<IActionResult> HandleMahasiswaViewDetails(string id)
         {
-            var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id,
-                p => p.Mahasiswa,
-                p => p.Dosen,
-                p => p.BiayaOperasional,
-                p => p.Laporan,
-                p => p.Kelompok
-            );
+            var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == id, includedProperties: [
+                     p => p.Mahasiswa,
+                    p => p.Dosen,
+                    p => p.BiayaOperasional,
+                    p => p.Laporan,
+                    p => p.Kelompok
+                 ]
+             );
 
             if(proyek == null)
             {
@@ -288,12 +289,13 @@ namespace SIPKK.Controllers
 
         private async Task<IActionResult> HandleDosenViewDetails(string id)
         {
-            var proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id,
-                p => p.Mahasiswa,
-                p => p.Dosen,
-                p => p.BiayaOperasional,
-                p => p.Laporan,
-                p => p.Kelompok
+            var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == id, includedProperties: [
+                    p => p.Mahasiswa,
+                    p => p.Dosen,
+                    p => p.BiayaOperasional,
+                    p => p.Laporan,
+                    p => p.Kelompok
+                ]
             );
 
             if(proyek == null)
@@ -306,6 +308,10 @@ namespace SIPKK.Controllers
             var dosen = await _unitOfWork.Dosen.GetAsync(filter: m => m.Id == currentDosen.Id, includedProperties: [
                 d=> d.Proyek
             ]);
+
+            var kelompok = await _unitOfWork.Kelompok.GetAllAsync(filter: k => k.IdProyek == id, includedProperties: [
+               k=> k.Mahasiswa
+           ]);
 
             string? proyekTerdaftarNameForCurrentMahasiswa = null;
             ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
@@ -328,7 +334,8 @@ namespace SIPKK.Controllers
                 Proyek = proyek,
                 ProyekTerdaftarNameForCurrentMahasiswa = proyekTerdaftarNameForCurrentMahasiswa,
                 StatusMahasiswa = status,
-                MahasiswaTerdaftar = proyek.Mahasiswa.Count()
+                MahasiswaTerdaftar = proyek.Mahasiswa.Count(),
+                KelompokList = (ICollection<Kelompok>)kelompok,
             };
 
             return View(proyekVM);

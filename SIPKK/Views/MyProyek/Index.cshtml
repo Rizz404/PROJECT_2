@@ -15,7 +15,7 @@
 <div class="container mt-4">
     <h2 class="mb-4">Proyek Kamu</h2>
 
-    @if(Model.Proyek != null && Model.Mahasiswa != null)
+    @if(Model.Proyek != null)
     {
         <div class="card mb-4 shadow">
             @if(!string.IsNullOrEmpty(Model.Proyek.FotoProyek))
@@ -226,9 +226,9 @@
             </div>
         </div>
 
-        @if(roles.Contains("Mahasiswa") && Model.Proyek.Verified)
+        @if(Model.Proyek.Verified)
         {
-            @if(Model.Mahasiswa.RoleMahasiswa == Mahasiswa.Role.KETUA || !string.IsNullOrEmpty(Model.Mahasiswa.IdProyekKKP))
+            @if(Model.Mahasiswa != null && (Model.Mahasiswa.RoleMahasiswa == Mahasiswa.Role.KETUA || !string.IsNullOrEmpty(Model.Mahasiswa.IdProyekKKP)))
             {
                 <a asp-action="CreateLaporan" class="btn btn-primary mb-4">Buat Laporan</a>
                 <a asp-action="CreateBiayaOperasional" class="btn btn-primary mb-4">Buat Laporan Biaya Operasional</a>

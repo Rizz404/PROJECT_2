@@ -104,10 +104,10 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            Proyek proyek = null;
+            Proyek? proyek = null;
             if(!string.IsNullOrEmpty(dosen.IdProyek))
             {
-                await _unitOfWork.Proyek.GetAsync(d => d.Id == dosen.IdProyek, includedProperties: [d => d.Mahasiswa]);
+                proyek = await _unitOfWork.Proyek.GetAsync(filter: p => p.Id == dosen.IdProyek, includedProperties: [p => p.Mahasiswa, p => p.Dosen]);
             }
 
             List<Kelompok> kelompokList = null;
@@ -115,7 +115,6 @@ namespace SIPKK.Controllers
             {
                 kelompokList = (List<Kelompok>)await _unitOfWork.Kelompok.GetAllAsync(k => k.IdProyek == proyek.Id);
             }
-
 
             var myProyekDosenVM = new MyProyekVM()
             {
@@ -189,7 +188,7 @@ namespace SIPKK.Controllers
             List<Laporan>? myLaporan = null;
             if(!string.IsNullOrEmpty(dosen.IdProyek))
             {
-                myLaporan = (List<Laporan>?)await _unitOfWork.Laporan.GetAllAsync(filter: b => b.IdMahasiswa == dosen.Id, includedProperties: [
+                myLaporan = (List<Laporan>?)await _unitOfWork.Laporan.GetAllAsync(filter: l => l.IdProyek == dosen.IdProyek, includedProperties: [
                     b => b.Mahasiswa,
                     b => b.Kelompok
                 ]);

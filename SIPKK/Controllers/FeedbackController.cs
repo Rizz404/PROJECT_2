@@ -42,8 +42,8 @@ namespace SIPKK.Controllers
             var Feedback = new Models.Feedback()
             {
                 IdDosen = dosen.Id,
-                IdKelompok = id,
-                IdMahasiswa = id,
+                IdKelompok = dosen.Proyek.TipeProyek == Proyek.Tipe.KKN ? id : null,
+                IdMahasiswa = dosen.Proyek.TipeProyek == Proyek.Tipe.KKP ? id : null,
             };
 
             var FeedbackVM = new FeedbackVM()
