@@ -230,6 +230,37 @@ namespace SIPKK.DataAccess.Migrations
                     b.ToTable("admin", (string)null);
                 });
 
+            modelBuilder.Entity("SIPKK.Models.Angkatan", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Deskripsi")
+                        .HasColumnType("text")
+                        .HasColumnName("deskripsi");
+
+                    b.Property<string>("Tahun")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("tahun");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_angkatan");
+
+                    b.ToTable("angkatan", (string)null);
+                });
+
             modelBuilder.Entity("SIPKK.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -342,6 +373,12 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("IdKelompok")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
+                        .HasColumnName("id_kelompok");
+
                     b.Property<string>("IdMahasiswa")
                         .IsRequired()
                         .HasMaxLength(36)
@@ -369,8 +406,10 @@ namespace SIPKK.DataAccess.Migrations
                     b.HasKey("Id")
                         .HasName("pk_biaya_operasional");
 
+                    b.HasIndex("IdKelompok")
+                        .HasDatabaseName("ix_biaya_operasional_id_kelompok");
+
                     b.HasIndex("IdMahasiswa")
-                        .IsUnique()
                         .HasDatabaseName("ix_biaya_operasional_id_mahasiswa");
 
                     b.HasIndex("IdProyek")
@@ -437,6 +476,138 @@ namespace SIPKK.DataAccess.Migrations
                     b.ToTable("dosen", (string)null);
                 });
 
+            modelBuilder.Entity("SIPKK.Models.Feedback", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("comment");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("IdDosen")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
+                        .HasColumnName("id_dosen");
+
+                    b.Property<string>("IdKelompok")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
+                        .HasColumnName("id_kelompok");
+
+                    b.Property<string>("IdMahasiswa")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
+                        .HasColumnName("id_mahasiswa");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_feedback");
+
+                    b.HasIndex("IdDosen")
+                        .HasDatabaseName("ix_feedback_id_dosen");
+
+                    b.HasIndex("IdKelompok")
+                        .HasDatabaseName("ix_feedback_id_kelompok");
+
+                    b.HasIndex("IdMahasiswa")
+                        .HasDatabaseName("ix_feedback_id_mahasiswa");
+
+                    b.ToTable("feedback", (string)null);
+                });
+
+            modelBuilder.Entity("SIPKK.Models.Kelas", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Deskripsi")
+                        .HasColumnType("text")
+                        .HasColumnName("deskripsi");
+
+                    b.Property<string>("Nama")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("nama");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_kelas");
+
+                    b.ToTable("kelas", (string)null);
+                });
+
+            modelBuilder.Entity("SIPKK.Models.Kelompok", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("IdProyek")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
+                        .HasColumnName("id_proyek");
+
+                    b.Property<int>("Kuota")
+                        .HasColumnType("integer")
+                        .HasColumnName("kuota");
+
+                    b.Property<string>("NamaKelompok")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("nama_kelompok");
+
+                    b.Property<string>("NamaKetua")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("nama_ketua");
+
+                    b.Property<int?>("Nilai")
+                        .HasColumnType("integer")
+                        .HasColumnName("nilai");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_kelompok");
+
+                    b.HasIndex("IdProyek")
+                        .HasDatabaseName("ix_kelompok_id_proyek");
+
+                    b.ToTable("kelompok", (string)null);
+                });
+
             modelBuilder.Entity("SIPKK.Models.Konsentrasi", b =>
                 {
                     b.Property<string>("Id")
@@ -488,13 +659,20 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("Feedback")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("feedback");
+
                     b.Property<string>("FileLaporan")
                         .HasColumnType("text")
                         .HasColumnName("file_laporan");
 
-                    b.Property<string>("FotoLaporan")
-                        .HasColumnType("text")
-                        .HasColumnName("foto_laporan");
+                    b.Property<string>("IdKelompok")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
+                        .HasColumnName("id_kelompok");
 
                     b.Property<string>("IdMahasiswa")
                         .IsRequired()
@@ -513,6 +691,10 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnType("text")
                         .HasColumnName("keterangan");
 
+                    b.Property<bool>("Status")
+                        .HasColumnType("boolean")
+                        .HasColumnName("status");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -520,8 +702,10 @@ namespace SIPKK.DataAccess.Migrations
                     b.HasKey("Id")
                         .HasName("pk_laporan");
 
+                    b.HasIndex("IdKelompok")
+                        .HasDatabaseName("ix_laporan_id_kelompok");
+
                     b.HasIndex("IdMahasiswa")
-                        .IsUnique()
                         .HasDatabaseName("ix_laporan_id_mahasiswa");
 
                     b.HasIndex("IdProyek")
@@ -551,6 +735,23 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnType("text")
                         .HasColumnName("foto_profil");
 
+                    b.Property<string>("IdAngkatan")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
+                        .HasColumnName("id_angkatan");
+
+                    b.Property<string>("IdKelas")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
+                        .HasColumnName("id_kelas");
+
+                    b.Property<string>("IdKelompok")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
+                        .HasColumnName("id_kelompok");
+
                     b.Property<string>("IdKonsentrasi")
                         .IsRequired()
                         .HasMaxLength(36)
@@ -563,10 +764,10 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnType("character varying(36)")
                         .HasColumnName("id_program_studi");
 
-                    b.Property<string>("IdProyek")
+                    b.Property<string>("IdProyekKKP")
                         .HasMaxLength(36)
                         .HasColumnType("character varying(36)")
-                        .HasColumnName("id_proyek");
+                        .HasColumnName("id_proyek_kkp");
 
                     b.Property<string>("IdUser")
                         .IsRequired()
@@ -585,6 +786,14 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnType("character varying(10)")
                         .HasColumnName("nim");
 
+                    b.Property<int?>("Nilai")
+                        .HasColumnType("integer")
+                        .HasColumnName("nilai");
+
+                    b.Property<int?>("RoleMahasiswa")
+                        .HasColumnType("integer")
+                        .HasColumnName("role_mahasiswa");
+
                     b.Property<short>("Semester")
                         .HasColumnType("smallint")
                         .HasColumnName("semester");
@@ -600,14 +809,23 @@ namespace SIPKK.DataAccess.Migrations
                     b.HasKey("Id")
                         .HasName("pk_mahasiswa");
 
+                    b.HasIndex("IdAngkatan")
+                        .HasDatabaseName("ix_mahasiswa_id_angkatan");
+
+                    b.HasIndex("IdKelas")
+                        .HasDatabaseName("ix_mahasiswa_id_kelas");
+
+                    b.HasIndex("IdKelompok")
+                        .HasDatabaseName("ix_mahasiswa_id_kelompok");
+
                     b.HasIndex("IdKonsentrasi")
                         .HasDatabaseName("ix_mahasiswa_id_konsentrasi");
 
                     b.HasIndex("IdProgramStudi")
                         .HasDatabaseName("ix_mahasiswa_id_program_studi");
 
-                    b.HasIndex("IdProyek")
-                        .HasDatabaseName("ix_mahasiswa_id_proyek");
+                    b.HasIndex("IdProyekKKP")
+                        .HasDatabaseName("ix_mahasiswa_id_proyek_kkp");
 
                     b.HasIndex("IdUser")
                         .HasDatabaseName("ix_mahasiswa_id_user");
@@ -735,40 +953,6 @@ namespace SIPKK.DataAccess.Migrations
                         .HasName("pk_program_studi");
 
                     b.ToTable("program_studi", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "kx5tyv1pwviukeiss489slcl",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9454),
-                            Deskripsi = "Program studi yang mempelajari ilmu komputer dan teknologi informasi",
-                            Nama = "Teknik Informatika",
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9455)
-                        },
-                        new
-                        {
-                            Id = "r122jeiuizwufsef6jigw68z",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9796),
-                            Deskripsi = "Program studi yang mempelajari pengembangan dan pengelolaan sistem informasi",
-                            Nama = "Sistem Informasi",
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9797)
-                        },
-                        new
-                        {
-                            Id = "ptksja2l2m8l3l8k8uwvuolw",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 853, DateTimeKind.Utc).AddTicks(112),
-                            Deskripsi = "Program studi yang mempelajari manajemen dan administrasi bisnis",
-                            Nama = "Manajemen Bisnis",
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 853, DateTimeKind.Utc).AddTicks(113)
-                        },
-                        new
-                        {
-                            Id = "p7qsf9uvi769euihj8uuuw7g",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 853, DateTimeKind.Utc).AddTicks(392),
-                            Deskripsi = "Program studi yang mempelajari prinsip dan praktik akuntansi",
-                            Nama = "Akuntansi",
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 853, DateTimeKind.Utc).AddTicks(393)
-                        });
                 });
 
             modelBuilder.Entity("SIPKK.Models.Proyek", b =>
@@ -818,6 +1002,10 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("tanggal_selesai");
 
+                    b.Property<int>("TipeProyek")
+                        .HasColumnType("integer")
+                        .HasColumnName("tipe_proyek");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -830,191 +1018,6 @@ namespace SIPKK.DataAccess.Migrations
                         .HasName("pk_proyek");
 
                     b.ToTable("proyek", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "amsvdevco4e24mwbrn9nnfr8",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6183),
-                            Deskripsi = "Proyek pengembangan aplikasi mobile untuk bisnis ritel",
-                            Kuota = (short)10,
-                            Lokasi = "Jakarta",
-                            NamaProyek = "Pengembangan Aplikasi Mobile",
-                            SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6173),
-                            TanggalSelesai = new DateTime(2025, 1, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6176),
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6184),
-                            Verified = false
-                        },
-                        new
-                        {
-                            Id = "rday0y3zbcxyofplk4exv464",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6482),
-                            Deskripsi = "Proyek desain antarmuka dan pengalaman pengguna untuk website perusahaan",
-                            Kuota = (short)8,
-                            Lokasi = "Bandung",
-                            NamaProyek = "Desain UI/UX Website",
-                            SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6479),
-                            TanggalSelesai = new DateTime(2024, 11, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6480),
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6483),
-                            Verified = false
-                        },
-                        new
-                        {
-                            Id = "s8ajrjewqdqdeixxmb59kb08",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6802),
-                            Deskripsi = "Proyek analisis data pemasaran untuk meningkatkan strategi penjualan",
-                            Kuota = (short)6,
-                            Lokasi = "Surabaya",
-                            NamaProyek = "Analisis Data Pemasaran",
-                            SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6800),
-                            TanggalSelesai = new DateTime(2024, 10, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6800),
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(6803),
-                            Verified = false
-                        },
-                        new
-                        {
-                            Id = "emfdisll88gq1d3cjlmcayt3",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7078),
-                            Deskripsi = "Proyek pengembangan game 3D untuk platform mobile",
-                            Kuota = (short)12,
-                            Lokasi = "Yogyakarta",
-                            NamaProyek = "Pengembangan Game 3D",
-                            SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7076),
-                            TanggalSelesai = new DateTime(2025, 3, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7076),
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7079),
-                            Verified = false
-                        },
-                        new
-                        {
-                            Id = "xenr3ryty8114gow6gn1e775",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7472),
-                            Deskripsi = "Proyek pengembangan sistem manajemen inventaris untuk perusahaan manufaktur",
-                            Kuota = (short)8,
-                            Lokasi = "Semarang",
-                            NamaProyek = "Sistem Manajemen Inventaris",
-                            SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7469),
-                            TanggalSelesai = new DateTime(2024, 12, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7470),
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7472),
-                            Verified = false
-                        },
-                        new
-                        {
-                            Id = "au0ngvltvhkpmocb4id333qk",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7793),
-                            Deskripsi = "Proyek analisis keamanan siber untuk meningkatkan sistem keamanan perusahaan",
-                            Kuota = (short)6,
-                            Lokasi = "Medan",
-                            NamaProyek = "Analisis Keamanan Siber",
-                            SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7791),
-                            TanggalSelesai = new DateTime(2024, 11, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7791),
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(7794),
-                            Verified = false
-                        },
-                        new
-                        {
-                            Id = "vcvmyf2oxw4sk3aybaby6x0z",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8080),
-                            Deskripsi = "Proyek pengembangan aplikasi web e-commerce untuk toko online",
-                            Kuota = (short)10,
-                            Lokasi = "Makassar",
-                            NamaProyek = "Pengembangan Aplikasi Web E-Commerce",
-                            SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8077),
-                            TanggalSelesai = new DateTime(2025, 2, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8078),
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8080),
-                            Verified = false
-                        },
-                        new
-                        {
-                            Id = "s12qhsxlf7ms62u8fc82wfhc",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8400),
-                            Deskripsi = "Proyek otomatisasi proses bisnis untuk meningkatkan efisiensi operasional",
-                            Kuota = (short)8,
-                            Lokasi = "Palembang",
-                            NamaProyek = "Otomatisasi Proses Bisnis",
-                            SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8398),
-                            TanggalSelesai = new DateTime(2025, 1, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8398),
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8401),
-                            Verified = false
-                        },
-                        new
-                        {
-                            Id = "ettelgsggjcjzbei6br09vv9",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8675),
-                            Deskripsi = "Proyek pengembangan sistem manajemen proyek untuk perusahaan konsultan",
-                            Kuota = (short)7,
-                            Lokasi = "Balikpapan",
-                            NamaProyek = "Pengembangan Sistem Manajemen Proyek",
-                            SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8673),
-                            TanggalSelesai = new DateTime(2024, 12, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8673),
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(8676),
-                            Verified = false
-                        },
-                        new
-                        {
-                            Id = "i53k2o6oagrt4lnfv6erlkn9",
-                            CreatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9018),
-                            Deskripsi = "Proyek analisis data keuangan untuk membantu pengambilan keputusan investasi",
-                            Kuota = (short)6,
-                            Lokasi = "Denpasar",
-                            NamaProyek = "Analisis Data Keuangan",
-                            SudahSelesai = false,
-                            TanggalMulai = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9015),
-                            TanggalSelesai = new DateTime(2024, 11, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9016),
-                            UpdatedAt = new DateTime(2024, 7, 8, 11, 32, 53, 852, DateTimeKind.Utc).AddTicks(9018),
-                            Verified = false
-                        });
-                });
-
-            modelBuilder.Entity("SIPKK.Models.Test", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("integer")
-                        .HasColumnName("number");
-
-                    b.Property<bool>("TruOrFalse")
-                        .HasColumnType("boolean")
-                        .HasColumnName("tru_or_false");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_test");
-
-                    b.ToTable("test", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1076,9 +1079,16 @@ namespace SIPKK.DataAccess.Migrations
 
             modelBuilder.Entity("SIPKK.Models.BiayaOperasional", b =>
                 {
+                    b.HasOne("SIPKK.Models.Kelompok", "Kelompok")
+                        .WithMany("BiayaOperasional")
+                        .HasForeignKey("IdKelompok")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_biaya_operasional_kelompok_id_kelompok");
+
                     b.HasOne("SIPKK.Models.Mahasiswa", "Mahasiswa")
-                        .WithOne("BiayaOperasional")
-                        .HasForeignKey("SIPKK.Models.BiayaOperasional", "IdMahasiswa")
+                        .WithMany("BiayaOperasional")
+                        .HasForeignKey("IdMahasiswa")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_biaya_operasional_mahasiswa_id_mahasiswa");
@@ -1089,6 +1099,8 @@ namespace SIPKK.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_biaya_operasional_proyek_id_proyek");
+
+                    b.Navigation("Kelompok");
 
                     b.Navigation("Mahasiswa");
 
@@ -1114,6 +1126,44 @@ namespace SIPKK.DataAccess.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SIPKK.Models.Feedback", b =>
+                {
+                    b.HasOne("SIPKK.Models.Dosen", "Dosen")
+                        .WithMany()
+                        .HasForeignKey("IdDosen")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_feedback_dosen_id_dosen");
+
+                    b.HasOne("SIPKK.Models.Kelompok", "Kelompok")
+                        .WithMany("Feedback")
+                        .HasForeignKey("IdKelompok")
+                        .HasConstraintName("fk_feedback_kelompok_id_kelompok");
+
+                    b.HasOne("SIPKK.Models.Mahasiswa", "Mahasiswa")
+                        .WithMany("Feedback")
+                        .HasForeignKey("IdMahasiswa")
+                        .HasConstraintName("fk_feedback_mahasiswa_id_mahasiswa");
+
+                    b.Navigation("Dosen");
+
+                    b.Navigation("Kelompok");
+
+                    b.Navigation("Mahasiswa");
+                });
+
+            modelBuilder.Entity("SIPKK.Models.Kelompok", b =>
+                {
+                    b.HasOne("SIPKK.Models.Proyek", "Proyek")
+                        .WithMany("Kelompok")
+                        .HasForeignKey("IdProyek")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_kelompok_proyek_id_proyek");
+
+                    b.Navigation("Proyek");
+                });
+
             modelBuilder.Entity("SIPKK.Models.Konsentrasi", b =>
                 {
                     b.HasOne("SIPKK.Models.ProgramStudi", "ProgramStudi")
@@ -1128,9 +1178,16 @@ namespace SIPKK.DataAccess.Migrations
 
             modelBuilder.Entity("SIPKK.Models.Laporan", b =>
                 {
+                    b.HasOne("SIPKK.Models.Kelompok", "Kelompok")
+                        .WithMany("Laporan")
+                        .HasForeignKey("IdKelompok")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_laporan_kelompok_id_kelompok");
+
                     b.HasOne("SIPKK.Models.Mahasiswa", "Mahasiswa")
-                        .WithOne("Laporan")
-                        .HasForeignKey("SIPKK.Models.Laporan", "IdMahasiswa")
+                        .WithMany("Laporan")
+                        .HasForeignKey("IdMahasiswa")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_laporan_mahasiswa_id_mahasiswa");
@@ -1142,6 +1199,8 @@ namespace SIPKK.DataAccess.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_laporan_proyek_id_proyek");
 
+                    b.Navigation("Kelompok");
+
                     b.Navigation("Mahasiswa");
 
                     b.Navigation("Proyek");
@@ -1149,6 +1208,25 @@ namespace SIPKK.DataAccess.Migrations
 
             modelBuilder.Entity("SIPKK.Models.Mahasiswa", b =>
                 {
+                    b.HasOne("SIPKK.Models.Angkatan", "Angkatan")
+                        .WithMany("Mahasiswa")
+                        .HasForeignKey("IdAngkatan")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_mahasiswa_angkatan_id_angkatan");
+
+                    b.HasOne("SIPKK.Models.Kelas", "Kelas")
+                        .WithMany("Mahasiswa")
+                        .HasForeignKey("IdKelas")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_mahasiswa_kelas_id_kelas");
+
+                    b.HasOne("SIPKK.Models.Kelompok", "Kelompok")
+                        .WithMany("Mahasiswa")
+                        .HasForeignKey("IdKelompok")
+                        .HasConstraintName("fk_mahasiswa_kelompok_id_kelompok");
+
                     b.HasOne("SIPKK.Models.Konsentrasi", "Konsentrasi")
                         .WithMany("Mahasiswa")
                         .HasForeignKey("IdKonsentrasi")
@@ -1165,8 +1243,8 @@ namespace SIPKK.DataAccess.Migrations
 
                     b.HasOne("SIPKK.Models.Proyek", "Proyek")
                         .WithMany("Mahasiswa")
-                        .HasForeignKey("IdProyek")
-                        .HasConstraintName("fk_mahasiswa_proyek_id_proyek");
+                        .HasForeignKey("IdProyekKKP")
+                        .HasConstraintName("fk_mahasiswa_proyek_id_proyek_kkp");
 
                     b.HasOne("SIPKK.Models.ApplicationUser", "User")
                         .WithMany()
@@ -1174,6 +1252,12 @@ namespace SIPKK.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_mahasiswa_application_user_id_user");
+
+                    b.Navigation("Angkatan");
+
+                    b.Navigation("Kelas");
+
+                    b.Navigation("Kelompok");
 
                     b.Navigation("Konsentrasi");
 
@@ -1217,6 +1301,27 @@ namespace SIPKK.DataAccess.Migrations
                     b.Navigation("Mahasiswa");
                 });
 
+            modelBuilder.Entity("SIPKK.Models.Angkatan", b =>
+                {
+                    b.Navigation("Mahasiswa");
+                });
+
+            modelBuilder.Entity("SIPKK.Models.Kelas", b =>
+                {
+                    b.Navigation("Mahasiswa");
+                });
+
+            modelBuilder.Entity("SIPKK.Models.Kelompok", b =>
+                {
+                    b.Navigation("BiayaOperasional");
+
+                    b.Navigation("Feedback");
+
+                    b.Navigation("Laporan");
+
+                    b.Navigation("Mahasiswa");
+                });
+
             modelBuilder.Entity("SIPKK.Models.Konsentrasi", b =>
                 {
                     b.Navigation("Mahasiswa");
@@ -1225,6 +1330,8 @@ namespace SIPKK.DataAccess.Migrations
             modelBuilder.Entity("SIPKK.Models.Mahasiswa", b =>
                 {
                     b.Navigation("BiayaOperasional");
+
+                    b.Navigation("Feedback");
 
                     b.Navigation("Laporan");
 
@@ -1245,6 +1352,8 @@ namespace SIPKK.DataAccess.Migrations
                     b.Navigation("BiayaOperasional");
 
                     b.Navigation("Dosen");
+
+                    b.Navigation("Kelompok");
 
                     b.Navigation("Laporan");
 

@@ -18,6 +18,11 @@ namespace SIPKK.Models
         [Display(Name = "Id Mahasiswa")]
         public string IdMahasiswa { get; set; }
 
+        [MaxLength(36)]
+        [Required(ErrorMessage = "{0} harus diisi")]
+        [Display(Name = "Id Mahasiswa")]
+        public string? IdKelompok { get; set; }
+
         // int gak bisa pakai max length
         [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Biaya Transportasi")]
@@ -47,6 +52,10 @@ namespace SIPKK.Models
         [ForeignKey(nameof(IdProyek))]
         [ValidateNever]
         public Proyek Proyek { get; set; }
+
+        [ForeignKey(nameof(IdKelompok))]
+        [ValidateNever]
+        public Kelompok Kelompok { get; set; }
 
         [ForeignKey(nameof(IdMahasiswa))]
         [ValidateNever]

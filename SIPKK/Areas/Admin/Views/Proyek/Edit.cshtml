@@ -50,6 +50,14 @@
                 <span asp-validation-for="Proyek.Kuota" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Proyek.TipeProyek" class="control-label"></label>
+                <select asp-for="Proyek.TipeProyek" class="form-control">
+                    <option value="KKN">KKN</option>
+                    <option value="KKP">KKP</option>
+                </select>
+                <span asp-validation-for="Proyek.TipeProyek" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Proyek.Verified" class="control-label"></label>
                 <select asp-for="Proyek.Verified" class="form-control">
                     <option value="false">False</option>

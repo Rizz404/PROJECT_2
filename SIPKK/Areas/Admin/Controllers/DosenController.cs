@@ -39,10 +39,7 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Dosens
         public async Task<IActionResult> Index()
         {
-            List<Dosen> dosenList = (await _unitOfWork.Dosen.GetAllAsync(includedProperties:
-            [
-                d => d.Proyek,
-            ])).ToList();
+            List<Dosen> dosenList = (await _unitOfWork.Dosen.FindAllAsync(include: q => q.Include(d => d.Proyek))).ToList();
             return View(dosenList);
         }
 
@@ -54,7 +51,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Dosen dosen = await _unitOfWork.Dosen.GetAsync(d => d.Id == id, d => d.Proyek);
+            Dosen dosen = await _unitOfWork.Dosen.FindAsync(filter: d => d.Id == id, include: q => q.Include(d => d.Proyek));
 
             if(dosen == null)
             {
@@ -69,7 +66,7 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             DosenVM dosenVM = new()
             {
-                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                ProyekList = (await _unitOfWork.Proyek.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.NamaProyek,
                     Value = p.Id
@@ -138,7 +135,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Dosen dosenFromDb = await _unitOfWork.Dosen.GetAsync(d => d.Id == id, d => d.Proyek);
+            Dosen dosenFromDb = await _unitOfWork.Dosen.FindAsync(filter: d => d.Id == id, include: q => q.Include(d => d.Proyek));
 
             if(dosenFromDb == null)
             {
@@ -147,7 +144,7 @@ namespace SIPKK.Areas.Admin.Controllers
 
             DosenVM dosenVM = new()
             {
-                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                ProyekList = (await _unitOfWork.Proyek.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.NamaProyek,
                     Value = p.Id
@@ -164,7 +161,7 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             if(ModelState.IsValid)
             {
-                var dosenFromDb = await _unitOfWork.Dosen.GetAsync(d => d.Id == dosenVM.Dosen.Id);
+                var dosenFromDb = await _unitOfWork.Dosen.FindAsync(d => d.Id == dosenVM.Dosen.Id);
                 if(dosenFromDb == null)
                 {
                     return NotFound();
@@ -190,7 +187,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Dosen? dosenFromDb = await _unitOfWork.Dosen.GetAsync(d => d.Id == id, d => d.Proyek);
+            Dosen? dosenFromDb = await _unitOfWork.Dosen.FindAsync(filter: d => d.Id == id, include: q => q.Include(d => d.Proyek));
 
             if(dosenFromDb == null)
             {
@@ -204,7 +201,7 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Dosen? dosen = await _unitOfWork.Dosen.GetAsync(d => d.Id == id, d => d.Proyek);
+            Dosen? dosen = await _unitOfWork.Dosen.FindAsync(filter: d => d.Id == id, include: q => q.Include(d => d.Proyek));
 
             if(dosen == null)
             {

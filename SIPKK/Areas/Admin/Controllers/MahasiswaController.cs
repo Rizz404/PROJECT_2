@@ -3,19 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using SIPKK.DataAccess.Data;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
 using SIPKK.Ultilities;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Transactions;
 using Visus.Cuid;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SIPKK.Areas.Admin.Controllers
 {
@@ -37,14 +30,15 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Mahasiswa
         public async Task<IActionResult> Index()
         {
-            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.GetAllAsync(includedProperties:
-            [
-                m => m.Proyek,
-                m => m.ProgramStudi,
-                m => m.Konsentrasi,
-                m => m.Persyaratan,
-                m => m.Pendaftaran
-            ])).ToList();
+            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.FindAllAsync(
+               include: q => q.
+               Include(m => m.Proyek).
+               Include(m => m.Kelompok).
+               Include(m => m.ProgramStudi).
+               Include(m => m.Konsentrasi).
+               Include(m => m.Persyaratan).
+               Include(m => m.Pendaftaran)
+               )).ToList();
             return View(mahasiswaList);
         }
 
@@ -56,7 +50,14 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(d => d.Id == id, m => m.Proyek, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Persyaratan, m => m.Pendaftaran);
+            Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(filter: m => m.Id == id, include: q => q.
+               Include(m => m.Proyek).
+               Include(m => m.Kelompok).
+               Include(m => m.ProgramStudi).
+               Include(m => m.Konsentrasi).
+               Include(m => m.Persyaratan).
+               Include(m => m.Pendaftaran)
+            );
 
             if(mahasiswa == null)
             {
@@ -71,19 +72,29 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             MahasiswaVM mahasiswaVM = new()
             {
-                ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
+                ProgramStudiList = (await _unitOfWork.ProgramStudi.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.Nama,
                     Value = p.Id
                 }),
-                KonsentrasiList = (await _unitOfWork.Konsentrasi.GetAllAsync()).Select(p => new SelectListItem
+                KonsentrasiList = (await _unitOfWork.Konsentrasi.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.Nama,
                     Value = p.Id
                 }),
-                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                KelompokList = (await _unitOfWork.Kelompok.FindAllAsync()).Select(p => new SelectListItem
                 {
-                    Text = p.NamaProyek,
+                    Text = p.NamaKelompok,
+                    Value = p.Id
+                }),
+                KelasList = (await _unitOfWork.Kelas.FindAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.Nama,
+                    Value = p.Id
+                }),
+                AngkatanList = (await _unitOfWork.Angkatan.FindAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.Tahun,
                     Value = p.Id
                 }),
             };
@@ -109,7 +120,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 {
                     if(ModelState.IsValid)
                     {
-                        var existingMahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.NIM == mahasiswaVM.Mahasiswa.NIM);
+                        var existingMahasiswa = await _unitOfWork.Mahasiswa.FindAsync(m => m.NIM == mahasiswaVM.Mahasiswa.NIM);
                         if(existingMahasiswa != null)
                         {
                             TempData["ErrorMessage"] = "Mahasiswa telah ada";
@@ -137,7 +148,7 @@ namespace SIPKK.Areas.Admin.Controllers
                                     NIM = mahasiswaVM.Mahasiswa.NIM,
                                     FirstName = mahasiswaVM.Mahasiswa.FirstName,
                                     LastName = mahasiswaVM.Mahasiswa.LastName,
-                                    IdProyek = mahasiswaVM.Mahasiswa.IdProyek,
+                                    IdKelompok = mahasiswaVM.Mahasiswa.IdKelompok,
                                     IdProgramStudi = mahasiswaVM.Mahasiswa.IdProgramStudi,
                                     IdKonsentrasi = mahasiswaVM.Mahasiswa.IdKonsentrasi,
                                     TanggalLahir = mahasiswaVM.Mahasiswa.TanggalLahir,
@@ -172,38 +183,58 @@ namespace SIPKK.Areas.Admin.Controllers
                         TempData["SuccessMessage"] = "Mahasiswa created successfully";
                         return RedirectToAction(nameof(Index));
                     }
-                    mahasiswaVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
+                    mahasiswaVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.FindAllAsync()).Select(p => new SelectListItem
                     {
                         Text = p.Nama,
                         Value = p.Id
                     });
-                    mahasiswaVM.KonsentrasiList = (await _unitOfWork.Konsentrasi.GetAllAsync()).Select(p => new SelectListItem
+                    mahasiswaVM.KonsentrasiList = (await _unitOfWork.Konsentrasi.FindAllAsync()).Select(p => new SelectListItem
                     {
                         Text = p.Nama,
                         Value = p.Id
                     });
-                    mahasiswaVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                    mahasiswaVM.KelompokList = (await _unitOfWork.Kelompok.FindAllAsync()).Select(p => new SelectListItem
                     {
-                        Text = p.NamaProyek,
+                        Text = p.NamaKelompok,
+                        Value = p.Id
+                    });
+                    mahasiswaVM.KelasList = (await _unitOfWork.Kelas.FindAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.Nama,
+                        Value = p.Id
+                    });
+                    mahasiswaVM.AngkatanList = (await _unitOfWork.Angkatan.FindAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.Tahun,
                         Value = p.Id
                     });
                     return View(mahasiswaVM);
                 }
                 catch(Exception)
                 {
-                    mahasiswaVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
+                    mahasiswaVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.FindAllAsync()).Select(p => new SelectListItem
                     {
                         Text = p.Nama,
                         Value = p.Id
                     });
-                    mahasiswaVM.KonsentrasiList = (await _unitOfWork.Konsentrasi.GetAllAsync()).Select(p => new SelectListItem
+                    mahasiswaVM.KonsentrasiList = (await _unitOfWork.Konsentrasi.FindAllAsync()).Select(p => new SelectListItem
                     {
                         Text = p.Nama,
                         Value = p.Id
                     });
-                    mahasiswaVM.ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                    mahasiswaVM.KelompokList = (await _unitOfWork.Kelompok.FindAllAsync()).Select(p => new SelectListItem
                     {
-                        Text = p.NamaProyek,
+                        Text = p.NamaKelompok,
+                        Value = p.Id
+                    });
+                    mahasiswaVM.KelasList = (await _unitOfWork.Kelas.FindAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.Nama,
+                        Value = p.Id
+                    });
+                    mahasiswaVM.AngkatanList = (await _unitOfWork.Angkatan.FindAllAsync()).Select(p => new SelectListItem
+                    {
+                        Text = p.Tahun,
                         Value = p.Id
                     });
                     return View(mahasiswaVM);
@@ -219,7 +250,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Mahasiswa? mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(d => d.Id == id);
+            Mahasiswa? mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(d => d.Id == id);
 
             if(mahasiswa == null)
             {
@@ -229,19 +260,29 @@ namespace SIPKK.Areas.Admin.Controllers
             MahasiswaVM mahasiswaVM = new()
             {
                 Mahasiswa = mahasiswa,
-                ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
+                ProgramStudiList = (await _unitOfWork.ProgramStudi.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.Nama,
                     Value = p.Id
                 }),
-                KonsentrasiList = (await _unitOfWork.Konsentrasi.GetAllAsync()).Select(p => new SelectListItem
+                KonsentrasiList = (await _unitOfWork.Konsentrasi.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.Nama,
                     Value = p.Id
                 }),
-                ProyekList = (await _unitOfWork.Proyek.GetAllAsync()).Select(p => new SelectListItem
+                KelompokList = (await _unitOfWork.Kelompok.FindAllAsync()).Select(p => new SelectListItem
                 {
-                    Text = p.NamaProyek,
+                    Text = p.NamaKelompok,
+                    Value = p.Id
+                }),
+                KelasList = (await _unitOfWork.Kelas.FindAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.Nama,
+                    Value = p.Id
+                }),
+                AngkatanList = (await _unitOfWork.Angkatan.FindAllAsync()).Select(p => new SelectListItem
+                {
+                    Text = p.Tahun,
                     Value = p.Id
                 }),
             };
@@ -255,14 +296,14 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             if(ModelState.IsValid)
             {
-                var mahasiswaFromDb = await _unitOfWork.Mahasiswa.GetAsync(d => d.Id == mahasiswaVM.Mahasiswa.Id);
+                var mahasiswaFromDb = await _unitOfWork.Mahasiswa.FindAsync(d => d.Id == mahasiswaVM.Mahasiswa.Id);
                 if(mahasiswaFromDb == null)
                 {
                     return NotFound();
                 }
 
                 if(await TryUpdateModelAsync(mahasiswaFromDb, "Mahasiswa",
-                   m => m.NIM, m => m.FirstName, m => m.LastName, m => m.TanggalLahir, m => m.IdProgramStudi, m => m.IdKonsentrasi, m => m.IdProyek, m => m.Semester))
+                   m => m.NIM, m => m.FirstName, m => m.LastName, m => m.TanggalLahir, m => m.IdProgramStudi, m => m.IdKonsentrasi, m => m.IdKelompok, m => m.Semester))
                 {
                     await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswaFromDb);
                     await _unitOfWork.SaveAsync();
@@ -281,7 +322,15 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.Id == id, m => m.Proyek, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Persyaratan, m => m.Pendaftaran);
+            Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(filter: m => m.Id == id,
+                include: q => q.
+                Include(m => m.Proyek).
+                Include(m => m.Kelompok).
+                Include(m => m.ProgramStudi).
+                Include(m => m.Konsentrasi).
+                Include(m => m.Persyaratan).
+                Include(m => m.Pendaftaran)
+            );
 
             if(mahasiswa == null)
             {
@@ -296,7 +345,7 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Mahasiswa? mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(d => d.Id == id);
+            Mahasiswa? mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(d => d.Id == id);
 
             if(mahasiswa == null)
             {

@@ -145,8 +145,8 @@ namespace SIPKK.Areas.Admin.Controllers
                                 Mahasiswa mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.Id == pendaftaranFromDb.IdMahasiswa);
                                 if(mahasiswa != null)
                                 {
-                                    mahasiswa.IdProyek = pendaftaranFromDb.IdProyek;
-                                    await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
+                                    //mahasiswa.IdProyek = pendaftaranFromDb.IdProyek;
+                                    //await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
                                 }
                             }
 

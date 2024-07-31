@@ -1,0 +1,25 @@
+﻿@model KelompokVM
+
+
+<div class="container mt-5">
+    <h2 class="mb-4">Buat Kelompok</h2>
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+        <input type="hidden" asp-for="Kelompok.NamaKetua" />
+        <input type="hidden" asp-for="Kelompok.IdProyek" />
+        <input type="hidden" asp-for="Kelompok.Nilai" />
+
+        <div class="form-group">
+            <label asp-for="Kelompok.NamaKelompok" class="control-label">
+                Nama Kelompok
+            </label>
+            <input asp-for="Kelompok.NamaKelompok" class="form-control" />
+            <span asp-validation-for="Kelompok.NamaKelompok" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>

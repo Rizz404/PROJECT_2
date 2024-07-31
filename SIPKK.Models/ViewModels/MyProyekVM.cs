@@ -4,31 +4,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SIPKK.Models.Mahasiswa;
 
 namespace SIPKK.Models.ViewModels
 {
     public class MyProyekVM
     {
-        [ValidateNever]
-        public Mahasiswa Mahasiswa { get; set; }
+        public Kelompok MyKelompok { get; set; }
+
+        public ICollection<Kelompok>? KelompokList { get; set; }
+        public ICollection<BiayaOperasional>? BiayaOperasionalList { get; set; }
+        public ICollection<Laporan>? LaporanList { get; set; }
 
         [ValidateNever]
-        public Dosen Dosen { get; set; }
+        public Dosen? Dosen { get; set; }
 
         [ValidateNever]
-        public Proyek Proyek { get; set; }
+        public Proyek? Proyek { get; set; }
 
         [ValidateNever]
-        public Laporan Laporan { get; set; }
+        public Laporan? Laporan { get; set; }
 
         [ValidateNever]
-        public Pendaftaran Pendaftaran { get; set; }
+        public Pendaftaran? Pendaftaran { get; set; }
 
         [ValidateNever]
-        public BiayaOperasional BiayaOperasional { get; set; }
+        public BiayaOperasional? BiayaOperasional { get; set; }
 
-        // Add these properties
-        public string IdMahasiswa { get; set; }
-        public string IdProyek { get; set; }
+        [ValidateNever]
+        public Mahasiswa? Mahasiswa { get; set; }
+
+        //// Add these properties
+        //public string IdMahasiswa { get; set; }
+        //public string IdProyek { get; set; }
     }
 }

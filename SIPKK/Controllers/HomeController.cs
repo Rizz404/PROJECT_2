@@ -25,55 +25,55 @@ namespace SIPKK.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var proyekList = await _unitOfWork.Proyek.GetAllAsync();
+            var proyekList = await _unitOfWork.Proyek.FindAllAsync(filter: p => p.SudahSelesai == true);
             return View(proyekList);
         }
 
-        public async Task<IActionResult> NavbarData()
-        {
-            bool hasProyek = false;
-            if(_signInManager.IsSignedIn(User))
-            {
-                var user = await _userManager.GetUserAsync(User);
+        //public async Task<IActionResult> NavbarData()
+        //{
+        //    bool hasProyek = false;
+        //    if(_signInManager.IsSignedIn(User))
+        //    {
+        //        var user = await _userManager.GetUserAsync(User);
 
-                if(user != null)
-                {
-                    var roles = await _userManager.GetRolesAsync(user);
+        //        if(user != null)
+        //        {
+        //            var roles = await _userManager.GetRolesAsync(user);
 
-                    if(roles.Contains("Mahasiswa"))
-                    {
-                        var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == user.Id);
+        //            if(roles.Contains("Mahasiswa"))
+        //            {
+        //                var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == user.Id);
 
-                        if(mahasiswa.IdProyek != null)
-                        {
-                            hasProyek = true;
-                            return View(new HelperVM
-                            {
-                                HasProyek = hasProyek
-                            });
-                        }
-                    }
-                    else if(roles.Contains("Dosen"))
-                    {
-                        var dosen = await _unitOfWork.Dosen.GetAsync(m => m.IdUser == user.Id);
+        //                if(mahasiswa.IdProyekKKP != null)
+        //                {
+        //                    hasProyek = true;
+        //                    return View(new HelperVM
+        //                    {
+        //                        HasProyek = hasProyek
+        //                    });
+        //                }
+        //            }
+        //            else if(roles.Contains("Dosen"))
+        //            {
+        //                var dosen = await _unitOfWork.Dosen.GetAsync(m => m.IdUser == user.Id);
 
-                        if(dosen.IdProyek != null)
-                        {
-                            hasProyek = true;
-                            return View(new HelperVM
-                            {
-                                HasProyek = hasProyek
-                            });
-                        }
-                    }
-                }
-            }
+        //                if(dosen.IdProyek != null)
+        //                {
+        //                    hasProyek = true;
+        //                    return View(new HelperVM
+        //                    {
+        //                        HasProyek = hasProyek
+        //                    });
+        //                }
+        //            }
+        //        }
+        //    }
 
-            return View(new HelperVM
-            {
-                HasProyek = hasProyek
-            });
-        }
+        //    return View(new HelperVM
+        //    {
+        //        HasProyek = hasProyek
+        //    });
+        //}
 
         public async Task<IActionResult> Details(string id)
         {
@@ -82,7 +82,7 @@ namespace SIPKK.Controllers
                 return NotFound();
             }
 
-            var proyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == id);
+            var proyek = await _unitOfWork.Proyek.FindAsync(p => p.Id == id);
 
             if(proyek == null)
             {

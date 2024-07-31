@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SIPKK.Models.Mahasiswa;
 
 namespace SIPKK.Models.ViewModels
 {
@@ -12,19 +13,21 @@ namespace SIPKK.Models.ViewModels
     {
         public enum Status
         {
-            TIDAK_TERDAFTAR, TERDAFTAR, PENDING, TERDAFTAR_PROYEK_LAIN
+            TIDAK_TERDAFTAR, TERDAFTAR, TERDAFTAR_PROYEK_LAIN
         }
 
         public Proyek Proyek { get; set; }
 
         [ValidateNever]
-        public Status StatusMahasiswa { get; set; }
-
+        public Status StatusTerdaftar { get; set; }
 
         [ValidateNever]
-        public string? ProyekTerdaftarNameForCurrentMahasiswa { get; set; }
+        public string? ProyekTerdaftarNameForCurrentUser { get; set; }
 
         [ValidateNever]
         public int MahasiswaTerdaftar { get; set; }
+
+        [ValidateNever]
+        public Role? RoleMahasiswa { get; set; }
     }
 }

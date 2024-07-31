@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
@@ -41,7 +42,7 @@ public class ProfileController : Controller
 
         if(roles.Contains("Mahasiswa"))
         {
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == user.Id, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Proyek);
+            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == user.Id, m => m.ProgramStudi, m => m.Konsentrasi, m => m.Angkatan, m => m.Kelas, m => m.Kelompok, m => m.Proyek);
             if(mahasiswa != null)
             {
                 profileVM.Id = mahasiswa.Id;
@@ -53,12 +54,16 @@ public class ProfileController : Controller
                 profileVM.FotoProfil = mahasiswa.FotoProfil;
                 profileVM.ProgramStudi = mahasiswa.ProgramStudi.Nama;
                 profileVM.Konsentrasi = mahasiswa.Konsentrasi.Nama;
-                profileVM.Proyek = mahasiswa.Proyek?.NamaProyek ?? "Belum mendaftar";
+                profileVM.Angkatan = mahasiswa.Angkatan.Tahun;
+                profileVM.Kelas = mahasiswa.Kelas.Nama;
+                profileVM.Kelompok = mahasiswa.Kelompok?.NamaKelompok;
+                profileVM.ProyekKKP = mahasiswa.Proyek?.NamaProyek;
+                profileVM.RoleMahasiswa = mahasiswa.RoleMahasiswa;
             }
         }
         else if(roles.Contains("Dosen"))
         {
-            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == user.Id, d => d.Proyek);
+            var dosen = await _unitOfWork.Dosen.FindAsync(filter: d => d.IdUser == user.Id, include: q => q.Include(d => d.Proyek));
             if(dosen != null)
             {
                 profileVM.Id = dosen.Id;
@@ -96,6 +101,11 @@ public class ProfileController : Controller
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
                 string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                 string userPath = Path.Combine(wwwRootPath, @"images\users");
+
+                if(!Directory.Exists(userPath))
+                {
+                    Directory.CreateDirectory(userPath);
+                }
 
                 if(!string.IsNullOrEmpty(profileVM.FotoProfil))
                 {
@@ -136,7 +146,7 @@ public class ProfileController : Controller
                     mahasiswa.LastName = profileVM.LastName;
                     mahasiswa.TanggalLahir = profileVM.TanggalLahir;
                     mahasiswa.FotoProfil = profileVM.FotoProfil;
-                    mahasiswa.Semester = profileVM.Semester.Value;
+                    mahasiswa.RoleMahasiswa = profileVM.RoleMahasiswa;
                     await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
                 }
             }

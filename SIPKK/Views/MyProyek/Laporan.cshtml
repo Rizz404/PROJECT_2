@@ -1,91 +1,78 @@
 ﻿@using System.Web
-@model IEnumerable<Mahasiswa>
+@model MyProyekVM
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "Laporan";
     int counter = 1;
+    var user = await UserManager.GetUserAsync(User);
+    var roles = await UserManager.GetRolesAsync(user);
+    string titleName = Model.Mahasiswa != null && Model.Mahasiswa.IdKelompok != null ? $"Kelompok {Model.MyKelompok.NamaKelompok}" : "Kamu";
 }
 <div class="container-fluid py-4">
-    <h1 class="mb-4">Mahasiswa terdaftar ke proyek yang sama</h1>
-    <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>No</th>
-                    <th>@Html.DisplayNameFor(model => model.NIM)</th>
-                    <th>Nama Lengkap</th>
-                    <th>@Html.DisplayNameFor(model => model.IdProgramStudi)</th>
-                    <th>@Html.DisplayNameFor(model => model.IdProgramStudi)</th>
-                    <th>@Html.DisplayNameFor(model => model.Semester)</th>
-                    <th>Proyek</th>
-                    <th>@Html.DisplayNameFor(model => model.Laporan)</th>
-                    <th>Biaya Proyek</th>
-                    <th>Biaya Transportasi</th>
-                    <th>Biaya Dll</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    string fullname = item.FirstName + " " + item.LastName;
+    <h1 class="mb-4">Laporan @titleName</h1>
+    @if(Model.LaporanList != null && Model.LaporanList.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
                     <tr>
-                        <td>@counter</td>
-                        <td>@item.NIM</td>
-                        <td>@fullname</td>
-                        <td>@item.ProgramStudi.Nama</td>
-                        <td>@item.Konsentrasi.Nama</td>
-                        <td>@item.Semester</td>
-                        <td>
-                            @if (item.Proyek != null)
-                            {
-                                @item.Proyek.NamaProyek
-                            }
-                        </td>
-                        <td>
-                            @if (item.Laporan != null && item.Laporan.FileLaporan != null)
-                            {
-                                string fileLaporanPath = $"{item.Laporan.FileLaporan}";
-                                <a href="@fileLaporanPath" class="btn btn-sm btn-primary" download="laporan">Unduh Laporan</a>
-                            }
-                            else
-                            {
-                                <span class="badge bg-warning text-dark">Belum upload laporan</span>
-                            }
-                        </td>
-                        <td>
-                            @if (item.BiayaOperasional != null)
-                            {
-                                @item.BiayaOperasional.BiayaProyek
-                            }
-                            else
-                            {
-                                <span class="badge bg-secondary">Belum upload biaya proyek</span>
-                            }
-                        </td>
-                        <td>
-                            @if (item.BiayaOperasional != null)
-                            {
-                                @item.BiayaOperasional.BiayaTransportasi
-                            }
-                            else
-                            {
-                                <span class="badge bg-secondary">Belum upload biaya transportasi</span>
-                            }
-                        </td>
-                        <td>
-                            @if (item.BiayaOperasional != null)
-                            {
-                                @item.BiayaOperasional.BiayaDll
-                            }
-                            else
-                            {
-                                <span class="badge bg-secondary">Belum upload biaya dll</span>
-                            }
-                        </td>
+                        <th>No</th>
+                        @if(roles.Contains("Dosen") && Model.Dosen != null && Model.Dosen.Proyek.TipeProyek == Proyek.Tipe.KKN)
+                        {
+                            <th>Nama Kelompok</th>
+                        }
+                        <th>@Html.DisplayNameFor(model => model.Laporan.Keterangan)</th>
+                        <th>@Html.DisplayNameFor(model => model.Laporan.FileLaporan)</th>
+                        @if(roles.Contains("Dosen") && Model.Dosen != null)
+                        {
+                            <th>Action</th>
+                        }
                     </tr>
-                    counter++;
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model.LaporanList)
+                    {
+                        <tr>
+                            <td>@counter</td>
+                            @if(roles.Contains("Dosen") && Model.Dosen != null && Model.Dosen.Proyek.TipeProyek == Proyek.Tipe.KKN)
+                            {
+                                <td>@item.Kelompok.NamaKelompok</td>
+                            }
+                            <td>@item.Keterangan</td>
+                            <td>
+                                @if(!string.IsNullOrEmpty(item.FileLaporan))
+                                {
+                                    <a href="@Url.Content(item.FileLaporan)" download>Unduh Laporan</a>
+                                }
+                                else
+                                {
+                                    <span>Tidak ada file</span>
+                                }
+                            </td>
+                            @if(roles.Contains("Dosen") && Model.Dosen != null)
+                            {
+                                <td><a asp-controller="Feedback" asp-action="Create" asp-route-id="@item.Id">Beri Feedback</a></td>
+                            }
+                        </tr>
+                        @if(!string.IsNullOrEmpty(item.Feedback))
+                        {
+                            <tr>
+                                <td>Feedback</td>
+                                <td colspan="4">@item.Feedback</td>
+                            </tr>
+                        }
+                        counter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <h1>Brother eww</h1>
+    }
 </div>

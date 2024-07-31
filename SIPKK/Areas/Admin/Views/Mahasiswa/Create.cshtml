@@ -38,11 +38,6 @@
                     <input asp-for="Mahasiswa.TanggalLahir" class="form-control" />
                     <span asp-validation-for="Mahasiswa.TanggalLahir" class="text-danger"></span>
                 </div>
-                @* <div class="form-group">
-                <label asp-for="Mahasiswa.FotoProfil" class="control-label"></label>
-                <input asp-for="Mahasiswa.FotoProfil" class="form-control" />
-                <span asp-validation-for="Mahasiswa.FotoProfil" class="text-danger"></span>
-                </div> *@
                 <div class="form-group">
                     <label asp-for="Mahasiswa.IdProgramStudi" class="control-label"></label>
                     <select asp-for="@Model.Mahasiswa.IdProgramStudi" class="form-control" asp-items="@Model.ProgramStudiList"></select>
@@ -52,6 +47,21 @@
                     <label asp-for="Mahasiswa.IdKonsentrasi" class="control-label"></label>
                     <select asp-for="@Model.Mahasiswa.IdKonsentrasi" class="form-control" asp-items="@Model.KonsentrasiList"></select>
                     <span asp-validation-for="Mahasiswa.IdKonsentrasi" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Mahasiswa.IdAngkatan" class="control-label"></label>
+                    <select asp-for="@Model.Mahasiswa.IdAngkatan" class="form-control" asp-items="@Model.AngkatanList"></select>
+                    <span asp-validation-for="Mahasiswa.IdAngkatan" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Mahasiswa.IdKelas" class="control-label"></label>
+                    <select asp-for="@Model.Mahasiswa.IdKelas" class="form-control" asp-items="@Model.KelasList"></select>
+                    <span asp-validation-for="Mahasiswa.IdKelas" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Mahasiswa.IdKelompok" class="control-label"></label>
+                    <select asp-for="@Model.Mahasiswa.IdKelompok" class="form-control" asp-items="@Model.KelompokList"></select>
+                    <span asp-validation-for="Mahasiswa.IdKelompok" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Mahasiswa.Semester" class="control-label"></label>
@@ -121,6 +131,22 @@
                             <option value="">Select Konsentrasi</option>
                         </select>
                         <span asp-validation-for="Mahasiswa.IdKonsentrasi" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Mahasiswa.IdAngkatan" class="control-label"></label>
+                        <select asp-for="@Model.Mahasiswa.IdAngkatan" class="form-control" asp-items="@Model.AngkatanList"></select>
+                        <span asp-validation-for="Mahasiswa.IdAngkatan" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Mahasiswa.IdKelas" class="control-label"></label>
+                        <select asp-for="@Model.Mahasiswa.IdKelas" class="form-control" asp-items="@Model.KelasList"></select>
+                        <span asp-validation-for="Mahasiswa.IdKelas" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Mahasiswa.IdKelompok" class="control-label"></label>
+                        <select asp-for="@Model.Mahasiswa.IdKelompok" class="form-control" asp-items="@Model.KelompokList"></select>
+                        <span asp-validation-for="Mahasiswa.IdKelompok" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">

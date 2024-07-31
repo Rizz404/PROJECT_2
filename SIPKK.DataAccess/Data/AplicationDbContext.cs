@@ -26,17 +26,20 @@ namespace SIPKK.DataAccess.Data
         //! Defaultnya bakal plural hati-hati penamaannya
         //jangan lupa nambahin kalo ada db baru
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Angkatan> Angkatan { get; set; }
         public DbSet<Admin> Admin { get; set; }
         public DbSet<Persyaratan> Persyaratan { get; set; }
         public DbSet<Proyek> Proyek { get; set; }
         public DbSet<Mahasiswa> Mahasiswa { get; set; }
         public DbSet<Dosen> Dosen { get; set; }
+        public DbSet<Feedback> Feedback { get; set; }
+        public DbSet<Kelas> Kelas { get; set; }
+        public DbSet<Kelompok> Kelompok { get; set; }
         public DbSet<ProgramStudi> ProgramStudi { get; set; }
         public DbSet<Konsentrasi> Konsentrasi { get; set; }
         public DbSet<Pendaftaran> Pendaftaran { get; set; }
         public DbSet<BiayaOperasional> BiayaOperasional { get; set; }
         public DbSet<Laporan> Laporan { get; set; }
-        public DbSet<Test> Test { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -57,25 +60,135 @@ namespace SIPKK.DataAccess.Data
                 }
             }
 
-            builder.Entity<Proyek>().HasData(
-                new Proyek { Id = new Cuid2().ToString(), NamaProyek = "Pengembangan Aplikasi Mobile", Deskripsi = "Proyek pengembangan aplikasi mobile untuk bisnis ritel", TanggalMulai = DateTime.UtcNow, TanggalSelesai = DateTime.UtcNow.AddMonths(6), Lokasi = "Jakarta", Kuota = 10, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-                new Proyek { Id = new Cuid2().ToString(), NamaProyek = "Desain UI/UX Website", Deskripsi = "Proyek desain antarmuka dan pengalaman pengguna untuk website perusahaan", TanggalMulai = DateTime.UtcNow, TanggalSelesai = DateTime.UtcNow.AddMonths(4), Lokasi = "Bandung", Kuota = 8, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-                new Proyek { Id = new Cuid2().ToString(), NamaProyek = "Analisis Data Pemasaran", Deskripsi = "Proyek analisis data pemasaran untuk meningkatkan strategi penjualan", TanggalMulai = DateTime.UtcNow, TanggalSelesai = DateTime.UtcNow.AddMonths(3), Lokasi = "Surabaya", Kuota = 6, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-                new Proyek { Id = new Cuid2().ToString(), NamaProyek = "Pengembangan Game 3D", Deskripsi = "Proyek pengembangan game 3D untuk platform mobile", TanggalMulai = DateTime.UtcNow, TanggalSelesai = DateTime.UtcNow.AddMonths(8), Lokasi = "Yogyakarta", Kuota = 12, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-                new Proyek { Id = new Cuid2().ToString(), NamaProyek = "Sistem Manajemen Inventaris", Deskripsi = "Proyek pengembangan sistem manajemen inventaris untuk perusahaan manufaktur", TanggalMulai = DateTime.UtcNow, TanggalSelesai = DateTime.UtcNow.AddMonths(5), Lokasi = "Semarang", Kuota = 8, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-                new Proyek { Id = new Cuid2().ToString(), NamaProyek = "Analisis Keamanan Siber", Deskripsi = "Proyek analisis keamanan siber untuk meningkatkan sistem keamanan perusahaan", TanggalMulai = DateTime.UtcNow, TanggalSelesai = DateTime.UtcNow.AddMonths(4), Lokasi = "Medan", Kuota = 6, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-                new Proyek { Id = new Cuid2().ToString(), NamaProyek = "Pengembangan Aplikasi Web E-Commerce", Deskripsi = "Proyek pengembangan aplikasi web e-commerce untuk toko online", TanggalMulai = DateTime.UtcNow, TanggalSelesai = DateTime.UtcNow.AddMonths(7), Lokasi = "Makassar", Kuota = 10, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-                new Proyek { Id = new Cuid2().ToString(), NamaProyek = "Otomatisasi Proses Bisnis", Deskripsi = "Proyek otomatisasi proses bisnis untuk meningkatkan efisiensi operasional", TanggalMulai = DateTime.UtcNow, TanggalSelesai = DateTime.UtcNow.AddMonths(6), Lokasi = "Palembang", Kuota = 8, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-                new Proyek { Id = new Cuid2().ToString(), NamaProyek = "Pengembangan Sistem Manajemen Proyek", Deskripsi = "Proyek pengembangan sistem manajemen proyek untuk perusahaan konsultan", TanggalMulai = DateTime.UtcNow, TanggalSelesai = DateTime.UtcNow.AddMonths(5), Lokasi = "Balikpapan", Kuota = 7, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-                new Proyek { Id = new Cuid2().ToString(), NamaProyek = "Analisis Data Keuangan", Deskripsi = "Proyek analisis data keuangan untuk membantu pengambilan keputusan investasi", TanggalMulai = DateTime.UtcNow, TanggalSelesai = DateTime.UtcNow.AddMonths(4), Lokasi = "Denpasar", Kuota = 6, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
-            );
+            // Tambahkan dummy data untuk ProgramStudi jika belum ada
+            if(!builder.Model.GetEntityTypes().Any(t => t.ClrType == typeof(ProgramStudi)))
+            {
+                var programStudiData = new[]
+                {
+                    new { Nama = "Teknik Informatika", Deskripsi = "Program studi yang mempelajari ilmu komputer dan teknologi informasi" },
+                    new { Nama = "Sistem Informasi", Deskripsi = "Program studi yang mempelajari pengembangan dan pengelolaan sistem informasi" },
+                    new { Nama = "Bisnis Digital", Deskripsi = "Program studi yang mempelajari manajemen dan administrasi bisnis digital" },
+                };
 
-            builder.Entity<ProgramStudi>().HasData(
-                new ProgramStudi { Id = new Cuid2().ToString(), Nama = "Teknik Informatika", Deskripsi = "Program studi yang mempelajari ilmu komputer dan teknologi informasi", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-                new ProgramStudi { Id = new Cuid2().ToString(), Nama = "Sistem Informasi", Deskripsi = "Program studi yang mempelajari pengembangan dan pengelolaan sistem informasi", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-                new ProgramStudi { Id = new Cuid2().ToString(), Nama = "Manajemen Bisnis", Deskripsi = "Program studi yang mempelajari manajemen dan administrasi bisnis", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-                new ProgramStudi { Id = new Cuid2().ToString(), Nama = "Akuntansi", Deskripsi = "Program studi yang mempelajari prinsip dan praktik akuntansi", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
-            );
+                var programStudiEntities = new List<ProgramStudi>();
+                var programStudiIds = new List<string>();
+
+                foreach(var data in programStudiData)
+                {
+                    var id = new Cuid2().ToString();
+                    programStudiIds.Add(id);
+                    programStudiEntities.Add(new ProgramStudi
+                    {
+                        Id = id,
+                        Nama = data.Nama,
+                        Deskripsi = data.Deskripsi,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                    });
+                }
+
+                builder.Entity<ProgramStudi>().HasData(programStudiEntities);
+
+                // Tambahkan dummy data untuk Konsentrasi jika ProgramStudi sudah ada
+                if(!builder.Model.GetEntityTypes().Any(t => t.ClrType == typeof(Konsentrasi)))
+                {
+                    var konsentrasiData = new[]
+                    {
+                        new { Nama = "Software Engineering", Deskripsi = "Deskripsi Konsentrasi 1 TI", IdProgramStudi = programStudiIds[0] },
+                        new { Nama = "Computer Networking", Deskripsi = "Deskripsi Konsentrasi 1 SI", IdProgramStudi = programStudiIds[0] },
+                        new { Nama = "Business Digital", Deskripsi = "Deskripsi Konsentrasi 1 MB", IdProgramStudi = programStudiIds[2] },
+                        new { Nama = "Testing", Deskripsi = "Deskripsi Konsentrasi 1 AK", IdProgramStudi = programStudiIds[2] }
+                    };
+
+                    var konsentrasiEntities = konsentrasiData.Select(data => new Konsentrasi
+                    {
+                        Id = new Cuid2().ToString(),
+                        IdProgramStudi = data.IdProgramStudi,
+                        Nama = data.Nama,
+                        Deskripsi = data.Deskripsi,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    }).ToList();
+
+                    builder.Entity<Konsentrasi>().HasData(konsentrasiEntities);
+                }
+            }
+
+            if(!builder.Model.GetEntityTypes().Any(t => t.ClrType == typeof(Angkatan)))
+            {
+                var angkatanData = new[]
+                {
+                        new { Tahun = "2022", Deskripsi = "Deskripsi Angkatan 1 TI"},
+                        new { Tahun = "2023", Deskripsi = "Deskripsi Angkatan 1 SI"},
+                        new { Tahun = "2024", Deskripsi = "Deskripsi Angkatan 1 MB"},
+                        new { Tahun = "2025", Deskripsi = "Deskripsi Angkatan 1 AK"}
+                    };
+
+                var angkatanEntities = angkatanData.Select(data => new Angkatan
+                {
+                    Id = new Cuid2().ToString(),
+                    Tahun = data.Tahun,
+                    Deskripsi = data.Deskripsi,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                }).ToList();
+
+                builder.Entity<Angkatan>().HasData(angkatanEntities);
+            }
+
+            if(!builder.Model.GetEntityTypes().Any(t => t.ClrType == typeof(Kelas)))
+            {
+                var kelasData = new[]
+                {
+                        new { Nama = "2022", Deskripsi = "Deskripsi Kelas 1 TI"},
+                        new { Nama = "2023", Deskripsi = "Deskripsi Kelas 1 SI"},
+                        new { Nama = "2024", Deskripsi = "Deskripsi Kelas 1 MB"},
+                        new { Nama = "2025", Deskripsi = "Deskripsi Kelas 1 AK"}
+                    };
+
+                var kelasEntities = kelasData.Select(data => new Kelas
+                {
+                    Id = new Cuid2().ToString(),
+                    Nama = data.Nama,
+                    Deskripsi = data.Deskripsi,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                }).ToList();
+
+                builder.Entity<Kelas>().HasData(kelasEntities);
+            }
+
+            // Tambahkan dummy data untuk Proyek jika belum ada
+            if(!builder.Model.GetEntityTypes().Any(t => t.ClrType == typeof(Proyek)))
+            {
+                var proyekData = new[]
+                {
+                    new { NamaProyek = "Proyek KKN Pemberdayaan Perempuan", Deskripsi = "Proyek KKN ini bertujuan untuk memberdayakan perempuan di Desa Mandiri melalui pelatihan keterampilan dan pemberian modal usaha.", TipeProyek = Models.Proyek.Tipe.KKN, Kuota = 16, Lokasi = "Garut" },
+                    new { NamaProyek = "Proyek KKN Pengembangan UMKM", Deskripsi = "Proyek KKN ini bertujuan untuk mengembangkan UMKM di Desa Sejahtera melalui pelatihan dan pemberian modal usaha.", TipeProyek = Models.Proyek.Tipe.KKN, Kuota = 20, Lokasi = "Jakarta" },
+                    new { NamaProyek = "Proyek KKN Kesehatan Ibu dan Anak", Deskripsi = "Proyek KKN ini bertujuan untuk meningkatkan kesehatan ibu dan anak di Desa Sejahtera melalui program pemeriksaan kesehatan dan edukasi.", TipeProyek = Models.Proyek.Tipe.KKN, Kuota = 8, Lokasi = "Pekalongan" },
+                    new { NamaProyek = "Proyek KKN Pengolahan Air Bersih", Deskripsi = "Proyek KKN ini bertujuan untuk menyediakan air bersih di Desa Bersih melalui program penyediaan fasilitas air bersih dan edukasi masyarakat.", TipeProyek = Models.Proyek.Tipe.KKN, Kuota = 32, Lokasi = "Papua" },
+                    new { NamaProyek = "Proyek KKP Literasi Digital", Deskripsi = "Proyek KKP ini bertujuan untuk meningkatkan literasi digital masyarakat di Kota Pintar melalui pelatihan dan seminar.", TipeProyek = Models.Proyek.Tipe.KKP, Kuota = 16, Lokasi = "Garut" },
+                    new { NamaProyek = "Proyek KKP Pendidikan Anak", Deskripsi = "Proyek KKP ini bertujuan untuk meningkatkan kualitas pendidikan anak di Kota Pintar melalui program bimbingan belajar dan penyediaan fasilitas belajar.", TipeProyek = Models.Proyek.Tipe.KKP, Kuota = 20, Lokasi = "Jakarta" },
+                    new { NamaProyek = "Proyek KKP Keterampilan Anak Muda", Deskripsi = "Proyek KKP ini bertujuan untuk mengembangkan keterampilan anak muda di Kota Kreatif melalui berbagai pelatihan dan workshop.", TipeProyek = Models.Proyek.Tipe.KKP, Kuota = 8, Lokasi = "Pekalongan" },
+                    new { NamaProyek = "Proyek KKP Teknologi Pertanian", Deskripsi = "Proyek KKP ini bertujuan untuk mengembangkan teknologi pertanian di Desa Tani melalui program pelatihan dan penerapan teknologi modern.", TipeProyek = Models.Proyek.Tipe.KKP, Kuota = 32, Lokasi = "Papua" }
+                };
+
+                var proyekEntities = proyekData.Select(data => new Proyek
+                {
+                    Id = new Cuid2().ToString(),
+                    NamaProyek = data.NamaProyek,
+                    Deskripsi = data.Deskripsi,
+                    TipeProyek = data.TipeProyek,
+                    Kuota = (short)data.Kuota,
+                    Lokasi = data.Lokasi,
+                    TanggalMulai = DateTime.UtcNow,
+                    TanggalSelesai = DateTime.UtcNow.AddMonths(6),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                }).ToList();
+
+                builder.Entity<Proyek>().HasData(proyekEntities);
+            }
         }
 
         public override int SaveChanges()

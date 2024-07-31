@@ -34,7 +34,7 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Proyek
         public async Task<IActionResult> Index()
         {
-            List<Proyek> proyekList = (await _unitOfWork.Proyek.GetAllAsync(includedProperties: [p => p.Mahasiswa])).ToList();
+            List<Proyek> proyekList = (await _unitOfWork.Proyek.FindAllAsync(include: q => q.Include(p => p.Mahasiswa))).ToList();
             return View(proyekList);
         }
 
@@ -46,7 +46,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Proyek proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+            Proyek proyek = await _unitOfWork.Proyek.FindAsync(d => d.Id == id);
 
             if(proyek == null)
             {
@@ -74,9 +74,14 @@ namespace SIPKK.Areas.Admin.Controllers
                 if(file != null)
                 {
                     string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string mahasiswaPath = Path.Combine(wwwRootPath, @"images\proyek");
+                    string proyekPath = Path.Combine(wwwRootPath, @"images\proyek");
 
-                    using(var fileStream = new FileStream(Path.Combine(mahasiswaPath, filename), FileMode.Create))
+                    if(!Directory.Exists(proyekPath))
+                    {
+                        Directory.CreateDirectory(proyekPath);
+                    }
+
+                    using(var fileStream = new FileStream(Path.Combine(proyekPath, filename), FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                     }
@@ -101,7 +106,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Proyek? proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+            Proyek? proyek = await _unitOfWork.Proyek.FindAsync(d => d.Id == id);
 
             if(proyek == null)
             {
@@ -123,7 +128,7 @@ namespace SIPKK.Areas.Admin.Controllers
             if(ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
-                var proyekFromDb = await _unitOfWork.Proyek.GetAsync(d => d.Id == proyekVM.Proyek.Id);
+                var proyekFromDb = await _unitOfWork.Proyek.FindAsync(d => d.Id == proyekVM.Proyek.Id);
 
                 if(proyekFromDb == null)
                 {
@@ -132,13 +137,18 @@ namespace SIPKK.Areas.Admin.Controllers
 
                 // Update the Proyek fields
                 if(await TryUpdateModelAsync(proyekFromDb, "Proyek",
-                    p => p.NamaProyek, p => p.Deskripsi, p => p.TanggalMulai, p => p.TanggalSelesai, p => p.Lokasi, p => p.Kuota, p => p.Verified, p => p.SudahSelesai))
+                    p => p.NamaProyek, p => p.Deskripsi, p => p.TanggalMulai, p => p.TanggalSelesai, p => p.Lokasi, p => p.Kuota, p => p.TipeProyek, p => p.Verified, p => p.SudahSelesai))
                 {
                     // If a new file is uploaded, update the FotoProyek field
                     if(file != null)
                     {
                         string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                         string proyekPath = Path.Combine(wwwRootPath, @"images\proyek");
+
+                        if(!Directory.Exists(proyekPath))
+                        {
+                            Directory.CreateDirectory(proyekPath);
+                        }
 
                         using(var fileStream = new FileStream(Path.Combine(proyekPath, filename), FileMode.Create))
                         {
@@ -179,7 +189,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            Proyek proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+            Proyek proyek = await _unitOfWork.Proyek.FindAsync(d => d.Id == id);
 
             if(proyek == null)
             {
@@ -194,7 +204,7 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Proyek? proyek = await _unitOfWork.Proyek.GetAsync(d => d.Id == id);
+            Proyek? proyek = await _unitOfWork.Proyek.FindAsync(d => d.Id == id);
 
             if(proyek == null)
             {

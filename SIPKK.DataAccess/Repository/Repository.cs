@@ -16,18 +16,43 @@ namespace SIPKK.DataAccess.Repository
     {
         private readonly ApplicationDbContext _db;
         internal DbSet<T> dbSet;
+
         public Repository(ApplicationDbContext db)
         {
             _db = db;
             this.dbSet = _db.Set<T>();
         }
 
-        public async Task CreateAsync(T entity)
+        public async Task<T> GetAsync(Expression<Func<T, bool>>? filter = null, params Expression<Func<T, object>>[] includedProperties)
         {
-            await dbSet.AddAsync(entity);
+            IQueryable<T> query = dbSet;
+            if(filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if(includedProperties != null && includedProperties.Any())
+            {
+                query = includedProperties.Aggregate(query, (current, includedProp) => current.Include(includedProp));
+            }
+            return await query.FirstOrDefaultAsync();
+        }
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, params Expression<Func<T, object>>[] includedProperties)
+        {
+            IQueryable<T> query = dbSet;
+            if(filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if(includedProperties != null && includedProperties.Any())
+            {
+                query = includedProperties.Aggregate(query, (current, includedProp) => current.Include(includedProp));
+            }
+            return await query.ToListAsync();
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>>? filter = null, params Expression<Func<T, object>>[] includedProperties)
+        public async Task<T> FindAsync(
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IQueryable<T>>? include = null)
         {
             IQueryable<T> query = dbSet;
 
@@ -36,15 +61,19 @@ namespace SIPKK.DataAccess.Repository
                 query = query.Where(filter);
             }
 
-            if(includedProperties != null && includedProperties.Any())
+            if(include != null)
             {
-                query = includedProperties.Aggregate(query, (current, includedProp) => current.Include(includedProp));
+                query = include(query);
             }
 
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, params Expression<Func<T, object>>[] includedProperties)
+        public async Task<IEnumerable<T>> FindAllAsync(
+            Expression<Func<T, bool>>? filter = null,
+            int? skip = null,
+            int? take = null,
+            Func<IQueryable<T>, IQueryable<T>>? include = null)
         {
             IQueryable<T> query = dbSet;
 
@@ -53,12 +82,27 @@ namespace SIPKK.DataAccess.Repository
                 query = query.Where(filter);
             }
 
-            if(includedProperties != null && includedProperties.Any())
+            if(skip.HasValue)
             {
-                query = includedProperties.Aggregate(query, (current, includedProp) => current.Include(includedProp));
+                query = query.Skip(skip.Value);
+            }
+
+            if(take.HasValue)
+            {
+                query = query.Take(take.Value);
+            }
+
+            if(include != null)
+            {
+                query = include(query);
             }
 
             return await query.ToListAsync();
+        }
+
+        public async Task CreateAsync(T entity)
+        {
+            await dbSet.AddAsync(entity);
         }
 
         public async Task DeleteAsync(T entity)

@@ -2,83 +2,8 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-
-
-<!--
-    <div class="row">
-    <partial name="_Notification" />
-@foreach(var proyek in Model)
-{
-            <div class="col-md-3 mb-2">
-                <div class="card">
-            @if(!string.IsNullOrEmpty(proyek.Proyek.FotoProyek))
-            {
-                            <img src="@proyek.Proyek.FotoProyek" class="card-img-top img-fluid" alt="Foto Proyek">
-            }
-            else
-            {
-                            <img src="https://i.pinimg.com/236x/fd/1e/00/fd1e00edba3b36fc06341ad96ab7329d.jpg" class="card-img-top" alt="Default Foto">
-            }
-                    <div class="card-body">
-                        <h5 class="card-title">@proyek.Proyek.NamaProyek</h5>
-                        <p class="card-text">@proyek.Proyek.Deskripsi</p>
-                @if(SignInManager.IsSignedIn(User))
-                {
-                    @if(User.IsInRole("Mahasiswa"))
-                    {
-                        @switch(proyek.StatusMahasiswa)
-                        {
-                            case ProyekVM.Status.PENDING:
-                                                <span>Terdaftar di proyek <span class="btn btn-success badge">@proyek.ProyekTerdaftarNameForCurrentMahasiswa</span> menunggu konfirmasi pembayaran</span>
-                            break;
-                            case ProyekVM.Status.TERDAFTAR:
-                                                <span class="btn btn-success badge">Terdaftar</span>
-                            break;
-                            case ProyekVM.Status.TERDAFTAR_PROYEK_LAIN:
-                                                <span>Terdaftar di proyek lain: <span class="btn btn-info badge">@proyek.ProyekTerdaftarNameForCurrentMahasiswa</span></span>
-                            break;
-                            default:
-                                                <span>kintil</span>
-                            break;
-                        }
-                    }
-                    else if(User.IsInRole("Dosen"))
-                    {
-                        @switch(proyek.StatusMahasiswa) // Perhatikan: kita menggunakan StatusMahasiswa untuk dosen juga
-                        {
-                            case ProyekVM.Status.TERDAFTAR:
-                                                <span class="btn btn-success badge">Proyek Anda</span>
-                            break;
-                            case ProyekVM.Status.TERDAFTAR_PROYEK_LAIN:
-                                                <span>Anda terdaftar di proyek lain: <span class="btn btn-info badge">@proyek.ProyekTerdaftarNameForCurrentMahasiswa</span></span>
-                            break;
-                            default:
-                                                <span class="btn btn-secondary badge">Bukan Proyek Anda</span>
-                            break;
-                        }
-                    }
-                }
-                        <div class="my-2 d-flex gap-2 flex-wrap">
-                            <button class="btn btn-danger badge">@proyek.Proyek.Kuota</button>
-                            <button class="btn btn-danger badge">@proyek.Proyek.Lokasi</button>
-                    @if(proyek.Proyek.Verified == true && proyek.Proyek.SudahSelesai == false)
-                    {
-                                    <button class="btn btn-warning badge">Berjalan</button>
-                    }
-                    else if(proyek.Proyek.SudahSelesai == true)
-                    {
-                                    <button class="btn btn-warning badge">Selesai</button>
-                    }
-                        </div>
-                        <a asp-action="Details" asp-route-id="@proyek.Proyek.Id" class="btn btn-primary">Detail</a>
-                    </div>
-                </div>
-            </div>
-}
-</div>
--->
-
 <partial name="_Notification" />
+
 <div class="base-container proyeks-wrapper">
     @foreach(var proyek in Model)
     {
@@ -111,6 +36,9 @@
                                 }
                                 <p>
                                     @proyek.Proyek.Lokasi
+                                </p> 
+                                <p>
+                                    @proyek.Proyek.TipeProyek
                                 </p>
                             </div>
                             <p>
@@ -152,6 +80,9 @@
                                 }
                                 <p>
                                     @proyek.Proyek.Lokasi
+                                </p>
+                                <p>
+                                    @proyek.Proyek.TipeProyek
                                 </p>
                             </div>
                         </div>

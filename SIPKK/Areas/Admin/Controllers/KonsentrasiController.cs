@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
@@ -21,21 +22,21 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Konsentrasi
         public async Task<IActionResult> Index()
         {
-            List<Konsentrasi> konsentrasiList = (await _unitOfWork.Konsentrasi.GetAllAsync(includedProperties: [k => k.ProgramStudi])).ToList();
+            List<Konsentrasi> konsentrasiList = (await _unitOfWork.Konsentrasi.FindAllAsync(include: q => q.Include(k => k.ProgramStudi))).ToList();
             return View(konsentrasiList);
         }
 
         // GET: Konsentrasi/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            if (id == null || id == string.Empty)
+            if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
-            Konsentrasi konsentrasi = await _unitOfWork.Konsentrasi.GetAsync(d => d.Id == id);
+            Konsentrasi konsentrasi = await _unitOfWork.Konsentrasi.FindAsync(d => d.Id == id);
 
-            if (konsentrasi == null)
+            if(konsentrasi == null)
             {
                 return NotFound();
             }
@@ -49,7 +50,7 @@ namespace SIPKK.Areas.Admin.Controllers
             // biar miftah
             KonsentrasiVM konsentrasiVM = new()
             {
-                ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
+                ProgramStudiList = (await _unitOfWork.ProgramStudi.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.Nama,
                     Value = p.Id
@@ -64,7 +65,7 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(KonsentrasiVM konsentrasiVM)
         {
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
                 await _unitOfWork.Konsentrasi.CreateAsync(konsentrasiVM.Konsentrasi);
                 await _unitOfWork.SaveAsync();
@@ -73,7 +74,7 @@ namespace SIPKK.Areas.Admin.Controllers
             }
             else
             {
-                konsentrasiVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
+                konsentrasiVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.Nama,
                     Value = p.Id
@@ -85,14 +86,14 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Konsentrasi/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null || id == string.Empty)
+            if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
-            Konsentrasi? konsentrasi = await _unitOfWork.Konsentrasi.GetAsync(d => d.Id == id);
+            Konsentrasi? konsentrasi = await _unitOfWork.Konsentrasi.FindAsync(d => d.Id == id);
 
-            if (konsentrasi == null)
+            if(konsentrasi == null)
             {
                 return NotFound();
             }
@@ -100,7 +101,7 @@ namespace SIPKK.Areas.Admin.Controllers
             KonsentrasiVM konsentrasiVM = new()
             {
                 Konsentrasi = konsentrasi,
-                ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
+                ProgramStudiList = (await _unitOfWork.ProgramStudi.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.Nama,
                     Value = p.Id
@@ -114,7 +115,7 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(KonsentrasiVM konsentrasiVM)
         {
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
                 await _unitOfWork.Konsentrasi.UpdateAsync(konsentrasiVM.Konsentrasi);
                 await _unitOfWork.SaveAsync();
@@ -123,7 +124,7 @@ namespace SIPKK.Areas.Admin.Controllers
             }
             else
             {
-                konsentrasiVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.GetAllAsync()).Select(p => new SelectListItem
+                konsentrasiVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.FindAllAsync()).Select(p => new SelectListItem
                 {
                     Text = p.Nama,
                     Value = p.Id
@@ -135,14 +136,14 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Konsentrasi/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
-            if (id == null || id == string.Empty)
+            if(id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
-            Konsentrasi konsentrasi = await _unitOfWork.Konsentrasi.GetAsync(d => d.Id == id);
+            Konsentrasi konsentrasi = await _unitOfWork.Konsentrasi.FindAsync(d => d.Id == id);
 
-            if (konsentrasi == null)
+            if(konsentrasi == null)
             {
                 return NotFound();
             }
@@ -155,9 +156,9 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Konsentrasi? konsentrasi = await _unitOfWork.Konsentrasi.GetAsync(d => d.Id == id);
+            Konsentrasi? konsentrasi = await _unitOfWork.Konsentrasi.FindAsync(d => d.Id == id);
 
-            if (konsentrasi == null)
+            if(konsentrasi == null)
             {
                 return NotFound();
             }
