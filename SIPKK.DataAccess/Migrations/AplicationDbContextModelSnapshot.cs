@@ -374,7 +374,6 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<string>("IdKelompok")
-                        .IsRequired()
                         .HasMaxLength(36)
                         .HasColumnType("character varying(36)")
                         .HasColumnName("id_kelompok");
@@ -660,7 +659,6 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<string>("Feedback")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("feedback");
 
@@ -669,7 +667,6 @@ namespace SIPKK.DataAccess.Migrations
                         .HasColumnName("file_laporan");
 
                     b.Property<string>("IdKelompok")
-                        .IsRequired()
                         .HasMaxLength(36)
                         .HasColumnType("character varying(36)")
                         .HasColumnName("id_kelompok");
@@ -1082,8 +1079,6 @@ namespace SIPKK.DataAccess.Migrations
                     b.HasOne("SIPKK.Models.Kelompok", "Kelompok")
                         .WithMany("BiayaOperasional")
                         .HasForeignKey("IdKelompok")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("fk_biaya_operasional_kelompok_id_kelompok");
 
                     b.HasOne("SIPKK.Models.Mahasiswa", "Mahasiswa")
@@ -1181,8 +1176,6 @@ namespace SIPKK.DataAccess.Migrations
                     b.HasOne("SIPKK.Models.Kelompok", "Kelompok")
                         .WithMany("Laporan")
                         .HasForeignKey("IdKelompok")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("fk_laporan_kelompok_id_kelompok");
 
                     b.HasOne("SIPKK.Models.Mahasiswa", "Mahasiswa")

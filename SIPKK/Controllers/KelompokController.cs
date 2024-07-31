@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
-using System.Diagnostics;
 
 namespace SIPKK.Controllers
 {
@@ -39,7 +35,7 @@ namespace SIPKK.Controllers
                 include: q => q.Include(m => m.Persyaratan)
             );
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 return NotFound();
             }
@@ -47,28 +43,28 @@ namespace SIPKK.Controllers
 
             var errorMessages = new List<string>();
 
-            if(mahasiswa.RoleMahasiswa == Mahasiswa.Role.ANGGOTA)
+            if (mahasiswa.RoleMahasiswa == Mahasiswa.Role.ANGGOTA)
             {
                 errorMessages.Add("Kamu bukan ketua, silahkan mengubah role di profile untuk dapat membuat kelompok");
             }
-            if(mahasiswa.Persyaratan.KetPembayaran == false)
+            if (mahasiswa.Persyaratan.KetPembayaran == false)
             {
                 errorMessages.Add("Kamu belum menyerahkan bukti pembayaran");
             }
-            if(mahasiswa.Persyaratan.KetOrangTua == false)
+            if (mahasiswa.Persyaratan.KetOrangTua == false)
             {
                 errorMessages.Add("Kamu belum menyerahkan bukti persetujuan orang tua");
             }
-            if(mahasiswa.Persyaratan.KetKelakuanBaik == false)
+            if (mahasiswa.Persyaratan.KetKelakuanBaik == false)
             {
                 errorMessages.Add("Kamu belum menyerahkan bukti kelakuan baik");
             }
-            if(mahasiswa.Persyaratan.KetSehat == false)
+            if (mahasiswa.Persyaratan.KetSehat == false)
             {
                 errorMessages.Add("Kamu belum menyerahkan bukti keterangan sehat");
             }
 
-            if(errorMessages.Any())
+            if (errorMessages.Any())
             {
                 TempData["ErrorMessage"] = errorMessages;
                 return Redirect(Request.Headers["Referer"].ToString());
@@ -95,7 +91,7 @@ namespace SIPKK.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(KelompokVM kelompokVM)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 await _unitOfWork.Kelompok.CreateAsync(kelompokVM.Kelompok);
                 await _unitOfWork.SaveAsync();
@@ -103,14 +99,14 @@ namespace SIPKK.Controllers
                 var userId = GetUserId();
                 var mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(filter: m => m.IdUser == userId);
 
-                if(mahasiswa != null)
+                if (mahasiswa != null)
                 {
                     mahasiswa.IdKelompok = kelompokVM.Kelompok.Id;
                     await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
                     await _unitOfWork.SaveAsync();
                 }
 
-                TempData["SuccessMessage"] = "Berhasil membuat kelompok menunggu konfirmasi admin";
+                TempData["SuccessMessage"] = "Berhasil membuat kelompok";
                 return Redirect($"/Proyek/Details/{kelompokVM.Kelompok.IdProyek}");
             }
             return View(kelompokVM);

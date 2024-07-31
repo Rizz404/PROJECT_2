@@ -28,24 +28,73 @@ namespace SIPKK.Areas.Admin.Controllers
         }
 
         // GET: Mahasiswa
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string programStudiId, string konsentrasiId, string angkatanId, string kelasId, int? semester, bool? persyaratanTerpenuhi)
         {
-            List<Mahasiswa> mahasiswaList = (await _unitOfWork.Mahasiswa.FindAllAsync(
-               include: q => q.
-               Include(m => m.Proyek).
-               Include(m => m.Kelompok).
-               Include(m => m.ProgramStudi).
-               Include(m => m.Konsentrasi).
-               Include(m => m.Persyaratan).
-               Include(m => m.Pendaftaran)
-               )).ToList();
+            var mahasiswaQuery = await _unitOfWork.Mahasiswa.FindAllAsync(
+                include: q => q
+                    .Include(m => m.Proyek)
+                    .Include(m => m.Kelompok)
+                    .Include(m => m.ProgramStudi)
+                    .Include(m => m.Konsentrasi)
+                    .Include(m => m.Angkatan)
+                    .Include(m => m.Kelas)
+                    .Include(m => m.Persyaratan)
+                    .Include(m => m.Pendaftaran)
+            );
+
+            if (!string.IsNullOrEmpty(programStudiId))
+            {
+                mahasiswaQuery = mahasiswaQuery.Where(m => m.ProgramStudi.Id == programStudiId);
+            }
+
+            if (!string.IsNullOrEmpty(konsentrasiId))
+            {
+                mahasiswaQuery = mahasiswaQuery.Where(m => m.Konsentrasi.Id == konsentrasiId);
+            }
+
+            if (!string.IsNullOrEmpty(angkatanId))
+            {
+                mahasiswaQuery = mahasiswaQuery.Where(m => m.Angkatan.Id == angkatanId);
+            }
+
+            if (!string.IsNullOrEmpty(kelasId))
+            {
+                mahasiswaQuery = mahasiswaQuery.Where(m => m.Kelas.Id == kelasId);
+            }
+
+            if (semester.HasValue)
+            {
+                mahasiswaQuery = mahasiswaQuery.Where(m => m.Semester == semester.Value);
+            }
+
+            if (persyaratanTerpenuhi.HasValue)
+            {
+                mahasiswaQuery = mahasiswaQuery.Where(m =>
+                    m.Persyaratan != null &&
+                    m.Persyaratan.KetSehat == persyaratanTerpenuhi.Value &&
+                    m.Persyaratan.KetPembayaran == persyaratanTerpenuhi.Value &&
+                    m.Persyaratan.KetOrangTua == persyaratanTerpenuhi.Value &&
+                    m.Persyaratan.KetKelakuanBaik == persyaratanTerpenuhi.Value
+                );
+            }
+
+            var mahasiswaList = mahasiswaQuery.ToList();
+
+            ViewBag.ProgramStudiList = new SelectList(await _unitOfWork.ProgramStudi.GetAllAsync(), "Id", "Nama");
+            ViewBag.KonsentrasiList = new SelectList(await _unitOfWork.Konsentrasi.GetAllAsync(), "Id", "Nama");
+            ViewBag.AngkatanList = new SelectList(await _unitOfWork.Angkatan.GetAllAsync(), "Id", "Tahun");
+            ViewBag.KelasList = new SelectList(await _unitOfWork.Kelas.GetAllAsync(), "Id", "Nama");
+            ViewBag.SemesterList = new SelectList(Enumerable.Range(1, 8));
+
             return View(mahasiswaList);
         }
+
+
 
         // GET: Mahasiswa/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            if(id == null || id == string.Empty)
+            if (id == null || id == string.Empty)
             {
                 return NotFound();
             }
@@ -59,7 +108,7 @@ namespace SIPKK.Areas.Admin.Controllers
                Include(m => m.Pendaftaran)
             );
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 return NotFound();
             }
@@ -114,14 +163,14 @@ namespace SIPKK.Areas.Admin.Controllers
             string email = $"{mahasiswaVM.Mahasiswa.NIM}@global.ac.id";
             string password = "123456789"; // nanti ganti ke tanggal lahir aja
 
-            using(var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
-                    if(ModelState.IsValid)
+                    if (ModelState.IsValid)
                     {
                         var existingMahasiswa = await _unitOfWork.Mahasiswa.FindAsync(m => m.NIM == mahasiswaVM.Mahasiswa.NIM);
-                        if(existingMahasiswa != null)
+                        if (existingMahasiswa != null)
                         {
                             TempData["ErrorMessage"] = "Mahasiswa telah ada";
                             return View(mahasiswaVM);
@@ -136,11 +185,11 @@ namespace SIPKK.Areas.Admin.Controllers
 
                         var createNewUser = await _userManager.CreateAsync(user, password);
 
-                        if(createNewUser.Succeeded)
+                        if (createNewUser.Succeeded)
                         {
                             var addRoleToUser = await _userManager.AddToRoleAsync(user, SD.Role_Mahasiswa);
 
-                            if(addRoleToUser.Succeeded)
+                            if (addRoleToUser.Succeeded)
                             {
                                 Mahasiswa mahasiswa = new()
                                 {
@@ -168,12 +217,12 @@ namespace SIPKK.Areas.Admin.Controllers
                                 await _unitOfWork.Mahasiswa.CreateAsync(mahasiswa);
                                 await _unitOfWork.Persyaratan.CreateAsync(persyaratan);
                             }
-                            foreach(var error in addRoleToUser.Errors)
+                            foreach (var error in addRoleToUser.Errors)
                             {
                                 ModelState.AddModelError(string.Empty, error.Description);
                             }
                         }
-                        foreach(var error in createNewUser.Errors)
+                        foreach (var error in createNewUser.Errors)
                         {
                             ModelState.AddModelError(string.Empty, error.Description);
                         }
@@ -210,7 +259,7 @@ namespace SIPKK.Areas.Admin.Controllers
                     });
                     return View(mahasiswaVM);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     mahasiswaVM.ProgramStudiList = (await _unitOfWork.ProgramStudi.FindAllAsync()).Select(p => new SelectListItem
                     {
@@ -245,14 +294,14 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Mahasiswa/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if(id == null || id == string.Empty)
+            if (id == null || id == string.Empty)
             {
                 return NotFound();
             }
 
             Mahasiswa? mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(d => d.Id == id);
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 return NotFound();
             }
@@ -294,15 +343,15 @@ namespace SIPKK.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(MahasiswaVM mahasiswaVM)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var mahasiswaFromDb = await _unitOfWork.Mahasiswa.FindAsync(d => d.Id == mahasiswaVM.Mahasiswa.Id);
-                if(mahasiswaFromDb == null)
+                if (mahasiswaFromDb == null)
                 {
                     return NotFound();
                 }
 
-                if(await TryUpdateModelAsync(mahasiswaFromDb, "Mahasiswa",
+                if (await TryUpdateModelAsync(mahasiswaFromDb, "Mahasiswa",
                    m => m.NIM, m => m.FirstName, m => m.LastName, m => m.TanggalLahir, m => m.IdProgramStudi, m => m.IdKonsentrasi, m => m.IdKelompok, m => m.Semester))
                 {
                     await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswaFromDb);
@@ -317,7 +366,7 @@ namespace SIPKK.Areas.Admin.Controllers
         // GET: Mahasiswa/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
-            if(id == null || id == string.Empty)
+            if (id == null || id == string.Empty)
             {
                 return NotFound();
             }
@@ -332,7 +381,7 @@ namespace SIPKK.Areas.Admin.Controllers
                 Include(m => m.Pendaftaran)
             );
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 return NotFound();
             }
@@ -347,7 +396,7 @@ namespace SIPKK.Areas.Admin.Controllers
         {
             Mahasiswa? mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(d => d.Id == id);
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 return NotFound();
             }
@@ -356,18 +405,18 @@ namespace SIPKK.Areas.Admin.Controllers
 
             ApplicationUser? user = await _userManager.FindByIdAsync(userId);
 
-            using(var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
                     await _unitOfWork.Mahasiswa.DeleteAsync(mahasiswa);
                     await _unitOfWork.SaveAsync();
 
-                    if(user != null)
+                    if (user != null)
                     {
                         var result = await _userManager.DeleteAsync(user);
 
-                        if(!result.Succeeded)
+                        if (!result.Succeeded)
                         {
                             TempData["Error"] = "Error deleting user";
                             return RedirectToAction(nameof(Index));
@@ -380,7 +429,7 @@ namespace SIPKK.Areas.Admin.Controllers
                     TempData["SuccessMessage"] = "Mahasiswa deleted successfully";
                     return RedirectToAction(nameof(Index));
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     TempData["Error"] = "An error occurred while deleting Mahasiswa";
                     return RedirectToAction(nameof(Index));

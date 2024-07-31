@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SIPKK.Ultilities.Abstractions;
 using System.ComponentModel.DataAnnotations;
 
@@ -55,6 +56,7 @@ namespace SIPKK.Models
 
         [Display(Name = "Tipe Proyek")]
         public Tipe TipeProyek { get; set; }
+        [ValidateNever]
 
         public ICollection<Mahasiswa>? Mahasiswa { get; set; }
         public ICollection<Kelompok>? Kelompok { get; set; }

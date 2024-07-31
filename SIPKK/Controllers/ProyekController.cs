@@ -34,38 +34,38 @@ namespace SIPKK.Controllers
         {
             var IdUser = _userManager.GetUserId(User);
 
-            switch(role)
+            switch (role)
             {
                 case UserRole.Mahasiswa:
-                var mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(filter: m => m.IdUser == IdUser,
-                    include: q => q.Include(m => m.Proyek).Include(m => m.Kelompok).ThenInclude(k => k.Proyek)
-                );
-                if(mahasiswa != null)
-                {
-                    return new UserRoleData { Mahasiswa = mahasiswa, Id = mahasiswa.Id, Proyek = mahasiswa.Proyek, Persyaratan = mahasiswa.Persyaratan };
-                }
-                break;
+                    var mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(filter: m => m.IdUser == IdUser,
+                        include: q => q.Include(m => m.Proyek).Include(m => m.Kelompok).ThenInclude(k => k.Proyek).Include(m => m.Persyaratan)
+                    );
+                    if (mahasiswa != null)
+                    {
+                        return new UserRoleData { Mahasiswa = mahasiswa, Id = mahasiswa.Id, Proyek = mahasiswa.Proyek, Persyaratan = mahasiswa.Persyaratan };
+                    }
+                    break;
 
                 case UserRole.Dosen:
-                var dosen = await _unitOfWork.Dosen.FindAsync(filter: d => d.IdUser == IdUser,
-                    include: q => q.Include(d => d.Proyek)
-                    );
-                if(dosen != null)
-                {
-                    return new UserRoleData { Dosen = dosen, Id = dosen.Id, Proyek = dosen.Proyek };
-                }
-                break;
+                    var dosen = await _unitOfWork.Dosen.FindAsync(filter: d => d.IdUser == IdUser,
+                        include: q => q.Include(d => d.Proyek)
+                        );
+                    if (dosen != null)
+                    {
+                        return new UserRoleData { Dosen = dosen, Id = dosen.Id, Proyek = dosen.Proyek };
+                    }
+                    break;
 
                 case UserRole.Admin:
-                var admin = await _unitOfWork.Admin.FindAsync(filter: a => a.IdUser == IdUser);
-                if(admin != null)
-                {
-                    return new UserRoleData { Id = admin.Id };
-                }
-                break;
+                    var admin = await _unitOfWork.Admin.FindAsync(filter: a => a.IdUser == IdUser);
+                    if (admin != null)
+                    {
+                        return new UserRoleData { Id = admin.Id };
+                    }
+                    break;
 
                 default:
-                throw new ArgumentException("Role tidak dikenali", nameof(role));
+                    throw new ArgumentException("Role tidak dikenali", nameof(role));
             }
 
             throw new InvalidOperationException($"Tidak ditemukan entitas yang cocok untuk user dengan Id {IdUser} dan role {role}.");
@@ -75,27 +75,27 @@ namespace SIPKK.Controllers
         {
             var userRole = await GetUserRole();
 
-            switch(userRole)
+            switch (userRole)
             {
                 case UserRole.Mahasiswa:
-                return await HandleMahasiswaView();
+                    return await HandleMahasiswaView();
 
                 case UserRole.Dosen:
-                return await HandleDosenView();
+                    return await HandleDosenView();
 
                 default:
-                return await HandleUnauthenticatedView();
+                    return await HandleUnauthenticatedView();
             }
         }
 
         private async Task<UserRole> GetUserRole()
         {
             var user = await _userManager.GetUserAsync(User);
-            if(user != null)
+            if (user != null)
             {
-                if(await _userManager.IsInRoleAsync(user, "Mahasiswa"))
+                if (await _userManager.IsInRoleAsync(user, "Mahasiswa"))
                     return UserRole.Mahasiswa;
-                if(await _userManager.IsInRoleAsync(user, "Dosen"))
+                if (await _userManager.IsInRoleAsync(user, "Dosen"))
                     return UserRole.Dosen;
                 return UserRole.Admin; // Atau role default lainnya
             }
@@ -111,13 +111,13 @@ namespace SIPKK.Controllers
                  include: q => q.Include(m => m.Dosen).Include(p => p.Mahasiswa).Include(p => p.Kelompok)
             );
 
-            if(proyekList == null || !proyekList.Any())
+            if (proyekList == null || !proyekList.Any())
             {
                 TempData["ErrorMessage"] = "Tidak ada proyek";
                 return View();
             }
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 TempData["ErrorMessage"] = "Data mahasiswa tidak ditemukan";
                 return View();
@@ -129,9 +129,9 @@ namespace SIPKK.Controllers
                 string? proyekTerdaftarNameForcurrentUser = null;
                 ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-                if(mahasiswa != null && mahasiswa.Kelompok != null)
+                if (mahasiswa != null && mahasiswa.Kelompok != null)
                 {
-                    if(mahasiswa.Kelompok.IdProyek == proyek.Id)
+                    if (mahasiswa.Kelompok.IdProyek == proyek.Id)
                     {
                         status = ProyekVM.Status.TERDAFTAR;
                     }
@@ -142,9 +142,9 @@ namespace SIPKK.Controllers
                     proyekTerdaftarNameForcurrentUser = mahasiswa.Kelompok.Proyek.NamaProyek;
                 }
 
-                if(mahasiswa != null && mahasiswa.Proyek != null)
+                if (mahasiswa != null && mahasiswa.Proyek != null)
                 {
-                    if(mahasiswa.IdProyekKKP == proyek.Id)
+                    if (mahasiswa.IdProyekKKP == proyek.Id)
                     {
                         status = ProyekVM.Status.TERDAFTAR;
                     }
@@ -173,10 +173,10 @@ namespace SIPKK.Controllers
             var dosen = currentUser.Dosen;
 
             var proyekList = await _unitOfWork.Proyek.FindAllAsync(
-                 include: q => q.Include(m => m.Dosen).Include(p => p.Mahasiswa)
+                 include: q => q.Include(m => m.Dosen).Include(p => p.Mahasiswa).Include(k => k.Kelompok)
             );
 
-            if(proyekList == null || !proyekList.Any())
+            if (proyekList == null || !proyekList.Any())
             {
                 TempData["ErrorMessage"] = "Tidak ada proyek";
                 return View();
@@ -188,9 +188,9 @@ namespace SIPKK.Controllers
                 string? proyekTerdaftarNameForcurrentUser = null;
                 ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-                if(dosen != null && dosen.Proyek != null)
+                if (dosen != null && dosen.Proyek != null)
                 {
-                    if(dosen.IdProyek == proyek.Id)
+                    if (dosen.IdProyek == proyek.Id)
                     {
                         status = ProyekVM.Status.TERDAFTAR;
                     }
@@ -225,10 +225,10 @@ namespace SIPKK.Controllers
             var mahasiswa = currentUser.Mahasiswa;
 
             var proyek = await _unitOfWork.Proyek.FindAsync(filter: p => p.Id == id,
-                include: q => q.Include(m => m.Dosen).Include(p => p.Mahasiswa)
+                include: q => q.Include(m => m.Dosen).Include(p => p.Mahasiswa).Include(p => p.Kelompok).ThenInclude(k => k.Mahasiswa)
            );
 
-            if(proyek == null)
+            if (proyek == null)
             {
                 return NotFound();
             }
@@ -237,9 +237,9 @@ namespace SIPKK.Controllers
             string? proyekTerdaftarNameForcurrentUser = null;
             ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-            if(mahasiswa != null && mahasiswa.Kelompok != null)
+            if (mahasiswa != null && mahasiswa.Kelompok != null)
             {
-                if(mahasiswa.Kelompok.IdProyek == proyek.Id)
+                if (mahasiswa.Kelompok.IdProyek == proyek.Id)
                 {
                     status = ProyekVM.Status.TERDAFTAR;
                 }
@@ -250,9 +250,9 @@ namespace SIPKK.Controllers
                 proyekTerdaftarNameForcurrentUser = mahasiswa.Kelompok.Proyek.NamaProyek;
             }
 
-            if(mahasiswa != null && mahasiswa.Proyek != null)
+            if (mahasiswa != null && mahasiswa.Proyek != null)
             {
-                if(mahasiswa.IdProyekKKP == proyek.Id)
+                if (mahasiswa.IdProyekKKP == proyek.Id)
                 {
                     status = ProyekVM.Status.TERDAFTAR;
                 }
@@ -267,6 +267,7 @@ namespace SIPKK.Controllers
             var proyekVM = new ProyekVM()
             {
                 Proyek = proyek,
+                Mahasiswa = mahasiswa,
                 ProyekTerdaftarNameForCurrentUser = proyekTerdaftarNameForcurrentUser,
                 StatusTerdaftar = status,
                 MahasiswaTerdaftar = mahasiswaTerdaftar,
@@ -282,10 +283,10 @@ namespace SIPKK.Controllers
             var dosen = currentUser.Dosen;
 
             var proyek = await _unitOfWork.Proyek.FindAsync(filter: p => p.Id == id,
-                include: q => q.Include(m => m.Dosen).Include(p => p.Mahasiswa)
+                include: q => q.Include(p => p.Dosen).Include(p => p.Mahasiswa).Include(p => p.Kelompok).ThenInclude(k => k.Mahasiswa)
            );
 
-            if(proyek == null)
+            if (proyek == null)
             {
                 return NotFound();
             }
@@ -294,9 +295,9 @@ namespace SIPKK.Controllers
             string? proyekTerdaftarNameForcurrentUser = null;
             ProyekVM.Status status = ProyekVM.Status.TIDAK_TERDAFTAR;
 
-            if(dosen != null && dosen.Proyek != null)
+            if (dosen != null && dosen.Proyek != null)
             {
-                if(dosen.IdProyek == proyek.Id)
+                if (dosen.IdProyek == proyek.Id)
                 {
                     status = ProyekVM.Status.TERDAFTAR;
                 }
@@ -333,16 +334,16 @@ namespace SIPKK.Controllers
         {
             var userRole = await GetUserRole();
 
-            switch(userRole)
+            switch (userRole)
             {
                 case UserRole.Mahasiswa:
-                return await HandleMahasiswaViewDetails(id);
+                    return await HandleMahasiswaViewDetails(id);
 
                 case UserRole.Dosen:
-                return await HandleDosenViewDetails(id);
+                    return await HandleDosenViewDetails(id);
 
                 default:
-                return await HandleUnauthenticatedViewDetails(id);
+                    return await HandleUnauthenticatedViewDetails(id);
             }
         }
 
@@ -353,7 +354,7 @@ namespace SIPKK.Controllers
         {
             var proyek = await _unitOfWork.Proyek.FindAsync(p => p.Id == id);
 
-            if(string.IsNullOrEmpty(id) || proyek == null)
+            if (string.IsNullOrEmpty(id) || proyek == null)
             {
                 return NotFound();
             }
@@ -371,14 +372,14 @@ namespace SIPKK.Controllers
                 TempData["SuccessMessage"] = "Berhasil menjadi pembimbing proyek";
                 return RedirectToAction(nameof(Details), new { id });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // Log the full exception including inner exception
                 _logger.LogError(ex, "Error intinya");
 
                 // Output the exception details to the debug console
                 Debug.WriteLine($"Exception: {ex.Message}");
-                if(ex.InnerException != null)
+                if (ex.InnerException != null)
                 {
                     Debug.WriteLine($"Inner Exception: {ex.InnerException.Message}");
                     TempData["ErrorMessage"] = $"Inner Exception: {ex.InnerException.Message}";
@@ -398,19 +399,19 @@ namespace SIPKK.Controllers
                 var currentUser = await GetAssociatedRoleId(UserRole.Mahasiswa);
                 var mahasiswa = currentUser.Mahasiswa;
 
-                if(mahasiswa == null)
+                if (mahasiswa == null)
                 {
                     TempData["ErrorMessage"] = "Mahasiswa tidak ditemukan.";
                     return Redirect(Request.Headers["Referer"].ToString());
                 }
 
-                if(mahasiswa.RoleMahasiswa == Mahasiswa.Role.KETUA)
+                if (mahasiswa.RoleMahasiswa == Mahasiswa.Role.KETUA)
                 {
                     TempData["ErrorMessage"] = "Ketua tidak bisa gabung kelompok lain";
                     return Redirect(Request.Headers["Referer"].ToString());
                 }
 
-                if(mahasiswa.RoleMahasiswa == null)
+                if (mahasiswa.RoleMahasiswa == null)
                 {
                     TempData["ErrorMessage"] = "Silahkan ubah role ke anggota untuk join kelompok";
                     return Redirect(Request.Headers["Referer"].ToString());
@@ -425,14 +426,81 @@ namespace SIPKK.Controllers
                 return Redirect(Request.Headers["Referer"].ToString());
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // Log the full exception including inner exception
                 _logger.LogError(ex, "Error intinya");
 
                 // Output the exception details to the debug console
                 Debug.WriteLine($"Exception: {ex.Message}");
-                if(ex.InnerException != null)
+                if (ex.InnerException != null)
+                {
+                    Debug.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                    TempData["ErrorMessage"] = $"Inner Exception: {ex.InnerException.Message}";
+                }
+
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DaftarKKP(string id)
+        {
+            try
+            {
+                var currentUser = await GetAssociatedRoleId(UserRole.Mahasiswa);
+                var mahasiswa = currentUser.Mahasiswa;
+
+                if (mahasiswa == null)
+                {
+                    TempData["ErrorMessage"] = "Mahasiswa tidak ditemukan.";
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
+
+                var errorMessages = new List<string>();
+                if (mahasiswa.Persyaratan.KetPembayaran == false)
+                {
+                    errorMessages.Add("Kamu belum menyerahkan bukti pembayaran");
+                }
+                if (mahasiswa.Persyaratan.KetOrangTua == false)
+                {
+                    errorMessages.Add("Kamu belum menyerahkan bukti persetujuan orang tua");
+                }
+                if (mahasiswa.Persyaratan.KetKelakuanBaik == false)
+                {
+                    errorMessages.Add("Kamu belum menyerahkan bukti kelakuan baik");
+                }
+                if (mahasiswa.Persyaratan.KetSehat == false)
+                {
+                    errorMessages.Add("Kamu belum menyerahkan bukti keterangan sehat");
+                }
+
+                if (errorMessages.Any())
+                {
+                    TempData["ErrorMessage"] = errorMessages;
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
+
+                mahasiswa.IdProyekKKP = id;
+
+                await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
+                await _unitOfWork.SaveAsync();
+
+                TempData["SuccessMessage"] = "Berhasil join kkp"; // Use null-coalescing operator to prevent null reference exception
+                return Redirect(Request.Headers["Referer"].ToString());
+
+            }
+            catch (Exception ex)
+            {
+                // Log the full exception including inner exception
+                _logger.LogError(ex, "Error intinya");
+
+                // Output the exception details to the debug console
+                Debug.WriteLine($"Exception: {ex.Message}");
+                if (ex.InnerException != null)
                 {
                     Debug.WriteLine($"Inner Exception: {ex.InnerException.Message}");
                     TempData["ErrorMessage"] = $"Inner Exception: {ex.InnerException.Message}";

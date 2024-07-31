@@ -14,12 +14,10 @@ namespace SIPKK.Models
         public string IdProyek { get; set; }
 
         [MaxLength(36)]
-        [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Id Mahasiswa")]
         public string IdMahasiswa { get; set; }
 
         [MaxLength(36)]
-        [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Id Kelompok")]
         public string? IdKelompok { get; set; }
 
@@ -33,8 +31,6 @@ namespace SIPKK.Models
         [Required(ErrorMessage = "{0} harus diisi")]
         public bool Status { get; set; }
 
-        [Required(ErrorMessage = "{0} harus diisi")]
-        [RegularExpression(@"^(?!.{5}$).*", ErrorMessage = "Feedback tidak boleh hanya berisi 5 karakter.")]
         public string? Feedback { get; set; }
 
         [ForeignKey(nameof(IdProyek))]
