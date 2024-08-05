@@ -1,16 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static SIPKK.Models.Mahasiswa;
 
 namespace SIPKK.Models.ViewModels
 {
     public class MyProyekVM
     {
-        public Kelompok MyKelompok { get; set; }
+        public Kelompok? MyKelompok { get; set; }
 
         public ICollection<Kelompok>? KelompokList { get; set; }
         public ICollection<BiayaOperasional>? BiayaOperasionalList { get; set; }

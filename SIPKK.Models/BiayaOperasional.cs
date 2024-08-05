@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SIPKK.Ultilities.Abstractions;
-using SIPKK.Ultilities.Interface;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,13 +13,11 @@ namespace SIPKK.Models
         public string IdProyek { get; set; }
 
         [MaxLength(36)]
-        [Required(ErrorMessage = "{0} harus diisi")]
         [Display(Name = "Id Mahasiswa")]
         public string IdMahasiswa { get; set; }
 
         [MaxLength(36)]
-        [Required(ErrorMessage = "{0} harus diisi")]
-        [Display(Name = "Id Mahasiswa")]
+        [Display(Name = "Id Kelompok")]
         public string? IdKelompok { get; set; }
 
         // int gak bisa pakai max length

@@ -18,7 +18,53 @@
             </button>
         </div>
     </div>
-
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="programStudiId" class="form-label">Program Studi</label>
+                    <select name="programStudiId" id="programStudiId" class="form-select" asp-items="ViewBag.ProgramStudiList">
+                        <option value="">Semua Program Studi</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="konsentrasiId" class="form-label">Konsentrasi</label>
+                    <select name="konsentrasiId" id="konsentrasiId" class="form-select" asp-items="ViewBag.KonsentrasiList">
+                        <option value="">Semua Konsentrasi</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="angkatanId" class="form-label">Angkatan</label>
+                    <select name="angkatanId" id="angkatanId" class="form-select" asp-items="ViewBag.AngkatanList">
+                        <option value="">Semua Angkatan</option>
+                    </select>
+                </div> 
+                <div class="col-md-3">
+                    <label for="kelasId" class="form-label">Kelas</label>
+                    <select name="kelasId" id="kelasId" class="form-select" asp-items="ViewBag.KelasList">
+                        <option value="">Semua Kelas</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="semester" class="form-label">Semester</label>
+                    <select name="semester" id="semester" class="form-select" asp-items="ViewBag.SemesterList">
+                        <option value="">Semua Semester</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="persyaratanTerpenuhi" class="form-label">Persyaratan</label>
+                    <select name="persyaratanTerpenuhi" id="persyaratanTerpenuhi" class="form-select">
+                        <option value="">Semua</option>
+                        <option value="true">Terpenuhi</option>
+                        <option value="false">Belum Terpenuhi</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">

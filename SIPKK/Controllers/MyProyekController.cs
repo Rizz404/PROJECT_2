@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SIPKK.DataAccess.Repository.IRepository;
 using SIPKK.Models;
 using SIPKK.Models.ViewModels;
-using Visus.Cuid;
 
 namespace SIPKK.Controllers
 {
@@ -31,12 +31,12 @@ namespace SIPKK.Controllers
         private async Task<UserRole> GetUserRole()
         {
             var user = await _userManager.GetUserAsync(User);
-            if(user == null)
+            if (user == null)
                 throw new InvalidOperationException("User not found");
 
-            if(await _userManager.IsInRoleAsync(user, "Mahasiswa"))
+            if (await _userManager.IsInRoleAsync(user, "Mahasiswa"))
                 return UserRole.Mahasiswa;
-            if(await _userManager.IsInRoleAsync(user, "Dosen"))
+            if (await _userManager.IsInRoleAsync(user, "Dosen"))
                 return UserRole.Dosen;
 
             throw new InvalidOperationException("User role not recognized");
@@ -46,48 +46,48 @@ namespace SIPKK.Controllers
         {
             var userRole = await GetUserRole();
 
-            switch(userRole)
+            switch (userRole)
             {
                 case UserRole.Mahasiswa:
-                return await HandleMahasiswaIndex();
+                    return await HandleMahasiswaIndex();
                 case UserRole.Dosen:
-                return await HandleDosenIndex();
+                    return await HandleDosenIndex();
                 default:
-                return NotFound();
+                    return NotFound();
             }
         }
 
         private async Task<IActionResult> HandleMahasiswaIndex()
         {
             string userId = _userManager.GetUserId(User);
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
-                includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Kelompok]);
+            var mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(m => m.IdUser == userId,
+                include: q => q.Include(m => m.ProgramStudi).Include(m => m.Konsentrasi).Include(m => m.Proyek).Include(m => m.Kelompok).ThenInclude(k => k.Proyek).Include(m => m.Kelompok).ThenInclude(k => k.Mahasiswa));
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 return NotFound();
             }
 
             Proyek? myProyek = null;
-            if(!string.IsNullOrEmpty(mahasiswa.IdProyekKKP))
+            Kelompok? myKelompok = null;
+            Dosen? myDosen = null;
+            if (!string.IsNullOrEmpty(mahasiswa.IdProyekKKP))
             {
-                myProyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == mahasiswa.IdProyekKKP, includedProperties: [d => d.Mahasiswa]);
+                myDosen = await _unitOfWork.Dosen.FindAsync(d => d.IdProyek == mahasiswa.IdProyekKKP);
+                myProyek = mahasiswa.Proyek;
             }
-            else if(mahasiswa.Kelompok != null)
+            else if (mahasiswa.Kelompok != null)
             {
-                myProyek = await _unitOfWork.Proyek.GetAsync(p => p.Id == mahasiswa.Kelompok.IdProyek, includedProperties: [d => d.Mahasiswa]);
+                myDosen = await _unitOfWork.Dosen.FindAsync(d => d.IdProyek == mahasiswa.Kelompok.IdProyek);
+                myKelompok = mahasiswa.Kelompok;
+                myProyek = mahasiswa.Kelompok.Proyek;
             }
-
-            var myKelompok = await _unitOfWork.Kelompok.GetAsync(k => k.Id == mahasiswa.IdKelompok, includedProperties: [k => k.Mahasiswa]);
 
             var myProyekVM = new MyProyekVM()
             {
                 MyKelompok = myKelompok,
                 Proyek = myProyek,
-                Laporan = await _unitOfWork.Laporan.GetAsync(l => l.IdMahasiswa == mahasiswa.Id),
-                Pendaftaran = await _unitOfWork.Pendaftaran.GetAsync(p => p.IdMahasiswa == mahasiswa.Id),
-                BiayaOperasional = await _unitOfWork.BiayaOperasional.GetAsync(b => b.IdMahasiswa == mahasiswa.Id),
-                Dosen = (mahasiswa.Proyek != null || mahasiswa.Kelompok != null) ? await _unitOfWork.Dosen.GetAsync(d => d.IdProyek == mahasiswa.Proyek.Id) : null,
+                Dosen = myDosen,
                 Mahasiswa = mahasiswa
             };
 
@@ -97,23 +97,24 @@ namespace SIPKK.Controllers
         private async Task<IActionResult> HandleDosenIndex()
         {
             string userId = _userManager.GetUserId(User);
-            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId, includedProperties: [d => d.Proyek]);
+            var dosen = await _unitOfWork.Dosen.FindAsync(filter: d => d.IdUser == userId);
 
-            if(dosen == null)
+            Proyek? proyek = null;
+            List<Kelompok>? kelompokList = null;
+
+            if (dosen == null)
             {
                 return NotFound();
             }
 
-            Proyek? proyek = null;
-            if(!string.IsNullOrEmpty(dosen.IdProyek))
+            if (!string.IsNullOrEmpty(dosen.IdProyek))
             {
-                proyek = await _unitOfWork.Proyek.GetAsync(filter: p => p.Id == dosen.IdProyek, includedProperties: [p => p.Mahasiswa, p => p.Dosen]);
+                proyek = await _unitOfWork.Proyek.FindAsync(filter: p => p.Id == dosen.IdProyek, include: q => q.Include(p => p.Mahasiswa).Include(p => p.Kelompok).ThenInclude(k => k.Mahasiswa));
             }
 
-            List<Kelompok> kelompokList = null;
-            if(proyek != null && proyek.TipeProyek == Proyek.Tipe.KKN)
+            if (proyek != null && proyek.Kelompok != null)
             {
-                kelompokList = (List<Kelompok>)await _unitOfWork.Kelompok.GetAllAsync(k => k.IdProyek == proyek.Id);
+                kelompokList = proyek.Kelompok.ToList(); // Convert HashSet<Kelompok> to List<Kelompok>
             }
 
             var myProyekDosenVM = new MyProyekVM()
@@ -131,34 +132,34 @@ namespace SIPKK.Controllers
         {
             var userRole = await GetUserRole();
 
-            switch(userRole)
+            switch (userRole)
             {
                 case UserRole.Mahasiswa:
-                return await HandleMahasiswaLaporan();
+                    return await HandleMahasiswaLaporan();
                 case UserRole.Dosen:
-                return await HandleDosenLaporan();
+                    return await HandleDosenLaporan();
                 default:
-                return NotFound();
+                    return NotFound();
             }
         }
 
         private async Task<IActionResult> HandleMahasiswaLaporan()
         {
             string userId = _userManager.GetUserId(User);
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
-                includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Kelompok]);
+            var mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(m => m.IdUser == userId,
+    include: q => q.Include(m => m.ProgramStudi).Include(m => m.Konsentrasi).Include(m => m.Proyek).Include(m => m.Kelompok).ThenInclude(k => k.Proyek));
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 return NotFound();
             }
 
             List<Laporan>? myLaporan = null;
-            if(!string.IsNullOrEmpty(mahasiswa.IdProyekKKP) && mahasiswa.Kelompok == null)
+            if (!string.IsNullOrEmpty(mahasiswa.IdProyekKKP) && mahasiswa.Kelompok == null)
             {
                 myLaporan = (List<Laporan>?)await _unitOfWork.Laporan.GetAllAsync(filter: b => b.IdMahasiswa == mahasiswa.Id);
             }
-            else if(mahasiswa.Kelompok != null && string.IsNullOrEmpty(mahasiswa.IdProyekKKP))
+            else if (mahasiswa.Kelompok != null && string.IsNullOrEmpty(mahasiswa.IdProyekKKP))
             {
                 myLaporan = (List<Laporan>?)await _unitOfWork.Laporan.GetAllAsync(filter: b => b.IdKelompok == mahasiswa.IdKelompok);
             }
@@ -176,17 +177,17 @@ namespace SIPKK.Controllers
         private async Task<IActionResult> HandleDosenLaporan()
         {
             string userId = _userManager.GetUserId(User);
-            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId, includedProperties: [
-                d => d.Proyek
-            ]);
+            var dosen = await _unitOfWork.Dosen.FindAsync(filter: d => d.IdUser == userId, include: q => q.Include(d => d.Proyek).ThenInclude(p => p.Mahasiswa).
+Include(d => d.Proyek).ThenInclude(k => k.Kelompok).ThenInclude(k => k.Mahasiswa));
 
-            if(dosen == null)
+
+            if (dosen == null)
             {
                 return NotFound();
             }
 
             List<Laporan>? myLaporan = null;
-            if(!string.IsNullOrEmpty(dosen.IdProyek))
+            if (!string.IsNullOrEmpty(dosen.IdProyek))
             {
                 myLaporan = (List<Laporan>?)await _unitOfWork.Laporan.GetAllAsync(filter: l => l.IdProyek == dosen.IdProyek, includedProperties: [
                     b => b.Mahasiswa,
@@ -207,34 +208,34 @@ namespace SIPKK.Controllers
         {
             var userRole = await GetUserRole();
 
-            switch(userRole)
+            switch (userRole)
             {
                 case UserRole.Mahasiswa:
-                return await HandleMahasiswaBiayaOperasional();
+                    return await HandleMahasiswaBiayaOperasional();
                 case UserRole.Dosen:
-                return await HandleDosenBiayaOperasional();
+                    return await HandleDosenBiayaOperasional();
                 default:
-                return NotFound();
+                    return NotFound();
             }
         }
 
         private async Task<IActionResult> HandleMahasiswaBiayaOperasional()
         {
             string userId = _userManager.GetUserId(User);
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
-                includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Kelompok]);
+            var mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(m => m.IdUser == userId,
+    include: q => q.Include(m => m.ProgramStudi).Include(m => m.Konsentrasi).Include(m => m.Proyek).Include(m => m.Kelompok).ThenInclude(k => k.Proyek));
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 return NotFound();
             }
 
             List<BiayaOperasional>? myBiayaOperasional = null;
-            if(!string.IsNullOrEmpty(mahasiswa.IdProyekKKP) && mahasiswa.Kelompok == null)
+            if (!string.IsNullOrEmpty(mahasiswa.IdProyekKKP) && mahasiswa.Kelompok == null)
             {
                 myBiayaOperasional = (List<BiayaOperasional>?)await _unitOfWork.BiayaOperasional.GetAllAsync(filter: b => b.IdMahasiswa == mahasiswa.Id);
             }
-            else if(mahasiswa.Kelompok != null && string.IsNullOrEmpty(mahasiswa.IdProyekKKP))
+            else if (mahasiswa.Kelompok != null && string.IsNullOrEmpty(mahasiswa.IdProyekKKP))
             {
                 myBiayaOperasional = (List<BiayaOperasional>?)await _unitOfWork.BiayaOperasional.GetAllAsync(filter: b => b.IdKelompok == mahasiswa.IdKelompok);
             }
@@ -252,19 +253,19 @@ namespace SIPKK.Controllers
         private async Task<IActionResult> HandleDosenBiayaOperasional()
         {
             string userId = _userManager.GetUserId(User);
-            var dosen = await _unitOfWork.Dosen.GetAsync(d => d.IdUser == userId, includedProperties: [
-                d => d.Proyek
-            ]);
+            var dosen = await _unitOfWork.Dosen.FindAsync(filter: d => d.IdUser == userId, include: q => q.Include(d => d.Proyek).ThenInclude(p => p.Mahasiswa).
+ Include(d => d.Proyek).ThenInclude(k => k.Kelompok).ThenInclude(k => k.Mahasiswa));
 
-            if(dosen == null)
+
+            if (dosen == null)
             {
                 return NotFound();
             }
 
             List<BiayaOperasional>? myBiayaOperasional = null;
-            if(!string.IsNullOrEmpty(dosen.IdProyek))
+            if (!string.IsNullOrEmpty(dosen.IdProyek))
             {
-                myBiayaOperasional = (List<BiayaOperasional>?)await _unitOfWork.BiayaOperasional.GetAllAsync(filter: b => b.IdMahasiswa == dosen.Id, includedProperties: [
+                myBiayaOperasional = (List<BiayaOperasional>?)await _unitOfWork.BiayaOperasional.GetAllAsync(filter: b => b.IdProyek == dosen.IdProyek, includedProperties: [
                     b => b.Mahasiswa,
                     b => b.Kelompok
                 ]);
@@ -283,10 +284,10 @@ namespace SIPKK.Controllers
         public async Task<IActionResult> CreateBiayaOperasional()
         {
             string userId = _userManager.GetUserId(User);
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
-                includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Kelompok]);
+            var mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(m => m.IdUser == userId,
+    include: q => q.Include(m => m.ProgramStudi).Include(m => m.Konsentrasi).Include(m => m.Proyek).Include(m => m.Kelompok).ThenInclude(k => k.Proyek));
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 return NotFound();
             }
@@ -309,7 +310,7 @@ namespace SIPKK.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateBiayaOperasional(BiayaOperasionalVM biayaOperasionalVM)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 await _unitOfWork.BiayaOperasional.CreateAsync(biayaOperasionalVM.BiayaOperasional);
                 await _unitOfWork.SaveAsync();
@@ -324,10 +325,10 @@ namespace SIPKK.Controllers
         public async Task<IActionResult> CreateLaporan()
         {
             string userId = _userManager.GetUserId(User);
-            var mahasiswa = await _unitOfWork.Mahasiswa.GetAsync(m => m.IdUser == userId,
-                includedProperties: [m => m.ProgramStudi, m => m.Konsentrasi, m => m.Kelompok]);
+            var mahasiswa = await _unitOfWork.Mahasiswa.FindAsync(m => m.IdUser == userId,
+    include: q => q.Include(m => m.ProgramStudi).Include(m => m.Konsentrasi).Include(m => m.Proyek).Include(m => m.Kelompok).ThenInclude(k => k.Proyek));
 
-            if(mahasiswa == null)
+            if (mahasiswa == null)
             {
                 return NotFound();
             }
@@ -349,11 +350,11 @@ namespace SIPKK.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateLaporan(LaporanVM laporanVM, IFormFile? file)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
 
-                if(file == null || file.Length == 0)
+                if (file == null || file.Length == 0)
                 {
                     ModelState.AddModelError("Laporan.FileLaporan", "File Laporan harus diisi");
                     return View(laporanVM);
@@ -363,12 +364,12 @@ namespace SIPKK.Controllers
                 string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                 string laporanPath = Path.Combine(wwwRootPath, @"files\laporan");
 
-                if(!Directory.Exists(laporanPath))
+                if (!Directory.Exists(laporanPath))
                 {
                     Directory.CreateDirectory(laporanPath);
                 }
 
-                using(var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
+                using (var fileStream = new FileStream(Path.Combine(laporanPath, filename), FileMode.Create))
                 {
                     await file.CopyToAsync(fileStream);
                 }
@@ -383,5 +384,60 @@ namespace SIPKK.Controllers
 
             return View(laporanVM);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateNilai(string Id, int nilai)
+        {
+            if (Id == null || Id == string.Empty)
+            {
+                return NotFound();
+            }
+
+            Mahasiswa updatedMahasiswa = await _unitOfWork.Mahasiswa.FindAsync(filter: d => d.Id == Id);
+
+            if (updatedMahasiswa == null)
+            {
+                return NotFound();
+            }
+
+            updatedMahasiswa.Nilai = nilai;
+            await _unitOfWork.Mahasiswa.UpdateAsync(updatedMahasiswa);
+            await _unitOfWork.SaveAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateNilaiKelompok(string Id, int nilai)
+        {
+            if (Id == null || Id == string.Empty)
+            {
+                return NotFound();
+            }
+
+            Kelompok updatedKelompok = await _unitOfWork.Kelompok.FindAsync(filter: d => d.Id == Id);
+
+            if (updatedKelompok == null)
+            {
+                return NotFound();
+            }
+
+            // Update nilai kelompok
+            updatedKelompok.Nilai = nilai;
+            await _unitOfWork.Kelompok.UpdateAsync(updatedKelompok);
+
+            // Update nilai mahasiswa yang terkait dengan kelompok
+            var mahasiswaList = await _unitOfWork.Mahasiswa.GetAllAsync(filter: m => m.IdKelompok == Id);
+            foreach (var mahasiswa in mahasiswaList)
+            {
+                mahasiswa.Nilai = nilai;
+                await _unitOfWork.Mahasiswa.UpdateAsync(mahasiswa);
+            }
+
+            await _unitOfWork.SaveAsync();
+
+            return RedirectToAction("Index");
+        }
+
     }
 }

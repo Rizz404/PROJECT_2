@@ -33,7 +33,7 @@
     <div class="proyek-container">
         <div class="proyek-inner">
             <div class="proyek-foto-container">
-                @if(Model.Proyek.FotoProyek != null)
+                @if (Model.Proyek.FotoProyek != null)
                 {
                     <img class="proyek-foto" src="@Model.Proyek.FotoProyek" alt="...">
                 }
@@ -64,13 +64,13 @@
                                 <p>Tipe Proyek:</p><span>@Model.Proyek.TipeProyek</span>
                             </div>
                             <div>
-                                @if(Model.MahasiswaTerdaftar == Model.Proyek.Kuota)
+                                @if (Model.MahasiswaTerdaftar == Model.Proyek.Kuota)
                                 {
                                     <p>Penuh</p>
                                 }
                                 else
                                 {
-                                    @if(Model.MahasiswaTerdaftar == Model.Proyek.Kuota)
+                                    @if (Model.MahasiswaTerdaftar == Model.Proyek.Kuota)
                                     {
                                         <p>Penuh</p>
                                     }
@@ -85,41 +85,61 @@
                         </div>
                     </div>
                 </div>
-                @if(SignInManager.IsSignedIn(User))
+                @if (SignInManager.IsSignedIn(User))
                 {
-                    @if(roles.Contains("Mahasiswa"))
+                    @if (roles.Contains("Mahasiswa"))
                     {
-                        if(Model.Proyek.TipeProyek == Proyek.Tipe.KKN && Model.RoleMahasiswa == Mahasiswa.Role.KETUA && Model.StatusTerdaftar == ProyekVM.Status.TIDAK_TERDAFTAR)
+                        if (Model.Proyek.TipeProyek == Proyek.Tipe.KKP)
                         {
-                            <a href="@routeCreateKelompok" class="btn btn-primary">Buat Kelompok</a>
+                            if (Model.StatusTerdaftar == ProyekVM.Status.TIDAK_TERDAFTAR)
+                            {
+                                <form asp-action="DaftarKKP" method="post">
+                                    <input type="hidden" name="id" value="@Model.Proyek.Id" />
+                                    <button type="submit" class="btn btn-primary">Daftar KKP</button>
+                                </form>
+                            }
+                            else if (Model.StatusTerdaftar == ProyekVM.Status.TERDAFTAR && Model.Mahasiswa.IdProyekKKP != null)
+                            {
+                                <button type="button" class="btn btn-primary">Terdaftar</button>
+                            }
+                            else if (Model.StatusTerdaftar == ProyekVM.Status.TERDAFTAR_PROYEK_LAIN)
+                            {
+                                <button type="button" class="btn btn-primary">Terdaftar di proyek lain</button>
+
+                            }
                         }
-                        else if(Model.Proyek.TipeProyek == Proyek.Tipe.KKP)
+                        else if (Model.Proyek.TipeProyek == Proyek.Tipe.KKN)
                         {
-                            <form asp-action="DaftarKKP" method="post">
-                                <input type="hidden" name="id" value="@Model.Proyek.Id" />
-                                <button type="submit" class="btn btn-primary">Daftar KKP</button>
-                            </form>
-                        }
-                        else if(Model.RoleMahasiswa == null)
-                        {
-                            <a asp-controller="Profile" asp-action="Index" class="btn btn-primary">Ubah Role kamu dulu agar bisa join kkn</a>
-                        }
-                        else if(Model.RoleMahasiswa == Mahasiswa.Role.ANGGOTA)
-                        {
-                            <span class="btn btn-success badge">Silahkan join kelompok yang tersedia</span>
-                        }
-                        else if(Model.StatusTerdaftar == ProyekVM.Status.TERDAFTAR)
-                        {
-                            <button type="button" class="btn btn-primary">Terdaftar</button>
-                        }
-                        else
-                        {
-                            <a href="https://bromo.com" class="btn btn-primary">Lupa add tipe proyek kan</a>
+                            if (Model.StatusTerdaftar == ProyekVM.Status.TIDAK_TERDAFTAR)
+                            {
+                                if (Model.Mahasiswa.RoleMahasiswa == Mahasiswa.Role.KETUA)
+                                {
+                                    <a href="@routeCreateKelompok" class="btn btn-primary">Buat Kelompok</a>
+
+                                }
+                                else if (Model.RoleMahasiswa == null)
+                                {
+                                    <a asp-controller="Profile" asp-action="Index" class="btn btn-primary">Ubah Role kamu dulu agar bisa join kkn</a>
+                                }
+                                else if (Model.RoleMahasiswa == Mahasiswa.Role.ANGGOTA)
+                                {
+                                    <span class="btn btn-success badge">Silahkan join kelompok yang tersedia</span>
+                                }
+                            }
+                            else if (Model.StatusTerdaftar == ProyekVM.Status.TERDAFTAR && Model.Mahasiswa.IdKelompok!= null)
+                            {
+                                <button type="button" class="btn btn-primary">Terdaftar</button>
+                            }
+                            else if (Model.StatusTerdaftar == ProyekVM.Status.TERDAFTAR_PROYEK_LAIN)
+                            {
+                                <button type="button" class="btn btn-primary">Terdaftar di proyek lain</button>
+
+                            }
                         }
                     }
-                    else if(roles.Contains("Dosen"))
+                    else if (roles.Contains("Dosen"))
                     {
-                        if(Model.StatusTerdaftar == ProyekVM.Status.TIDAK_TERDAFTAR)
+                        if (Model.StatusTerdaftar == ProyekVM.Status.TIDAK_TERDAFTAR)
                         {
                             <form asp-action="DaftarJadiPembimbing" method="post">
                                 <input type="hidden" name="id" value="@Model.Proyek.Id" />
@@ -132,7 +152,7 @@
                         }
 
                     }
-                    else if(roles.Contains("Admin"))
+                    else if (roles.Contains("Admin"))
                     {
                         <button type="button" class="btn btn-success" disabled>Youre gay</button>
                     }
@@ -147,44 +167,56 @@
                 </p>
             </div>
             <div>
-                @foreach(var kelompok in Model.Proyek.Kelompok)
+                @if (Model.Proyek.TipeProyek == Proyek.Tipe.KKN)
                 {
-                    <div class="card mb-2">
-                        <span>Nama Kelompok: @kelompok.NamaKelompok</span>
-                        <span>Nama ketua @kelompok.NamaKetua</span>
-                        <div>
-                            @foreach(var mahasiswa in kelompok.Mahasiswa)
-                            {
-                                if(mahasiswa.RoleMahasiswa == Mahasiswa.Role.KETUA)
+                    @foreach (var kelompok in Model.Proyek.Kelompok)
+                    {
+                        <div class="card mb-2">
+                            <span>Nama Kelompok: @kelompok.NamaKelompok</span>
+                            <span>Nama ketua @kelompok.NamaKetua</span>
+                            <div>
+                                @foreach (var mahasiswa in kelompok.Mahasiswa)
                                 {
-                                    <p>@mahasiswa.FirstName (ketua)</p>
+                                    if (mahasiswa.RoleMahasiswa == Mahasiswa.Role.KETUA)
+                                    {
+                                        <p>@mahasiswa.FirstName (ketua)</p>
+                                    }
+                                    else
+                                    {
+                                        <p>@mahasiswa.FirstName</p>
+                                    }
                                 }
-                                else
+                            </div>
+
+                            @if (roles.Contains("Mahasiswa") && Model.RoleMahasiswa != null && Model.RoleMahasiswa != Mahasiswa.Role.KETUA)
+                            {
+                                @if (Model.StatusTerdaftar == ProyekVM.Status.TIDAK_TERDAFTAR && kelompok.Mahasiswa.Count <= kelompok.Kuota)
                                 {
-                                    <p>@mahasiswa.FirstName</p>
+                                    <form asp-action="JoinKelompok" method="post">
+                                        <input type="hidden" name="id" value="@kelompok.Id" />
+                                        <button type="submit" class="btn btn-primary">Join</button>
+                                    </form>
                                 }
                             }
                         </div>
-
-                        @if(roles.Contains("Mahasiswa") && Model.RoleMahasiswa != Mahasiswa.Role.KETUA)
+                    }
+                }
+                else
+                {
+                    <ul>
+                        @foreach (var mahasiswa in Model.Proyek.Mahasiswa)
                         {
-                            @if(Model.StatusTerdaftar == ProyekVM.Status.TIDAK_TERDAFTAR)
-                            {
-                                <form asp-action="JoinKelompok" method="post">
-                                    <input type="hidden" name="id" value="@kelompok.Id" />
-                                    <button type="submit" class="btn btn-primary">Join</button>
-                                </form>
-                            }
+                            <li>@mahasiswa.FirstName</li>
                         }
-                    </div>
+                    </ul>
                 }
             </div>
             <div>
-                @if(Model.Proyek.Verified == true && Model.Proyek.SudahSelesai == false)
+                @if (Model.Proyek.Verified == true && Model.Proyek.SudahSelesai == false)
                 {
                     <button>Berjalan</button>
                 }
-                else if(Model.Proyek.SudahSelesai == true)
+                else if (Model.Proyek.SudahSelesai == true)
                 {
                     <button>Selesai</button>
                 }
@@ -195,7 +227,7 @@
                 Rules
             </h2>
             <ol>
-                @foreach(var rule in rules)
+                @foreach (var rule in rules)
                 {
                     <li>@rule</li>
                 }
