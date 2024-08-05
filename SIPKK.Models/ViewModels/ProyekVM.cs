@@ -12,6 +12,7 @@ namespace SIPKK.Models.ViewModels
 
         public Proyek Proyek { get; set; }
         public Mahasiswa? Mahasiswa { get; set; }
+        public Dosen? Dosen { get; set; }
 
         [ValidateNever]
         public Status StatusTerdaftar { get; set; }

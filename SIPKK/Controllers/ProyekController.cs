@@ -315,6 +315,7 @@ namespace SIPKK.Controllers
                 ProyekTerdaftarNameForCurrentUser = proyekTerdaftarNameForcurrentUser,
                 StatusTerdaftar = status,
                 MahasiswaTerdaftar = mahasiswaTerdaftar,
+                Dosen = dosen
             };
 
             return View(proyekVM);

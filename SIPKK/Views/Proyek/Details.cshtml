@@ -139,16 +139,19 @@
                     }
                     else if (roles.Contains("Dosen"))
                     {
-                        if (Model.StatusTerdaftar == ProyekVM.Status.TIDAK_TERDAFTAR)
+                        if (Model.StatusTerdaftar == ProyekVM.Status.TIDAK_TERDAFTAR && Model.Proyek.Dosen.Count == 0)
                         {
                             <form asp-action="DaftarJadiPembimbing" method="post">
                                 <input type="hidden" name="id" value="@Model.Proyek.Id" />
                                 <button type="submit" class="btn btn-primary">Jadi pembimbing</button>
                             </form>
                         }
-                        else
-                        {
+                        else if (Model.Proyek.Id == Model.Dosen.IdProyek)
+                        {   
                             <button type="button" class="btn btn-primary">Terdaftar</button>
+                        } else
+                        {
+                            <button type="button" class="btn btn-primary">Sudah ada dosen pembimbing</button>
                         }
 
                     }
