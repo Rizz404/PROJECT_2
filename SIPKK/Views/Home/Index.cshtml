@@ -1,222 +1,38 @@
-﻿@model IEnumerable<Proyek>
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
-
-@{
-    var user = await UserManager.GetUserAsync(User);
-}
-@if(SignInManager.IsSignedIn(User) && user != null)
-{
-    var roles = await UserManager.GetRolesAsync(user);
-    if(roles.Contains("Admin"))
-    {
-        <partial name="HomeAdmin" />
-    }
-    else
-    {
-        <partial name="_Notification" />
-        <section class="base-container  hero-container">
-            <div class="flex-col left-hero-container">
-                <h2 class="heading">
-                    Find your dream
-                    KKN for anyone,
-                    anywhere
-                </h2>
-                <p>
-                    Achieve your dream and passion with us
-                </p>
-            </div>
-            <div class="right-hero-container">
-                <img src="~/images//assets/top-person-hero.png" class="top" />
-                <img src="~/images//assets/inner-person-hero.png" class="inner" />
-                <img src="~/images//assets/left-person-hero.png" class="left" />
-                <img src="~/images/assets/person-hero.png" alt="Hero Image" class="person" />
-                <img src="~/images//assets/right-person-hero.png" class="right" />
-            </div>
-        </section>
-        <!---->
-        <div class="separator-hero-container ">
-            <div class="separator-hero-inner flex-center">
-                <svg width="170" height="144" viewBox="0 0 170 144" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M121 0.5C122 19.5 120.3 57.2 79.4997 66C28.4997 77 7.99973 133 7.99973 144" stroke="#0E171F" stroke-width="15" />
-                    <path d="M165 16.5C165 35 163.616 84.7 122.816 93.5C71.8161 104.5 46.5 125.5 46.5 136.5" stroke="#0E171F" stroke-width="10" />
-                </svg>
-                <div class="flex-center">
-                    <img src="~/images/assets/kampus-merdeka.png" alt="Kampus Merdeka" />
-                    <img src="~/images/assets/campus-logo.png" alt="Global" />
-                    <img src="~/images/assets/lpdp-logo.png" alt="LPDP" />
-
-                </div>
-                <svg width="170" height="144" viewBox="0 0 170 144" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M49.5 0.5C48.4999 19.5 50.2002 57.2 91.0002 66C142 77 162.5 133 162.5 144" stroke="#0E171F" stroke-width="15" />
-                    <path d="M5.5 16.5C5.5 35 6.88388 84.7 47.6839 93.5C98.6839 104.5 124 125.5 124 136.5" stroke="#0E171F" stroke-width="10" />
-                </svg>
-            </div>
-        </div>
-        <!---->
-        <section class="global-institute-container flex-center">
-            <div class="base-container">
-                <div>
-                    <h3 class="sub-heading">
-                        GLOBAL INSTITUTE
-                    </h3>
-                    <p>
-                        The Global Institute of Technology and Business is a campus that possesses core competencies in the fields of technology
-                        and business to compete in the era of globalization. This campus was established to create a generation that is ready to
-                        compete, has a broad perspective, noble attitudes and ethics, and contributes to the progress of the world. Join us…!!
-                    </p>
-                    <a asp-area="User" asp-controller="Home" asp-action="Index" class="tertiary-btn flex-center">
-                        View Profile
-                        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1.125 18C1.125 27.3198 8.68019 34.875 18 34.875C27.3198 34.875 34.875 27.3198 34.875 18C34.875 8.68019 27.3198 1.125 18 1.125C8.68019 1.125 1.125 8.68019 1.125 18Z" fill="#C2E4FF" />
-                            <path d="M18.9562 27L27.5625 18L18.9563 9L18.9562 14.9625L8.4375 14.9625L8.4375 20.7562L18.9562 20.7563L18.9562 27Z" fill="white" />
-                        </svg>
-                    </a>
-
-                </div>
-
-            </div>
-            <img src="~/images/assets/below-hero.png" />
-        </section>
-        <section class="container py-5">
-            <h3 class="h3 mb-4 text-center">
-                Result Alumni KKN
-            </h3>
-            <div class="row">
-                @foreach(var proyek in Model)
-                {
-
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card h-100">
-                            @if(proyek.FotoProyek != null)
-                            {
-                                <img src="@Html.DisplayFor(modelItem => proyek.FotoProyek)" class="landing-page-foto" alt="@Html.DisplayFor(modelItem => proyek.FotoProyek)" />
-
-                            }
-                            else
-                            {
-                                <img src="https://i.pinimg.com/736x/87/20/2f/87202f0fc6edd3524e49679bea430025.jpg" class="landing-page-foto" alt="No Image" />
-                            }
-                            <div class="card-body">
-                                <h4 class="card-title">
-                                    @proyek.NamaProyek
-                                </h4>
-                                <p class="card-text">
-                                    @proyek.Deskripsi
-                                </p>
-                            </div>
-                            <div class="card-footer">
-                                <a asp-controller="Proyek" asp-area="" asp-action="Details" asp-route-id="@proyek.Id" class="btn btn-primary">Details</a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        </section>
-
-    }
-}
-else
-{
-    <section class="base-container  hero-container ">
-        <div class="flex-col left-hero-container">
-            <h2 class="heading">
-                Find your dream
-                KKN for anyone,
-                anywhere
-            </h2>
-            <p>
-                Achieve your dream and passion with us
-            </p>
-        </div>
-        <div class="right-hero-container">
-            <img src="~/images//assets/top-person-hero.png" class="top" />
-            <img src="~/images//assets/inner-person-hero.png" class="inner" />
-            <img src="~/images//assets/left-person-hero.png" class="left" />
-            <img src="~/images/assets/person-hero.png" alt="Hero Image" class="person" />
-            <img src="~/images//assets/right-person-hero.png" class="right" />
-        </div>
-    </section>
-    <!---->
-    <div class="separator-hero-container ">
-        <div class="separator-hero-inner flex-center">
-            <svg width="170" height="144" viewBox="0 0 170 144" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M121 0.5C122 19.5 120.3 57.2 79.4997 66C28.4997 77 7.99973 133 7.99973 144" stroke="#0E171F" stroke-width="15" />
-                <path d="M165 16.5C165 35 163.616 84.7 122.816 93.5C71.8161 104.5 46.5 125.5 46.5 136.5" stroke="#0E171F" stroke-width="10" />
-            </svg>
-            <div class="flex-center">
-                <img src="~/images/assets/kampus-merdeka.png" alt="Kampus Merdeka" />
-                <img src="~/images/assets/campus-logo.png" alt="Global" />
-                <img src="~/images/assets/lpdp-logo.png" alt="LPDP" />
-
-            </div>
-            <svg width="170" height="144" viewBox="0 0 170 144" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M49.5 0.5C48.4999 19.5 50.2002 57.2 91.0002 66C142 77 162.5 133 162.5 144" stroke="#0E171F" stroke-width="15" />
-                <path d="M5.5 16.5C5.5 35 6.88388 84.7 47.6839 93.5C98.6839 104.5 124 125.5 124 136.5" stroke="#0E171F" stroke-width="10" />
-            </svg>
+@model IEnumerable<Proyek>
+@{ ViewData["Title"] = "Sistem Informasi KKN/KKP"; }
+<partial name="_Notification" />
+<section style="max-width:1200px;margin:48px auto;padding:36px;background:#e8f2ef;border-radius:24px;display:flex;gap:32px;align-items:center;flex-wrap:wrap">
+    <div style="flex:1;min-width:300px">
+        <p style="color:#1d6754;font-weight:700;letter-spacing:.1em">SIPKK · KKN / KKP</p>
+        <h1 style="font-size:44px;line-height:1.15;color:#13382e">Temukan program pengabdian yang sesuai.</h1>
+        <p style="font-size:18px;color:#34564d">Jelajahi proyek KKN dan KKP, lihat lokasi serta kuota, lalu lengkapi pendaftaran melalui akun mahasiswa.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:24px">
+            <a class="primary-btn" asp-controller="Proyek" asp-action="Index">Jelajahi Proyek</a>
+            <a class="primary-btn" asp-area="Identity" asp-page="/Account/RegisterMahasiswa">Daftar Mahasiswa</a>
         </div>
     </div>
-    <!---->
-    <section class="global-institute-container flex-center">
-        <div class="base-container">
-            <div>
-                <h3 class="sub-heading">
-                    GLOBAL INSTITUTE
-                </h3>
-                <p>
-                    The Global Institute of Technology and Business is a campus that possesses core competencies in the fields of technology
-                    and business to compete in the era of globalization. This campus was established to create a generation that is ready to
-                    compete, has a broad perspective, noble attitudes and ethics, and contributes to the progress of the world. Join us…!!
-                </p>
-                <a asp-area="User" asp-controller="Home" asp-action="Index" class="tertiary-btn flex-center">
-                    View Profile
-                    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1.125 18C1.125 27.3198 8.68019 34.875 18 34.875C27.3198 34.875 34.875 27.3198 34.875 18C34.875 8.68019 27.3198 1.125 18 1.125C8.68019 1.125 1.125 8.68019 1.125 18Z" fill="#C2E4FF" />
-                        <path d="M18.9562 27L27.5625 18L18.9563 9L18.9562 14.9625L8.4375 14.9625L8.4375 20.7562L18.9562 20.7563L18.9562 27Z" fill="white" />
-                    </svg>
-                </a>
-
-            </div>
-
+    <img src="~/images/contextual/project.svg" width="440" height="264" style="max-width:100%;border-radius:20px" alt="Diagram program pengabdian KKN dan KKP" />
+</section>
+<section style="max-width:1200px;margin:40px auto;padding:0 24px">
+    <h2 style="color:#13382e">Program Selesai</h2>
+    <p>Informasi kegiatan KKN dan KKP yang telah selesai.</p>
+    @if (!Model.Any())
+    {
+        <div style="padding:24px;background:white;border:1px solid #d1ddd7;border-radius:16px">
+            <p>Belum ada program yang tercatat selesai. Lihat daftar proyek untuk informasi kegiatan yang tersedia.</p>
+            <a asp-area="" asp-controller="Proyek" asp-action="Index">Jelajahi proyek KKN / KKP →</a>
         </div>
-        <img src="~/images/assets/below-hero.png" />
-    </section>
-    <section class="container py-5">
-        <h3 class="h3 mb-4 text-center">
-            Result Alumni KKN
-        </h3>
-        <div class="row">
-            @foreach(var proyek in Model)
-            {
-                @if(proyek.SudahSelesai)
-                {
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card h-100">
-                            @if(proyek.FotoProyek != null)
-                            {
-                                <img src="@Html.DisplayFor(modelItem => proyek.FotoProyek)" class="landing-page-foto" alt="@Html.DisplayFor(modelItem => proyek.FotoProyek)" />
-
-                            }
-                            else
-                            {
-                                <img src="https://i.pinimg.com/736x/87/20/2f/87202f0fc6edd3524e49679bea430025.jpg" class="landing-page-foto" alt="No Image" />
-                            }
-                            <div class="card-body">
-                                <h4 class="card-title">
-                                    @proyek.NamaProyek
-                                </h4>
-                                <p class="card-text">
-                                    @proyek.Deskripsi
-                                </p>
-                            </div>
-                            <div class="card-footer">
-                                <a asp-controller="Proyek" asp-area="" asp-action="Details" asp-route-id="@proyek.Id" class="btn btn-primary">Details</a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            }
-        </div>
-    </section>
-
-}
+    }
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px">
+        @foreach (var proyek in Model.Take(6))
+        {
+            <article style="background:white;border:1px solid #d1ddd7;border-radius:16px;padding:24px">
+                <span style="color:#1d6754;font-weight:700">@proyek.TipeProyek · @proyek.Lokasi</span>
+                <h3 style="font-size:21px;margin-top:14px">@proyek.NamaProyek</h3>
+                <p>@proyek.Deskripsi</p>
+                <p style="font-weight:600">Kuota @proyek.Kuota peserta</p>
+                <a asp-area="" asp-controller="Proyek" asp-action="Details" asp-route-id="@proyek.Id">Lihat informasi proyek →</a>
+            </article>
+        }
+    </div>
+</section>
