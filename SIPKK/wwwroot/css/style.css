@@ -1,4 +1,4 @@
-﻿/* reset*/
+/* reset*/
 :root {
     --primary-white: hsla(0, 0%, 95%, 1);
     --primary-black: hsla(0, 0%, 5%, 1);
@@ -73,7 +73,7 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 .heading {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 70px;
     font-weight: 800;
     line-height: 84.72px;
@@ -81,35 +81,35 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 .sub-heading {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 48px;
     font-weight: 700;
     line-height: 58.09px;
 }
 
 .title {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 24px;
     font-weight: 800;
     line-height: 29.05px;
 }
 
 .sub-title {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 32px;
     font-weight: 700;
     line-height: 38.73px;
 }
 
 .paragraph {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 18px;
     font-weight: 400;
     line-height: 21.78px;
 }
 
 .description {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 12px;
     font-weight: 500;
     line-height: 14.52px;
@@ -309,7 +309,7 @@ nav > ul {
 }
 
     .right-hero-box > p {
-        font-family: Inter;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
         font-size: 20px;
         font-weight: 600;
         line-height: 24.2px;
@@ -489,14 +489,14 @@ footer {
     gap: 1rem;
 }
 .proyeks-nama {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 16px;
     font-weight: 700;
     line-height: 19.36px;
     text-align: left;
 }
 .proyeks-deskripsi {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 12px;
     font-weight: 400;
     line-height: 9.68px;
@@ -523,7 +523,7 @@ footer {
     gap: .5rem;
 }
 .proyeks-kuota-lokasi > p {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 12px;
     font-weight: 400;
     line-height: 9.68px;
@@ -548,7 +548,7 @@ footer {
     gap: 40px;
 }
 .proyek-title {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 55px;
     font-weight: 800;
     line-height: 66.56px;
@@ -594,7 +594,7 @@ footer {
     justify-content: space-between;
 }
 .proyek-inner-detail > div > div > p {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 20px;
     font-weight: 700;
     line-height: 24.2px;
@@ -602,7 +602,7 @@ footer {
     color: var(--dark-grey);
 }
 .proyek-inner-detail > div > div > span {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 20px;
     font-weight: 500;
     line-height: 24.2px;
@@ -611,7 +611,7 @@ footer {
 }
 
 .proyek-subtitle {
-    font-family: Inter;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     font-size: 36px;
     font-weight: 700;
     line-height: 43.57px;
@@ -653,3 +653,10 @@ footer {
     border-radius: 100%;
     margin: 0 auto;
 }
+/* Domain preview readability: system fallback when Inter is unavailable. */
+body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif; color: #182c26; }
+.proyeks-container { color: #182c26; text-decoration: none; }
+.proyeks-nama { color: #13382e; font-size: 21px; }
+.proyeks-deskripsi { color: #34564d; font-size: 16px; }
+.proyeks-nama, .proyeks-deskripsi { line-height: 1.45; } .proyeks-kuota-lokasi > p { color: #34564d; font-size: 14px; line-height: 1.45; }
+.proyeks-foto[src$=".svg"] { object-fit: contain; background: #e8f2ef; } .table-foto[src$=".svg"] { object-fit: contain; width: 96px !important; height: 58px !important; border-radius: 8px !important; }

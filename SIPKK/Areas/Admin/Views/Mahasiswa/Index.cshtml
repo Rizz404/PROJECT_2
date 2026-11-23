@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Mahasiswa>
+@model IEnumerable<Mahasiswa>
 
 @{
     ViewData["Title"] = "Index";
@@ -106,7 +106,7 @@
                                     }
                                     else
                                     {
-                                        <img class="table-foto" src="~/images/users/f8187bf9-cdf4-4e4d-b0dc-b98841d21866.jpg" alt="Foto Profil" class="profile-pic rounded-circle" />
+                                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width:48px;height:48px" aria-label="Inisial mahasiswa">@(string.IsNullOrEmpty(item.FirstName) ? "" : item.FirstName.Substring(0, 1))@(string.IsNullOrEmpty(item.LastName) ? "" : item.LastName.Substring(0, 1))</span>
                                     }
                                 </td>
                                 <td>@item.ProgramStudi.Nama</td>
