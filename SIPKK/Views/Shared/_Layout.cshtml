@@ -9,7 +9,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] GEH</title>
+    <title>@ViewData["Title"] · SIPKK</title>
     <link rel="icon" type="image/x-icon" href="~/materio/assets/img/favicon/favicon.ico" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -101,10 +101,10 @@
                 </div>
                 <div class="col-md-6 text-md-end">
                     <ul class="list-inline mb-0">
-                        <li class="list-inline-item"><a href="#" class="text-white">Home</a></li>
-                        <li class="list-inline-item"><a href="#" class="text-white">About Us</a></li>
-                        <li class="list-inline-item"><a href="#" class="text-white">Contact</a></li>
-                        <li class="list-inline-item"><a href="#" class="text-white">Privacy</a></li>
+                        <li class="list-inline-item"><a asp-area="" asp-controller="Home" asp-action="Index" class="text-white">Beranda</a></li>
+                        <li class="list-inline-item"><a asp-area="" asp-controller="Proyek" asp-action="Index" class="text-white">Proyek</a></li>
+                        <li class="list-inline-item"><a asp-area="Identity" asp-page="/Account/RegisterMahasiswa" class="text-white">Daftar Mahasiswa</a></li>
+                        <li class="list-inline-item"><a asp-area="Identity" asp-page="/Account/Login" class="text-white">Login</a></li>
                     </ul>
                 </div>
             </div>
