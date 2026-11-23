@@ -110,10 +110,10 @@ void SeedData(ApplicationDbContext context)
         // Seed Konsentrasi
         var konsentrasiData = new[]
         {
-            new { Nama = "Software Engineering", Deskripsi = "Deskripsi Konsentrasi 1 TI", IdProgramStudi = programStudiIds[0] },
-            new { Nama = "Computer Networking", Deskripsi = "Deskripsi Konsentrasi 1 SI", IdProgramStudi = programStudiIds[0] },
-            new { Nama = "Business Digital", Deskripsi = "Deskripsi Konsentrasi 1 MB", IdProgramStudi = programStudiIds[2] },
-            new { Nama = "Testing", Deskripsi = "Deskripsi Konsentrasi 1 AK", IdProgramStudi = programStudiIds[2] }
+            new { Nama = "Software Engineering", Deskripsi = "Pengembangan perangkat lunak, pengujian, dan pemeliharaan aplikasi.", IdProgramStudi = programStudiIds[0] },
+            new { Nama = "Computer Networking", Deskripsi = "Perancangan jaringan komputer, konektivitas, dan administrasi jaringan.", IdProgramStudi = programStudiIds[0] },
+            new { Nama = "Business Digital", Deskripsi = "Pengembangan layanan dan proses bisnis berbasis teknologi digital.", IdProgramStudi = programStudiIds[2] },
+            new { Nama = "Testing", Deskripsi = "Pengujian fungsional dan kualitas aplikasi untuk proses bisnis digital.", IdProgramStudi = programStudiIds[2] }
         };
 
         var konsentrasiEntities = konsentrasiData.Select(data => new Konsentrasi
@@ -159,10 +159,10 @@ void SeedData(ApplicationDbContext context)
     {
         var kelasData = new[]
         {
-            new { Nama = "2022", Deskripsi = "Deskripsi Kelas 1 TI"},
-            new { Nama = "2023", Deskripsi = "Deskripsi Kelas 1 SI"},
-            new { Nama = "2024", Deskripsi = "Deskripsi Kelas 1 MB"},
-            new { Nama = "2025", Deskripsi = "Deskripsi Kelas 1 AK"}
+            new { Nama = "2022", Deskripsi = "Kelas untuk mahasiswa angkatan 2022."},
+            new { Nama = "2023", Deskripsi = "Kelas untuk mahasiswa angkatan 2023."},
+            new { Nama = "2024", Deskripsi = "Kelas untuk mahasiswa angkatan 2024."},
+            new { Nama = "2025", Deskripsi = "Kelas untuk mahasiswa angkatan 2025."}
         };
 
         var kelasEntities = kelasData.Select(data => new Kelas
